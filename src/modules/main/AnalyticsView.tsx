@@ -1,3 +1,5 @@
+import { JSX } from 'react';
+
 import { Box, Button, Stack, Typography } from '@mui/material';
 
 import { useLocalContext } from '@graasp/apps-query-client';

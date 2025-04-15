@@ -1,16 +1,33 @@
-import { useEffect } from 'react';
+import { JSX, useEffect, useState } from 'react';
+import { Layer, Stage } from 'react-konva';
 
 import { useLocalContext } from '@graasp/apps-query-client';
-import { Context } from '@graasp/sdk';
 
 import i18n, { DEFAULT_LANGUAGE } from '../../config/i18n';
-import { SettingsProvider } from '../context/SettingsContext';
-import AnalyticsView from './AnalyticsView';
-import BuilderView from './BuilderView';
-import PlayerView from './PlayerView';
+import Thermometer from '../components/thermometer/Thermometer';
+import MacroView from './MacroView';
 
 const App = (): JSX.Element => {
   const context = useLocalContext();
+  const [stageDimensions, setStageDimensions] = useState({
+    width: 0,
+    height: 0,
+  });
+
+  const checkSize = (): void => {
+    const stageWidth = window?.innerWidth || 0;
+    const stageHeight = window?.innerHeight || 0;
+    setStageDimensions({ width: stageWidth, height: stageHeight });
+    console.log(stageHeight, stageWidth);
+  };
+
+  useEffect(() => {
+    checkSize();
+    // const ro = new ResizeObserver(() => {
+    //   checkSize();
+    // });
+    // ro.observe(document.querySelector(`#container`));
+  }, []);
 
   useEffect(() => {
     // handle a change of language
@@ -20,21 +37,17 @@ const App = (): JSX.Element => {
     }
   }, [context]);
 
-  const renderContent = (): JSX.Element => {
-    switch (context.context) {
-      case Context.Builder:
-        return <BuilderView />;
-
-      case Context.Analytics:
-        return <AnalyticsView />;
-
-      case Context.Player:
-      default:
-        return <PlayerView />;
-    }
-  };
-
-  return <SettingsProvider>{renderContent()}</SettingsProvider>;
+  return (
+    <Stage width={stageDimensions.width} height={stageDimensions.height}>
+      <Layer>
+        <MacroView
+          width={stageDimensions.width}
+          height={stageDimensions.height}
+        />
+        <Thermometer stageHeight={stageDimensions.height} />
+      </Layer>
+    </Stage>
+  );
 };
 
 export default App;

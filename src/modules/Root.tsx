@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { ToastContainer } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.min.css';
 
 import { CssBaseline, ThemeProvider, createTheme, styled } from '@mui/material';
 import { grey, orange, pink } from '@mui/material/colors';
@@ -30,16 +29,12 @@ import App from './main/App';
 // declare the module to enable theme modification
 declare module '@mui/material/styles' {
   interface Theme {
-    status: {
-      danger: { background: string; color: string };
-    };
+    status: { danger: { background: string; color: string } };
   }
 
   // allow configuration using `createTheme`
   interface ThemeOptions {
-    status?: {
-      danger?: { background: string; color: string };
-    };
+    status?: { danger?: { background: string; color: string } };
   }
 
   interface PaletteOptions {
@@ -49,28 +44,15 @@ declare module '@mui/material/styles' {
 
 const theme = createTheme({
   palette: {
-    primary: {
-      main: '#5050d2',
-    },
+    primary: { main: '#5050d2' },
     secondary: pink,
     default: grey['500'],
-    background: {
-      default: 'transparent',
-      paper: '#fff',
-    },
+    background: { default: 'transparent', paper: '#fff' },
   },
-  status: {
-    danger: {
-      background: orange['400'],
-      color: '#fff',
-    },
-  },
+  status: { danger: { background: orange['400'], color: '#fff' } },
 });
 
-const RootDiv = styled('div')({
-  flexGrow: 1,
-  height: '100%',
-});
+const RootDiv = styled('div')({ flexGrow: 1, height: '100%' });
 
 const Root: FC = () => {
   const [mockContext, setMockContext] = useObjectState(defaultMockContext);
@@ -84,6 +66,7 @@ const Root: FC = () => {
           <I18nextProvider i18n={i18nConfig}>
             <ErrorBoundary>
               <QueryClientProvider client={queryClient}>
+                <ReactQueryDevtools initialIsOpen={false} />
                 <ToastContainer />
                 <WithLocalContext
                   defaultValue={

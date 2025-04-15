@@ -4,6 +4,7 @@ import ReactDOM from 'react-dom/client';
 import { MockSolution, mockApi } from '@graasp/apps-query-client';
 
 import * as Sentry from '@sentry/react';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import { MOCK_API } from './config/env';
 import { generateSentryConfig } from './config/sentry';
@@ -12,7 +13,7 @@ import buildDatabase, { defaultMockContext, mockMembers } from './mocks/db';
 import Root from './modules/Root';
 
 Sentry.init({
-  integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
+  // integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
 
   // Set tracesSampleRate to 1.0 to capture 100%
   // of transactions for performance monitoring.

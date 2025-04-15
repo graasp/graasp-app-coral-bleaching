@@ -1,5 +1,7 @@
 import React from 'react';
 
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+
 export type UpdateArgument<T extends object> =
   | T
   | ((previousArg: T) => Partial<T>);
@@ -15,20 +17,32 @@ export function useObjectState<T extends object>(
       setState((s) => {
         const newState = arg(s);
 
-        return {
-          ...s,
-          ...newState,
-        };
+        return { ...s, ...newState };
       });
     }
 
     if (typeof arg === 'object') {
-      setState((s) => ({
-        ...s,
-        ...arg,
-      }));
+      setState((s) => ({ ...s, ...arg }));
     }
   }, []);
 
   return [state, handleUpdate];
 }
+
+export const useCurrentTemperature = () => {
+  const value = useQuery({
+    // queryFn: () => {},
+    queryKey: ['temperature'],
+    placeholderData: 0,
+    initialData: 0,
+  });
+  return value;
+};
+export const useUpdateCurrentTemperature = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    onMutate: (newTemperature: number) => {
+      queryClient.setQueryData(['temperature'], newTemperature);
+    },
+  });
+};
