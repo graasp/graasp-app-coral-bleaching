@@ -110,3 +110,16 @@ VITE_VERSION=latest
 # dont open browser
 BROWSER=none
 ```
+
+---
+
+## title: Coral bleaching
+
+```mermaid
+stateDiagram-v2
+[*] --> Growing
+Growing --> Growing: kelpCount, 23-28°c = +1, otherwise -1
+
+    Growing --> Dead: kelpCount == 0
+    Dead --> Dead
+```

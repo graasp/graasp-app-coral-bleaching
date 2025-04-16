@@ -6,23 +6,18 @@ import { CssBaseline, ThemeProvider, createTheme, styled } from '@mui/material';
 import { grey, orange, pink } from '@mui/material/colors';
 import { StyledEngineProvider } from '@mui/material/styles';
 
-import {
-  GraaspContextDevTool,
-  WithLocalContext,
-  WithTokenContext,
-} from '@graasp/apps-query-client';
+import { GraaspContextDevTool } from '@graasp/apps-query-client';
 
 import i18nConfig from '@/config/i18n';
 import {
   QueryClientProvider,
   ReactQueryDevtools,
-  hooks,
   queryClient,
 } from '@/config/queryClient';
 import { defaultMockContext, mockMembers } from '@/mocks/db';
-import Loader from '@/modules/common/Loader';
 import { useObjectState } from '@/utils/hooks';
 
+import Debug from './Debug';
 import ErrorBoundary from './ErrorBoundary';
 import App from './main/App';
 
@@ -66,42 +61,21 @@ const Root: FC = () => {
           <I18nextProvider i18n={i18nConfig}>
             <ErrorBoundary>
               <QueryClientProvider client={queryClient}>
-                <ReactQueryDevtools initialIsOpen={false} />
                 <ToastContainer />
-                <WithLocalContext
-                  defaultValue={
-                    window.Cypress ? window.appContext : mockContext
-                  }
-                  LoadingComponent={<Loader />}
-                  useGetLocalContext={hooks.useGetLocalContext}
-                  useAutoResize={hooks.useAutoResize}
-                  onError={() => {
-                    console.error(
-                      'An error occurred while fetching the context.',
-                    );
-                  }}
-                >
-                  <WithTokenContext
-                    LoadingComponent={<Loader />}
-                    useAuthToken={hooks.useAuthToken}
-                    onError={() => {
-                      console.error(
-                        'An error occurred while requesting the token.',
-                      );
-                    }}
-                  >
-                    <App />
-                    {import.meta.env.DEV && (
-                      <GraaspContextDevTool
-                        members={mockMembers}
-                        context={mockContext}
-                        setContext={setMockContext}
-                      />
-                    )}
-                  </WithTokenContext>
-                </WithLocalContext>
+
+                <App />
                 {import.meta.env.DEV && (
-                  <ReactQueryDevtools position="bottom-left" />
+                  <GraaspContextDevTool
+                    members={mockMembers}
+                    context={mockContext}
+                    setContext={setMockContext}
+                  />
+                )}
+                {import.meta.env.DEV && (
+                  <>
+                    <ReactQueryDevtools position="bottom-left" />
+                    <Debug />
+                  </>
                 )}
               </QueryClientProvider>
             </ErrorBoundary>

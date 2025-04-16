@@ -1,7 +1,7 @@
 import { ReactNode } from 'react';
 import { Group } from 'react-konva';
 
-import { useCurrentTemperature } from '@/utils/hooks';
+import { useCurrentTemperature, useStageDimensions } from '@/utils/hooks';
 
 import {
   SCALE_LEGEND_PADDING_BOTTOM,
@@ -17,7 +17,10 @@ import CurrentTemperature from './CurrentTemperature.js';
 import Scale from './Scale.js';
 import ThermometerShape from './ThermometerShape';
 
-const Thermometer = ({ stageHeight }: { stageHeight: number }): ReactNode => {
+const Thermometer = (): ReactNode => {
+  const {
+    data: { height: stageHeight },
+  } = useStageDimensions();
   const thermometerHeight = stageHeight * THERMOMETER_HEIGHT_FACTOR;
   const offsetY = stageHeight * THERMOMETER_POSITION_Y_FACTOR;
   const { data: currentTemperature } = useCurrentTemperature();

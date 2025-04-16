@@ -1,33 +1,55 @@
-import { JSX, useEffect, useState } from 'react';
+import { JSX, createRef, useEffect, useRef } from 'react';
 import { Layer, Stage } from 'react-konva';
+
+import { Fab } from '@mui/material';
 
 import { useLocalContext } from '@graasp/apps-query-client';
 
+import { View } from '@/config/types';
+import {
+  useAnimation,
+  useSetKelpAmount,
+  useStageDimensions,
+  useView,
+} from '@/utils/hooks';
+
 import i18n, { DEFAULT_LANGUAGE } from '../../config/i18n';
+import { SettingsButton } from '../components/settings/SettingsButton';
 import Thermometer from '../components/thermometer/Thermometer';
 import MacroView from './MacroView';
+import MicroView from './MicroView';
 
 const App = (): JSX.Element => {
   const context = useLocalContext();
-  const [stageDimensions, setStageDimensions] = useState({
-    width: 0,
-    height: 0,
-  });
+  const { data: view } = useView();
+  const interval = createRef();
+  const { data: stageDimensions } = useStageDimensions();
+  const { mutate: updateKelpAmount } = useSetKelpAmount();
+  const { data: isPlaying } = useAnimation();
 
-  const checkSize = (): void => {
-    const stageWidth = window?.innerWidth || 0;
-    const stageHeight = window?.innerHeight || 0;
-    setStageDimensions({ width: stageWidth, height: stageHeight });
-    console.log(stageHeight, stageWidth);
-  };
+  // const checkSize = (): void => {
+  //   const stageWidth = window?.innerWidth || 0;
+  //   const stageHeight = window?.innerHeight || 0;
+  //   setStageDimensions({ width: stageWidth, height: stageHeight });
+  // };
 
   useEffect(() => {
-    checkSize();
-    // const ro = new ResizeObserver(() => {
-    //   checkSize();
-    // });
-    // ro.observe(document.querySelector(`#container`));
-  }, []);
+    if (isPlaying) {
+      interval.current = setInterval(() => {
+        updateKelpAmount();
+      }, 1000);
+      // checkSize();
+      // const ro = new ResizeObserver(() => {
+      //   checkSize();
+      // });
+      // ro.observe(document.querySelector(`#container`));
+
+      return () => {
+        clearInterval(interval.current);
+      };
+    }
+    clearInterval(interval.current);
+  }, [isPlaying]);
 
   useEffect(() => {
     // handle a change of language
@@ -38,15 +60,25 @@ const App = (): JSX.Element => {
   }, [context]);
 
   return (
-    <Stage width={stageDimensions.width} height={stageDimensions.height}>
-      <Layer>
-        <MacroView
-          width={stageDimensions.width}
-          height={stageDimensions.height}
-        />
-        <Thermometer stageHeight={stageDimensions.height} />
-      </Layer>
-    </Stage>
+    <>
+      <SettingsButton />
+      <Stage width={stageDimensions.width} height={stageDimensions.height}>
+        <Layer>
+          {view === View.Macro ? (
+            <MacroView
+              width={stageDimensions.width}
+              height={stageDimensions.height}
+            />
+          ) : (
+            <MicroView
+              width={stageDimensions.width}
+              height={stageDimensions.height}
+            />
+          )}
+          <Thermometer />
+        </Layer>
+      </Stage>
+    </>
   );
 };
 

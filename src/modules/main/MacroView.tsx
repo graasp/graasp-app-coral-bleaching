@@ -2,6 +2,7 @@ import React, { ReactNode } from 'react';
 import { Rect } from 'react-konva';
 
 import Coral from '../components/coral/Coral';
+import { Sunshine } from '../components/elements/Sunshine';
 
 // eslint-disable-next-line react/function-component-definition
 function MacroView({
@@ -11,8 +12,6 @@ function MacroView({
   width: number;
   height: number;
 }): ReactNode {
-  console.log('wefoijlk');
-
   const offsetY = height * 0.2;
 
   return (
@@ -32,6 +31,7 @@ function MacroView({
         fill="#f7dc6b"
       />
       <Coral />
+      <Sunshine width={width} height={height} />
     </>
   );
 }
