@@ -1,4 +1,5 @@
-import React from 'react';
+/* eslint-disable @typescript-eslint/explicit-function-return-type */
+import React, { useEffect, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -33,11 +34,27 @@ export function useObjectState<T extends object>(
 
 const INIT_KELP_AMOUNT = 50;
 const INIT_GROWTH_SCALE = 50;
-const INIT_CURRENT_TEMPERATURE = 296;
+const INIT_CURRENT_TEMPERATURE = 300.1;
+
+export const useTime = () => {
+  const value = useQuery({
+    // queryFn: () => {},
+    queryKey: ['time'],
+    initialData: 0,
+  });
+  return value;
+};
+export const useUpdateTime = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async () => {
+      queryClient.setQueryData<number>(['time'], (t) => (t ?? 0) + 1);
+    },
+  });
+};
 
 export const useCurrentTemperature = () => {
   const value = useQuery({
-    // queryFn: () => {},
     queryKey: ['temperature'],
     initialData: INIT_CURRENT_TEMPERATURE,
   });
@@ -46,99 +63,151 @@ export const useCurrentTemperature = () => {
 export const useUpdateCurrentTemperature = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    onMutate: (newTemperature: number) => {
+    mutationFn: async (newTemperature) => {
+      // do nothing
       queryClient.setQueryData(['temperature'], newTemperature);
     },
   });
 };
 
-export const useView = () => {
+type Context = { view: View; reset: number };
+
+export const useContext = () => {
   const value = useQuery({
     // queryFn: () => {},
-    queryKey: ['view'],
-    initialData: View.Macro,
+    queryKey: ['context'],
+    initialData: { view: View.Macro, reset: 0 },
   });
   return value;
 };
+
 export const useSetView = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    onMutate: (view: string) => {
-      queryClient.setQueryData(['view'], view);
+    mutationFn: async (view: View) => {
+      queryClient.setQueryData<Context>(['context'], (d) => ({
+        ...(d ?? { reset: 0, view }),
+        view,
+      }));
     },
   });
 };
 
 export const useStageDimensions = ({ select = undefined } = {}) => {
   const value = useQuery({
-    // queryFn: () => {},
     queryKey: ['stageDimensions'],
     initialData: { width: window?.innerWidth, height: window?.innerHeight },
     select,
   });
   return value;
 };
+
 export const useGrowthScale = () => {
-  const value = useQuery({
+  const value = useQuery<number>({
     // queryFn: () => {},
     queryKey: ['growthScale'],
   });
   return value;
 };
 export const useKelpAmount = () => {
-  const value = useQuery({
+  const value = useQuery<number>({
     // queryFn: () => {},
     queryKey: ['kelpAmount'],
+    initialData: INIT_KELP_AMOUNT,
   });
   return value;
 };
 export const useIsDead = () => {
-  const value = useQuery({
-    // queryFn: () => {},
+  const value = useQuery<boolean>({
     queryKey: ['isDead'],
+    initialData: false,
   });
   return value;
 };
 
-export const useSetKelpAmount = () => {
-  const queryClient = useQueryClient();
-  return useMutation({
-    onMutate: () => {
-      const currentTemperature = queryClient.getQueryData<number>([
-        'temperature',
-      ]);
-      const isDead = queryClient.getQueryData<number>(['isDead']);
+const SPEED = 0.5;
 
-      const init =
-        queryClient.getQueryData<number>(['kelpAmount']) ?? INIT_KELP_AMOUNT;
+export enum CoralStatus {
+  Normal = 'normal',
+  Dying = 'dying',
+  Dead = 'dead',
+}
 
-      if (!isDead) {
-        const kelpAmount = Math.max(
-          0,
-          Math.min(
-            currentTemperature < 290 || currentTemperature > 310
-              ? init - 5
-              : init + 5,
-            100,
-          ),
-        );
+export const useStatus = (
+  coralId: string,
+  { deathSpeed = 5, initialKelpAmount = INIT_KELP_AMOUNT } = {},
+): { kelpAmount: number; status: CoralStatus } => {
+  const { data: time } = useTime();
 
-        queryClient.setQueryData(['kelpAmount'], kelpAmount);
+  const [status, setStatus] = useState(CoralStatus.Normal);
+  const { data: currentTemperature } = useCurrentTemperature();
+  // todo: could use ref?
+  const { data } = useContext();
+  const [dyingFactor, setDyingFactor] = useState(0);
+  const [kelpAmount, setKelpAmount] = useState(initialKelpAmount);
 
-        queryClient.setQueryData(
-          ['growthScale'],
-          Math.max(
-            queryClient.getQueryData(['growthScale']) ?? INIT_GROWTH_SCALE,
-            kelpAmount,
-          ),
-        );
+  const reset = data?.reset;
 
-        if (kelpAmount === 0) {
-          queryClient.setQueryData(['isDead'], true);
+  useEffect(() => {
+    if (reset) {
+      setStatus(CoralStatus.Normal);
+      setDyingFactor(0);
+      setKelpAmount(initialKelpAmount);
+    }
+  }, [reset]);
+
+  // update kelp value
+  useEffect(() => {
+    // reset
+    if (time === 0) {
+      setStatus(CoralStatus.Normal);
+      setDyingFactor(0);
+      setKelpAmount(initialKelpAmount);
+    }
+    // non-dead coral
+    else if (status !== CoralStatus.Dead && currentTemperature) {
+      const newValue = Math.max(
+        0,
+        Math.min(
+          currentTemperature < 296.15 || currentTemperature > 302.15
+            ? kelpAmount - deathSpeed
+            : kelpAmount + SPEED,
+          150,
+        ),
+      );
+      setKelpAmount(newValue);
+    }
+  }, [time]);
+
+  // state machine per status
+  useEffect(() => {
+    switch (status) {
+      case CoralStatus.Normal:
+        if (kelpAmount < 40) {
+          setStatus(CoralStatus.Dying);
+        } else {
+          setDyingFactor(0);
         }
-      }
-    },
-  });
+        break;
+      case CoralStatus.Dying:
+        if (kelpAmount > 40) {
+          setStatus(CoralStatus.Normal);
+        }
+        if (dyingFactor > 7) {
+          setStatus(CoralStatus.Dead);
+        } else {
+          setDyingFactor((d) => d + 1);
+        }
+        break;
+      case CoralStatus.Dead:
+        setKelpAmount(0);
+        break;
+      default:
+        break;
+    }
+  }, [time, kelpAmount, status]);
+
+  return { kelpAmount, status };
 };
 
 export const useReset = () => {
@@ -153,6 +222,11 @@ export const useReset = () => {
       queryClient.setQueryData(['growthScale'], INIT_GROWTH_SCALE);
       queryClient.setQueryData(['animation'], false);
       queryClient.setQueryData(['isDead'], false);
+      queryClient.setQueryData(['time'], 0);
+      queryClient.setQueryData<Context>(['context'], (d) => ({
+        ...(d ?? { reset: 0, view: View.Macro }),
+        reset: (d?.reset ?? 0) + 1,
+      }));
     },
   });
 };
@@ -160,7 +234,7 @@ export const useReset = () => {
 export const useSetAnimation = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    onMutate: (value: boolean) => {
+    mutationFn: async (value: boolean) => {
       queryClient.setQueryData(['animation'], value);
     },
   });
@@ -168,9 +242,8 @@ export const useSetAnimation = () => {
 
 export const useAnimation = () => {
   const value = useQuery({
-    // queryFn: () => {},
     queryKey: ['animation'],
-    initialData: true,
+    initialData: false,
   });
   return value;
 };

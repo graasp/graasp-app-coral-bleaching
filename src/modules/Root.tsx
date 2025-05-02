@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { ReactNode } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import { ToastContainer } from 'react-toastify';
 
@@ -6,19 +6,12 @@ import { CssBaseline, ThemeProvider, createTheme, styled } from '@mui/material';
 import { grey, orange, pink } from '@mui/material/colors';
 import { StyledEngineProvider } from '@mui/material/styles';
 
-import { GraaspContextDevTool } from '@graasp/apps-query-client';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import i18nConfig from '@/config/i18n';
-import {
-  QueryClientProvider,
-  ReactQueryDevtools,
-  queryClient,
-} from '@/config/queryClient';
-import { defaultMockContext, mockMembers } from '@/mocks/db';
-import { useObjectState } from '@/utils/hooks';
 
 import Debug from './Debug';
-import ErrorBoundary from './ErrorBoundary';
 import App from './main/App';
 
 // declare the module to enable theme modification
@@ -37,6 +30,8 @@ declare module '@mui/material/styles' {
   }
 }
 
+const queryClient = new QueryClient();
+
 const theme = createTheme({
   palette: {
     primary: { main: '#5050d2' },
@@ -49,41 +44,28 @@ const theme = createTheme({
 
 const RootDiv = styled('div')({ flexGrow: 1, height: '100%' });
 
-const Root: FC = () => {
-  const [mockContext, setMockContext] = useObjectState(defaultMockContext);
+const Root = (): ReactNode => (
+  <RootDiv>
+    {/* Used to define the order of injected properties between JSS and emotion */}
+    <StyledEngineProvider injectFirst>
+      <ThemeProvider theme={theme}>
+        <CssBaseline enableColorScheme />
+        <I18nextProvider i18n={i18nConfig}>
+          <QueryClientProvider client={queryClient}>
+            <ToastContainer />
 
-  return (
-    <RootDiv>
-      {/* Used to define the order of injected properties between JSS and emotion */}
-      <StyledEngineProvider injectFirst>
-        <ThemeProvider theme={theme}>
-          <CssBaseline enableColorScheme />
-          <I18nextProvider i18n={i18nConfig}>
-            <ErrorBoundary>
-              <QueryClientProvider client={queryClient}>
-                <ToastContainer />
-
-                <App />
-                {import.meta.env.DEV && (
-                  <GraaspContextDevTool
-                    members={mockMembers}
-                    context={mockContext}
-                    setContext={setMockContext}
-                  />
-                )}
-                {import.meta.env.DEV && (
-                  <>
-                    <ReactQueryDevtools position="bottom-left" />
-                    <Debug />
-                  </>
-                )}
-              </QueryClientProvider>
-            </ErrorBoundary>
-          </I18nextProvider>
-        </ThemeProvider>
-      </StyledEngineProvider>
-    </RootDiv>
-  );
-};
+            <App />
+            {import.meta.env.DEV && (
+              <>
+                <ReactQueryDevtools position="bottom" />
+                <Debug />
+              </>
+            )}
+          </QueryClientProvider>
+        </I18nextProvider>
+      </ThemeProvider>
+    </StyledEngineProvider>
+  </RootDiv>
+);
 
 export default Root;

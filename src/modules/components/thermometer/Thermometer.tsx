@@ -1,7 +1,4 @@
 import { ReactNode } from 'react';
-import { Group } from 'react-konva';
-
-import { useCurrentTemperature, useStageDimensions } from '@/utils/hooks';
 
 import {
   SCALE_LEGEND_PADDING_BOTTOM,
@@ -12,44 +9,58 @@ import {
   THERMOMETER_POSITION_Y_FACTOR,
   THERMOMETER_STROKE_COLOR,
   THERMOMETER_STROKE_WIDTH,
-} from '../../../config/constants';
-import CurrentTemperature from './CurrentTemperature.js';
-import Scale from './Scale.js';
-import ThermometerShape from './ThermometerShape';
+} from '@/config/constants';
+import { useCurrentTemperature, useStageDimensions } from '@/utils/hooks';
 
-const Thermometer = (): ReactNode => {
+import CurrentTemperature from './CurrentTemperature';
+import Scale from './Scale';
+import { ThermometerShape } from './ThermometerShape';
+
+// eslint-disable-next-line react/function-component-definition
+export function Thermometer(): ReactNode {
+  const { data: currentTemperature } = useCurrentTemperature();
   const {
     data: { height: stageHeight },
   } = useStageDimensions();
   const thermometerHeight = stageHeight * THERMOMETER_HEIGHT_FACTOR;
   const offsetY = stageHeight * THERMOMETER_POSITION_Y_FACTOR;
-  const { data: currentTemperature } = useCurrentTemperature();
+
   return (
-    <Group>
+    <svg
+      style={{
+        position: 'absolute',
+        top: 0,
+        zIndex: 203,
+        height: '100%',
+      }}
+    >
       <Scale
         thermometerHeight={thermometerHeight}
         offsetY={offsetY}
-        scales={{ from: 271, to: 313 }}
+        scales={{ from: 295, to: 310 }}
         currentTemperature={currentTemperature}
-        // showKelvinScale
       />
       <ThermometerShape
-        fillColor={THERMOMETER_COLOR}
+        fill={THERMOMETER_COLOR}
+        thermometerHeight={thermometerHeight}
+        offsetY={offsetY}
+        height={0}
+      />
+      <ThermometerShape
         thermometerHeight={thermometerHeight}
         offsetY={offsetY}
         stroke={THERMOMETER_STROKE_COLOR}
         strokeWidth={THERMOMETER_STROKE_WIDTH}
+        height={thermometerHeight}
       />
       <CurrentTemperature
         x={THERMOMETER_POSITION_X}
         y={
           offsetY -
-          SCALE_LEGEND_PADDING_BOTTOM -
+          SCALE_LEGEND_PADDING_BOTTOM / 2 -
           THERMOMETER_CURRENT_TEMPERATURE_FONT_SIZE / 2
         }
       />
-    </Group>
+    </svg>
   );
-};
-
-export default Thermometer;
+}

@@ -1,18 +1,14 @@
-import { ReactNode } from 'react';
-import { RegularPolygon } from 'react-konva';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 
-import { KonvaEventObject } from 'konva/lib/Node';
+import { motion } from 'motion/react';
 
 import { useUpdateCurrentTemperature } from '@/utils/hooks';
 
 import {
   BACKGROUND_COLOR,
   SCALE_LABEL_NOTES_STROKE_WIDTH,
-  SCALE_PADDING_LEFT,
-  SCALE_TEXT_WIDTH_FACTOR,
   SCALE_WIDTH,
   SLIDER_FILL_COLOR,
-  SLIDER_RADIUS,
   THERMOMETER_POSITION_X,
   THERMOMETER_WIDTH,
 } from '../../../config/constants';
@@ -35,14 +31,6 @@ const heightToTemperature = ({
     (thermometerHeight + offsetY - height) / deltaTemperatureHeight +
     minTemperature;
 
-  // clamp value
-  // let value = newTemperature;
-  // if (value < minTemperature) {
-  //   value = minTemperature;
-  // } else if (value > maxTemperature) {
-  //   value = maxTemperature;
-  // }
-
   return newTemperature;
 };
 
@@ -61,67 +49,54 @@ const Slider = ({
   maxTemperature: number;
   deltaTemperatureHeight: number;
 }): ReactNode => {
+  const [drag, setDrag] = useState<'y' | false>(false);
+  const ref = useRef(null);
+  useEffect(() => {
+    setDrag('y');
+  }, []);
+
   const { mutate: updateCurrentTemperature } = useUpdateCurrentTemperature();
 
-  const onMouseEnter = (event: KonvaEventObject<MouseEvent>): void => {
-    const container = event.target.getStage()?.container();
-    if (container) {
-      container.style.cursor = 'grab';
-    }
-  };
-
-  const onMouseLeave = (event: KonvaEventObject<MouseEvent>): void => {
-    const container = event.target.getStage()?.container();
-    if (container) {
-      container.style.cursor = 'default';
-    }
-  };
-
   const sliderPositionX =
-    THERMOMETER_POSITION_X +
-    THERMOMETER_WIDTH +
-    SCALE_WIDTH +
-    SCALE_PADDING_LEFT +
-    SCALE_TEXT_WIDTH_FACTOR;
+    THERMOMETER_POSITION_X + THERMOMETER_WIDTH + SCALE_WIDTH;
 
-  const minThermometerHeight = offsetY + thermometerHeight;
-  const maxThermomerterHeight = minThermometerHeight - thermometerHeight;
+  const minThermometerHeight = offsetY + thermometerHeight - 30;
+  const maxThermomerterHeight = minThermometerHeight - thermometerHeight + 40;
 
   return (
-    <RegularPolygon
-      draggable
-      fillAfterStrokeEnabled
+    <motion.polygon
+      id="slider"
+      drag={drag}
+      ref={ref}
+      dragConstraints={{
+        top: maxThermomerterHeight,
+        bottom: minThermometerHeight,
+      }}
+      dragElastic={false}
+      dragMomentum={false}
       stroke={BACKGROUND_COLOR}
       strokeWidth={SCALE_LABEL_NOTES_STROKE_WIDTH}
-      onMouseEnter={onMouseEnter}
-      onMouseLeave={onMouseLeave}
-      dragBoundFunc={(pos) => {
-        // clamp y position
-        let newPositionY = pos.y;
-        if (newPositionY > minThermometerHeight) {
-          newPositionY = minThermometerHeight;
-        } else if (newPositionY < maxThermomerterHeight) {
-          newPositionY = maxThermomerterHeight;
+      onDrag={() => {
+        if (ref.current) {
+          const coords =
+            ref.current.style.transform.match(/translateY\((.+)px\)/);
+          const newPositionY = coords[1];
+
+          // compute temperature from slider y position
+          const newTemperature = heightToTemperature({
+            height: newPositionY,
+            deltaTemperatureHeight,
+            minTemperature,
+            maxTemperature,
+            offsetY,
+            thermometerHeight,
+          });
+
+          updateCurrentTemperature(newTemperature);
         }
-        // compute temperature from slider y position
-        const newTemperature = heightToTemperature({
-          height: newPositionY,
-          deltaTemperatureHeight,
-          minTemperature,
-          maxTemperature,
-          offsetY,
-          thermometerHeight,
-        });
-
-        updateCurrentTemperature(newTemperature);
-
-        return { x: sliderPositionX, y: newPositionY };
       }}
-      x={sliderPositionX}
-      y={y}
-      sides={3}
-      radius={SLIDER_RADIUS}
-      rotation={30}
+      style={{ x: sliderPositionX, y }}
+      points="28,40 10,30 28,20"
       fill={SLIDER_FILL_COLOR}
     />
   );

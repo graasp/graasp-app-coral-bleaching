@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import React, { ReactNode } from 'react';
-import { Rect, RegularPolygon, Shape } from 'react-konva';
 
 export const Sunshine = ({ width, height }) => {
   const [colorStops, setColorStops] = React.useState([
@@ -10,21 +9,20 @@ export const Sunshine = ({ width, height }) => {
     '#70cfed',
   ]);
   return (
-    <Shape
-      sceneFunc={(context, shape) => {
-        context.beginPath();
-        context.moveTo(0, 0);
-        context.lineTo(width / 4, 0);
-        context.lineTo(width / 1.2, height);
-        context.lineTo(width / 5, height);
-        context.closePath();
-        context.fillStrokeShape(shape);
-      }}
-      x={width / 8}
-      y={0}
-      fillLinearGradientStartPoint={{ x: 0, y: 0 }}
-      fillLinearGradientEndPoint={{ x: width / 2, y: height }}
-      fillLinearGradientColorStops={[0, '#BEF7F2dd', 1, '#BEF7F200']}
-    />
+    <g>
+      <defs>
+        <linearGradient id="grad" x1="0%" y1="0%" x2="0%" y2="100%">
+          <stop offset="0%" stop-color="#BEF7F2dd" />
+          <stop offset="100%" stop-color="#BEF7F200" />
+        </linearGradient>
+      </defs>
+      <polygon
+        id="sunshine"
+        x={width / 8}
+        y={0}
+        fill="url(#grad)"
+        points={`120,0 400,0 870,${height} 250,${height}`}
+      />
+    </g>
   );
 };

@@ -55,12 +55,12 @@ export const SCALE_HEIGHT = 27;
 // approximatively the width of the scale text
 export const SCALE_TEXT_WIDTH_FACTOR = SCALE_FONT_SIZE;
 // the actual number of displayed ticks might vary due to number rounding
-export const SCALE_MAX_NUMBER_TICKS = 20;
+export const SCALE_MAX_NUMBER_TICKS = 35;
 export const SCALE_LEGEND_PADDING_BOTTOM = 30;
 export const SCALE_TICKS_STROKE_COLOR = 'black';
 export const SCALE_LABEL_NOTES = [];
 export const SCALE_LABEL_NOTES_STROKE_WIDTH = 3;
-export const TICK_STEP_FACTOR = 0.3;
+export const TICK_STEP_FACTOR = 0.1;
 // apply dashed stroke that is 6px long and 2 pixels apart
 export const SCALE_LABELS_LINE_DASH = [6, 2];
 
@@ -138,3 +138,7 @@ export const KELVIN_STRING = 'kelvin';
 export const CELSIUS_STRING = 'celsius';
 export const PAUSED_STRING = 'paused';
 export const PLAYING_STRING = 'playing';
+
+// ------
+
+export const CORAL_COLOR = '#F08080';

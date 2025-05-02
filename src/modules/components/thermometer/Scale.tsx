@@ -1,9 +1,7 @@
 import { ReactNode } from 'react';
-import { Group, Rect, Text } from 'react-konva';
 
 import {
   SCALE_FONT_SIZE,
-  SCALE_HEIGHT,
   SCALE_LINE_HEIGHT,
   SCALE_MAX_NUMBER_TICKS,
   SCALE_PADDING_RIGHT,
@@ -56,72 +54,37 @@ const renderScales = ({
     {scales.map(({ text, y }) => {
       const thermometerYPosition = offsetY - y;
 
+      // y={thermometerYPosition} x={offsetX}
+
       return (
-        <Group key={text} y={thermometerYPosition} x={offsetX}>
-          <Text
-            x={textXOffset}
-            y={-SCALE_FONT_SIZE / 3}
-            text={text}
+        <g key={text}>
+          <text
+            style={{
+              '-webkit-user-select': 'none',
+              '-moz-user-select': 'none',
+              '-ms-user-select': 'none',
+              'user-select': 'none',
+            }}
+            x={offsetX + textXOffset}
+            y={thermometerYPosition - SCALE_FONT_SIZE / 3}
             fontSize={SCALE_FONT_SIZE}
-          />
-          <Rect
-            x={scaleXOffset}
+            fill={THERMOMETER_STROKE_COLOR}
+          >
+            {text}
+          </text>
+          <rect
+            x={offsetX + scaleXOffset}
+            // y={thermometerYPosition - SCALE_FONT_SIZE / 3}
+            y={thermometerYPosition - SCALE_FONT_SIZE / 2}
             width={SCALE_WIDTH}
             height={SCALE_LINE_HEIGHT}
             fill={THERMOMETER_STROKE_COLOR}
           />
-        </Group>
+        </g>
       );
     })}
   </>
 );
-
-const buildKelvinScales = ({
-  to,
-  from,
-  tickStep,
-  thermometerHeight,
-  offsetY,
-  offsetX,
-  deltaHeight,
-}: {
-  to: number;
-  from: number;
-  tickStep: number;
-  thermometerHeight: number;
-  offsetY: number;
-  offsetX: number;
-  deltaHeight: number;
-}): ReactNode => {
-  // compute text and y position for kelvin scales
-  let scales = Array.from(
-    {
-      length: (to - from) / tickStep + 1, // +1 to include max
-    },
-    (key, idx) => {
-      const value = idx * tickStep + from;
-      return { text: value, y: (value - from) * deltaHeight };
-    },
-  );
-
-  // select marks at most number of scale we can display
-  const maxNbScale = Math.floor(thermometerHeight / SCALE_HEIGHT);
-  const prop = Math.ceil(scales.length / maxNbScale);
-  if (prop > 1) {
-    scales = scales.filter((_, i) => i % prop === 0);
-  }
-
-  // draw scale ticks
-  const ScaleComponents = renderScales({
-    offsetY: offsetY + thermometerHeight - SCALE_LINE_HEIGHT,
-    x: offsetX,
-    scales,
-    scaleXOffset: 0,
-    textXOffset: -SCALE_PADDING_RIGHT - SCALE_WIDTH,
-  });
-
-  return ScaleComponents;
-};
 
 const buildCelsiusScales = ({
   from,
@@ -209,17 +172,6 @@ const Scale = ({
   // height in pixel for one degree kelvin
   const deltaKelvinHeight = thermometerHeight / (roundTo - roundFrom);
 
-  // build kelvin scales
-  const KelvinScaleComponents = buildKelvinScales({
-    from: roundFrom,
-    to: roundTo,
-    offsetY,
-    offsetX: thermometerXPosition - THERMOMETER_WIDTH,
-    tickStep,
-    thermometerHeight,
-    deltaHeight: deltaKelvinHeight,
-  });
-
   // build celsius scales
   const CelsiusScaleComponents = buildCelsiusScales({
     from,
@@ -230,38 +182,6 @@ const Scale = ({
     deltaKelvinHeight,
   });
 
-  // const LabelNoteComponents = SCALE_LABEL_NOTES.map(
-  //   ({ name, t: temperature }) => (
-  //     <Group
-  //       key={name}
-  //       x={thermometerXPosition}
-  //       y={
-  //         offsetY +
-  //         thermometerHeight -
-  //         (temperature - roundFrom) * deltaKelvinHeight
-  //       }
-  //     >
-  //       <Line
-  //         x={-THERMOMETER_WIDTH}
-  //         points={[0, 0, THERMOMETER_WIDTH + SCALE_TEXT_WIDTH_FACTOR - 5, 0]}
-  //         stroke={SCALE_TICKS_STROKE_COLOR}
-  //         dash={SCALE_LABELS_LINE_DASH}
-  //         strokeWidth={1}
-  //       />
-  //       <Text
-  //         x={SCALE_TEXT_WIDTH_FACTOR}
-  //         y={-SCALE_FONT_SIZE / 2}
-  //         fontStyle="italic"
-  //         stroke={BACKGROUND_COLOR}
-  //         strokeWidth={SCALE_LABEL_NOTES_STROKE_WIDTH}
-  //         fillAfterStrokeEnabled
-  //         text={t(name)}
-  //         fontSize={SCALE_FONT_SIZE}
-  //       />
-  //     </Group>
-  //   ),
-  // );
-
   // compute fill height given current temperature value
   const fillValue = temperatureToHeight({
     deltaTemperatureHeight: deltaKelvinHeight,
@@ -270,6 +190,8 @@ const Scale = ({
     minTemperature: roundFrom,
     maxTemperature: roundTo,
   });
+  // shift bug
+  // + 10;
 
   // absolute y position for given temperature
   const currentTemperatureY = offsetY + thermometerHeight - fillValue;
@@ -277,30 +199,28 @@ const Scale = ({
   return (
     <>
       {/* current temperature fill */}
-      <Rect
+      <rect
         fill={THERMOMETER_COLOR}
         x={THERMOMETER_POSITION_X}
-        y={currentTemperatureY}
+        y={currentTemperatureY - 7}
         width={THERMOMETER_WIDTH}
-        height={fillValue}
+        height={fillValue + 7}
       />
 
       {/* scales */}
-      {showKelvinScale && KelvinScaleComponents}
       {!showKelvinScale && CelsiusScaleComponents}
 
-      {/* label notes: planets, etc */}
-      {/* {DEFAULT_SHOW_THERMOMETER_LABELS && LabelNoteComponents} */}
-
       {/* triangle slider */}
-      <Slider
-        deltaTemperatureHeight={deltaKelvinHeight}
-        y={currentTemperatureY}
-        offsetY={offsetY}
-        thermometerHeight={thermometerHeight}
-        minTemperature={roundFrom}
-        maxTemperature={roundTo}
-      />
+      <g transform="translate(0,-35)">
+        <Slider
+          deltaTemperatureHeight={deltaKelvinHeight}
+          y={currentTemperatureY}
+          offsetY={offsetY}
+          thermometerHeight={thermometerHeight}
+          minTemperature={roundFrom}
+          maxTemperature={roundTo}
+        />
+      </g>
     </>
   );
 };

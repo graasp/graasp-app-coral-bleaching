@@ -8,12 +8,14 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { View } from '@/config/types';
-import { useSetView, useView } from '@/utils/hooks';
+import { useContext, useSetView } from '@/utils/hooks';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, react/function-component-definition
 export function SettingsButton() {
   const [open, setOpen] = useState(false);
-  const { data: view } = useView();
+  const {
+    data: { view },
+  } = useContext();
   const { mutate: setView } = useSetView();
 
   const handleClickOpen = () => {

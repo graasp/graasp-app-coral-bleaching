@@ -1,28 +1,55 @@
-import { ReactNode } from 'react';
-import { Shape } from 'react-konva';
-
-import { Context } from 'konva/lib/Context';
-import { ShapeConfig, type Shape as ShapeType } from 'konva/lib/Shape';
+import { ReactElement } from 'react';
 
 import {
   THERMOMETER_POSITION_X,
   THERMOMETER_RADIUS,
   THERMOMETER_WIDTH,
-} from '../../../config/constants';
+} from '@/config/constants';
 
-const ThermometerShape = ({
+// eslint-disable-next-line react/function-component-definition
+export function ThermometerShape({
   stroke = '',
   strokeWidth = 0,
-  fillColor = '',
+  fill = 'transparent',
   thermometerHeight,
   offsetY,
+  height,
 }: {
   stroke?: string;
   strokeWidth?: number;
-  fillColor?: string;
+  fill?: string;
   thermometerHeight: number;
   offsetY: number;
-}): ReactNode => {
+  height: number;
+}): ReactElement {
+  function arcToSvgPath(
+    x: number,
+    y: number,
+    r: number,
+    startAngle: number,
+    endAngle: number,
+    anticlockwise = false,
+  ): string {
+    const startX = x + r * Math.cos(startAngle);
+    const startY = y + r * Math.sin(startAngle);
+    const endX = x + r * Math.cos(endAngle);
+    const endY = y + r * Math.sin(endAngle);
+
+    let deltaAngle = endAngle - startAngle;
+    if (anticlockwise && deltaAngle < 0) {
+      deltaAngle += 2 * Math.PI;
+    } else if (!anticlockwise && deltaAngle < 0) {
+      deltaAngle += 2 * Math.PI;
+    }
+
+    const largeArcFlag = deltaAngle > Math.PI ? 1 : 0;
+    const sweepFlag = anticlockwise ? 0 : 1;
+
+    return `M ${startX} ${startY} A ${r} ${r} 0 ${largeArcFlag} ${sweepFlag} ${endX} ${endY}`;
+  }
+
+  const totalOffset = offsetY + thermometerHeight - height; // fill, not filled, thermometerHeight
+
   // use trigonometry to get the exact angle matching the circle and the rectangle
   // the angle is used to draw the most perfect mercury bulb
   const angle = Math.asin(THERMOMETER_WIDTH / 2 / THERMOMETER_RADIUS);
@@ -33,57 +60,34 @@ const ThermometerShape = ({
 
   const computeEndAngle = (): number => -angle + (3 / 2) * Math.PI;
 
-  const drawThermometerShape = (
-    context: Context,
-    shape: ShapeType<ShapeConfig>,
-    height: number,
-  ): void => {
-    const totalOffset = offsetY + thermometerHeight - height;
-
-    // draw fill rectangle
-
-    context.beginPath();
-    // draw top and right straight lines
-    context.lineTo(THERMOMETER_POSITION_X, totalOffset);
-    context.lineTo(THERMOMETER_POSITION_X + THERMOMETER_WIDTH, totalOffset);
-    context.lineTo(
-      THERMOMETER_POSITION_X + THERMOMETER_WIDTH,
-      totalOffset + height,
-    );
-
-    // draw bulb
-    context.arc(
-      THERMOMETER_POSITION_X + THERMOMETER_WIDTH / 2,
-      totalOffset + height + THERMOMETER_RADIUS,
-      THERMOMETER_RADIUS,
-      computeStartAngle(),
-      computeEndAngle(),
-    );
-
-    // draw left straight line
-    context.lineTo(THERMOMETER_POSITION_X, totalOffset + height);
-    context.closePath();
-    // (!) Konva specific method, it is very important
-    context.fillStrokeShape(shape);
-  };
-
   return (
     <>
-      <Shape
-        sceneFunc={(context, shape) => {
-          drawThermometerShape(context, shape, 0);
-        }}
-        fill={fillColor}
-      />
-      <Shape
-        sceneFunc={(context, shape) => {
-          drawThermometerShape(context, shape, thermometerHeight);
-        }}
-        stroke={stroke}
+      {/* small bug of translation */}
+      <g transform="translate(0,-3)">
+        <path
+          d={`${arcToSvgPath(
+            THERMOMETER_POSITION_X + THERMOMETER_WIDTH / 2,
+            totalOffset + height + THERMOMETER_RADIUS,
+            THERMOMETER_RADIUS,
+            computeStartAngle(),
+            computeEndAngle(),
+          )}`}
+          fill={fill}
+          stroke={stroke}
+          strokeWidth={strokeWidth}
+        />
+      </g>
+      <path
+        d={`
+        M ${THERMOMETER_POSITION_X} ${totalOffset + height} 
+        L ${THERMOMETER_POSITION_X} ${totalOffset} 
+        L ${THERMOMETER_POSITION_X + THERMOMETER_WIDTH} ${totalOffset} 
+        L ${THERMOMETER_POSITION_X + THERMOMETER_WIDTH} ${totalOffset + height} 
+        `}
         strokeWidth={strokeWidth}
+        stroke={stroke}
+        fill={fill}
       />
     </>
   );
-};
-
-export default ThermometerShape;
+}

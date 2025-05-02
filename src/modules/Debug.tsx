@@ -10,26 +10,28 @@ import {
   useKelpAmount,
   useReset,
   useSetAnimation,
+  useTime,
 } from '@/utils/hooks';
 
 const Debug = () => {
-  const { data: kelpAmount } = useKelpAmount();
+  // const { data: kelpAmount } = useKelpAmount();
   const { data: isPlaying } = useAnimation();
 
-  const { data: growthScale } = useGrowthScale();
+  // const { data: growthScale } = useGrowthScale();
   const { mutate: reset } = useReset();
   const { mutate: setAnimation } = useSetAnimation();
-  const { data: isDead } = useIsDead();
+  // const { data: isDead } = useIsDead();
+  const { data: time } = useTime();
 
   return (
-    <div style={{ position: 'absolute', top: 0, left: 200 }}>
+    <div style={{ position: 'absolute', top: 0, left: 200, zIndex: 1000000 }}>
       isPlaying : {isPlaying ? 'isPlaying' : 'stopped'}
       <br />
-      isDead : {isDead ? 'isDead' : 'alive'}
+      {/* isDead : {isDead ? 'isDead' : 'alive'}
       <br />
-      kelpAmount : {kelpAmount}
+      kelpAmount : {kelpAmount} */}
       <br />
-      growthScale : {growthScale}
+      time : {time} jours
       <br />
       <Button title="reset" onClick={reset}>
         Reset
