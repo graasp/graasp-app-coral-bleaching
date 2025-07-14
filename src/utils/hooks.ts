@@ -15,6 +15,8 @@ import {
 } from '@/config/constants';
 import { View } from '@/config/types';
 
+import { kelvinToCelsius } from './utils';
+
 export type UpdateArgument<T extends object> =
   | T
   | ((previousArg: T) => Partial<T>);
@@ -48,13 +50,14 @@ const KEYS = {
   context: ['context'],
   kelpAmount: ['kelpAmount'],
   temperatureHistory: ['temperatureHistory'],
+  animation: ['animation'],
 };
 
 export const useTime = () => {
   const queryClient = useQueryClient();
   const value = useQuery({
     queryKey: KEYS.time,
-    queryFn: () => queryClient.getQueryData(KEYS.time) ?? 0,
+    queryFn: () => queryClient.getQueryData<number>(KEYS.time) ?? 0,
     initialData: 0,
   });
   return value;
@@ -104,9 +107,11 @@ export const useCurrentTemperature = () => {
 export const useUpdateCurrentTemperature = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async (newTemperature) => {
-      // do nothing
-      queryClient.setQueryData(KEYS.currentTemperature, newTemperature);
+    mutationFn: async (newTemperature: number) => {
+      queryClient.setQueryData(
+        KEYS.currentTemperature,
+        kelvinToCelsius(newTemperature),
+      );
     },
   });
 };
@@ -117,11 +122,8 @@ export const useContext = () => {
   const queryClient = useQueryClient();
   const value = useQuery({
     queryKey: KEYS.context,
-    queryFn: () => {
-      console.log(queryClient.getQueryData(KEYS.context));
-
-      return queryClient.getQueryData(KEYS.context);
-    },
+    queryFn: () =>
+      queryClient.getQueryData<{ view: View; reset: number }>(KEYS.context),
     initialData: { view: View.Macro, reset: 0 },
   });
   return value;
@@ -143,7 +145,10 @@ export const useStageDimensions = ({ select = undefined } = {}) => {
   const queryClient = useQueryClient();
   const value = useQuery({
     queryKey: ['stageDimensions'],
-    queryFn: () => queryClient.getQueryData(['stageDimensions']),
+    queryFn: () =>
+      queryClient.getQueryData<{ height: number; width: number }>([
+        'stageDimensions',
+      ]),
     select,
     initialData: {
       width: window?.innerWidth,
@@ -185,8 +190,8 @@ export enum CoralStatus {
 
 export const useStatus = (
   coralId: string,
-  { deathSpeed = 3, initialKelpAmount = INIT_KELP_AMOUNT } = {},
-): { kelpAmount: number; status: CoralStatus } => {
+  { deathSpeed = 1, initialKelpAmount = INIT_KELP_AMOUNT } = {},
+): { kelpAmount: number; status: CoralStatus; dyingFactor: number } => {
   const { data: time } = useTime();
 
   const [status, setStatus] = useState(CoralStatus.Normal);
@@ -238,7 +243,7 @@ export const useStatus = (
         if (!isGrowing) {
           setStatus(CoralStatus.Dying);
         } else {
-          setDyingFactor(0);
+          setDyingFactor((d) => Math.max(d - TIME_SPEED, 0));
         }
         break;
       case CoralStatus.Dying:
@@ -247,7 +252,7 @@ export const useStatus = (
         } else if (dyingFactor > DEATH_DAY) {
           setStatus(CoralStatus.Dead);
         } else {
-          setDyingFactor((d) => d + TIME_SPEED);
+          setDyingFactor((d) => d + TIME_SPEED * deathSpeed);
         }
         break;
       case CoralStatus.Dead:
@@ -258,7 +263,7 @@ export const useStatus = (
     }
   }, [time]);
 
-  return { kelpAmount, status };
+  return { kelpAmount, status, dyingFactor };
 };
 
 export const useReset = () => {
@@ -276,7 +281,7 @@ export const useReset = () => {
       queryClient.setQueryData(KEYS.temperatureHistory, []);
       queryClient.setQueryData(KEYS.time, 0);
       queryClient.setQueryData<Context>(KEYS.context, (d) => ({
-        ...(d ?? { reset: 0, view: View.Macro }),
+        ...(d ?? { reset: 0, view: View.Micro }),
         reset: (d?.reset ?? 0) + 1,
       }));
     },
@@ -295,10 +300,8 @@ export const useSetAnimation = () => {
 export const useAnimation = () => {
   const queryClient = useQueryClient();
   const value = useQuery({
-    queryKey: ['animation'],
-    queryFn: () => {
-      return queryClient.getQueryData(['animation']);
-    },
+    queryKey: KEYS.animation,
+    queryFn: () => queryClient.getQueryData(KEYS.animation),
     initialData: false,
   });
   return value;

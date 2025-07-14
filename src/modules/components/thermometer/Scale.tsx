@@ -145,6 +145,9 @@ const buildCelsiusScales = ({
   return CelsiusScaleComponents;
 };
 
+/**
+ * temperature are in kelvin
+ */
 const Scale = ({
   currentTemperature,
   scales: { from, to },

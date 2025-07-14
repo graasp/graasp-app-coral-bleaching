@@ -59,11 +59,11 @@ export const CORAL_COLOR = '#F08080';
 
 export const INIT_KELP_AMOUNT = 50;
 export const INIT_GROWTH_SCALE = 50;
-export const INIT_CURRENT_TEMPERATURE = 300.1;
+export const INIT_CURRENT_TEMPERATURE = 25;
 
 export const KELP_SPEED = 0.6;
-export const TIME_SPEED = 0.1;
-export const DEATH_DAY = 3;
+export const TIME_SPEED = 0.1; // Macro: 0.1 Micro: 0.02
+export const DEATH_DAY = 14;
 
-export const MIN_TEMP_GROWTH = 296.15;
-export const MAX_TEMP_GROWTH = 302.15;
+export const MIN_TEMP_GROWTH = 23;
+export const MAX_TEMP_GROWTH = 30;

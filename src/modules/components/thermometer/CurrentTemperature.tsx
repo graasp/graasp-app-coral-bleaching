@@ -7,7 +7,6 @@ import {
   THERMOMETER_CURRENT_TEMPERATURE_FONT_SIZE,
   THERMOMETER_WIDTH,
 } from '../../../config/constants.js';
-import { kelvinToCelsius } from '../../../utils/utils.js';
 
 const CurrentTemperature = ({ x, y }: { x: number; y: number }): ReactNode => {
   const { data: temperature } = useCurrentTemperature();
@@ -15,17 +14,7 @@ const CurrentTemperature = ({ x, y }: { x: number; y: number }): ReactNode => {
   if (temperature) {
     const scaleUnit = SCALE_UNITS.CELSIUS; // TODO: get scale unit
 
-    let text;
-    switch (scaleUnit) {
-      case SCALE_UNITS.CELSIUS:
-        text =
-          Math.round(kelvinToCelsius(temperature) * 10) / 10 + scaleUnit.unit;
-        break;
-      case SCALE_UNITS.KELVIN:
-      default:
-        text = Math.round(temperature * 10) / 10 + scaleUnit.unit;
-        break;
-    }
+    const text = Math.round(temperature * 10) / 10 + scaleUnit.unit;
 
     return (
       <text

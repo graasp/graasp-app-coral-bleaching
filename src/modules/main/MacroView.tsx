@@ -23,11 +23,11 @@ function MacroView({
         offsetY={20}
         height={700}
         coralColor="#800000"
-        deathSpeed={1}
+        deathSpeed={0.7}
         initialKelpAmount={80}
         id="3"
       />
-      <Coral offsetX={500} offsetY={30} height={550} id={1} />
+      <Coral offsetX={500} offsetY={30} height={550} id={1} deathSpeed={1.5} />
       <Coral
         offsetX={150}
         offsetY={20}

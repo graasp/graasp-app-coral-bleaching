@@ -1,18 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React from 'react';
+import { Button } from '@mui/material';
 
-import { Box, Button, Typography } from '@mui/material';
-
-import {
-  useAnimation,
-  useGrowthScale,
-  useIsDead,
-  useKelpAmount,
-  useReset,
-  useSetAnimation,
-  useTemperatureHistory,
-  useTime,
-} from '@/utils/hooks';
+import { useAnimation, useReset, useSetAnimation } from '@/utils/hooks';
 
 const Debug = () => {
   // const { data: kelpAmount } = useKelpAmount();
@@ -25,13 +14,8 @@ const Debug = () => {
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 200, zIndex: 1000000 }}>
-      isPlaying : {isPlaying ? 'isPlaying' : 'stopped'}
       <br />
-      {/* isDead : {isDead ? 'isDead' : 'alive'}
-      <br />
-      kelpAmount : {kelpAmount} */}
-      <br />
-      <Button title="reset" onClick={reset}>
+      <Button title="reset" onClick={() => reset()}>
         Reset
       </Button>
       {isPlaying ? (

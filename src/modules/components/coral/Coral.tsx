@@ -6,7 +6,7 @@ import {
   transform,
 } from 'motion/react';
 
-import { CORAL_COLOR } from '@/config/constants';
+import { CORAL_COLOR, DEATH_DAY } from '@/config/constants';
 import { useAnimation, useContext, useStatus } from '@/utils/hooks';
 
 import { CoralBranch } from './CoralBranch';
@@ -16,7 +16,7 @@ function Coral({
   offsetX,
   offsetY,
   height,
-  deathSpeed,
+  deathSpeed = 1,
   initialKelpAmount,
   coralColor = CORAL_COLOR,
   id,
@@ -30,7 +30,7 @@ function Coral({
   id: string;
 }>): ReactNode {
   const { data: isPlaying } = useAnimation();
-  const { kelpAmount, status } = useStatus('id', {
+  const { kelpAmount, status, dyingFactor } = useStatus('id', {
     initialKelpAmount,
     deathSpeed,
   });
@@ -41,7 +41,7 @@ function Coral({
   // const [scope, animate] = useAnimate();
   const [de, setDe] = useState<AnimationPlaybackControlsWithThen | undefined>();
 
-  const color = transform(kelpAmount, [0, 50], ['#ffffff', coralColor]);
+  const color = transform(dyingFactor, [2, DEATH_DAY], [coralColor, '#ffffff']);
 
   useEffect(() => {
     if (de) {

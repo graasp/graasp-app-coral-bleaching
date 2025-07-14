@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { motion, transform, useAnimate } from 'motion/react';
 
-import { CoralStatus, useContext } from '@/utils/hooks';
+import { CoralStatus, useContext, useCurrentTemperature } from '@/utils/hooks';
 
 export const CoralBranch = ({
   kelpAmount,
@@ -16,6 +16,7 @@ export const CoralBranch = ({
 }) => {
   const [minGrowth, setMinGrowth] = useState(0);
 
+  const { data: currentTemperature } = useCurrentTemperature();
   const growth = transform(kelpAmount - delay, [50, 100], [0, 100]);
 
   const {

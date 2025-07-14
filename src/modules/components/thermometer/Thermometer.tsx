@@ -11,6 +11,7 @@ import {
   THERMOMETER_STROKE_WIDTH,
 } from '@/config/constants';
 import { useCurrentTemperature, useStageDimensions } from '@/utils/hooks';
+import { celsiusToKelvin } from '@/utils/utils';
 
 import CurrentTemperature from './CurrentTemperature';
 import Scale from './Scale';
@@ -19,9 +20,8 @@ import { ThermometerShape } from './ThermometerShape';
 // eslint-disable-next-line react/function-component-definition
 export function Thermometer(): ReactNode {
   const { data: currentTemperature } = useCurrentTemperature();
-  const {
-    data: { height: stageHeight },
-  } = useStageDimensions();
+  const { data } = useStageDimensions();
+  const stageHeight = data.height;
   const thermometerHeight = stageHeight * THERMOMETER_HEIGHT_FACTOR;
   const offsetY = stageHeight * THERMOMETER_POSITION_Y_FACTOR;
 
@@ -38,7 +38,7 @@ export function Thermometer(): ReactNode {
         thermometerHeight={thermometerHeight}
         offsetY={offsetY}
         scales={{ from: 295, to: 310 }}
-        currentTemperature={currentTemperature}
+        currentTemperature={celsiusToKelvin(currentTemperature)}
       />
       <ThermometerShape
         fill={THERMOMETER_COLOR}

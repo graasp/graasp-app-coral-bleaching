@@ -2,23 +2,27 @@ import { ReactNode, useEffect, useState } from 'react';
 
 import { motion, transform, useAnimate } from 'motion/react';
 
-import { CORAL_COLOR } from '@/config/constants';
-import { useContext, useKelpAmount } from '@/utils/hooks';
+import { CORAL_COLOR, DEATH_DAY } from '@/config/constants';
+import { CoralStatus, useContext, useStatus } from '@/utils/hooks';
 
 import { Polype } from './Polype';
 
+const Steps = {
+  Normal: 'normal',
+  EjectKelp: 'ejectKelp',
+  LooseColor: 'looseColor',
+  DisappearBody: 'disappearBody',
+};
+
 // eslint-disable-next-line arrow-body-style
 const MicroCoral = (): ReactNode => {
-  const kelpAmount = useKelpAmount();
+  const { dyingFactor, status } = useStatus('id');
   const [scope, animate] = useAnimate();
   const [kelpScope, kelpAnimate] = useAnimate();
-  const color = transform(kelpAmount, [20, 40], ['#ffffff00', CORAL_COLOR]);
-  const bodyOpacity = transform(kelpAmount, [10, 30], [0, 1]);
-  const cellOpacity = transform(kelpAmount, [20, 40], [0, 0.4]);
-  const { reset } = useContext();
-  const strokeWidth = transform(kelpAmount, [0, 40], [0, 40]);
-
-  // const [zCellFill, setzCellFill] = useState(CORAL_COLOR);
+  const [step, setStep] = useState(Steps.Normal);
+  const {
+    data: { reset },
+  } = useContext();
 
   const returnToCoral = () => {
     kelpAnimate(`.un1`, { x: 0, y: 0 }, { duration: 1 });
@@ -26,14 +30,44 @@ const MicroCoral = (): ReactNode => {
   };
 
   useEffect(() => {
-    if (kelpAmount < 35) {
-      kelpAnimate(`.un0`, { x: -40, y: -40 }, { duration: 5 });
-    } else if (kelpAmount < 40) {
-      kelpAnimate(`.un1`, { x: -40, y: -40 }, { duration: 5 });
+    if (dyingFactor >= 5) {
+      setStep(Steps.DisappearBody);
+    } else if (dyingFactor > 2.5) {
+      setStep(Steps.LooseColor);
+    } else if (dyingFactor > 2) {
+      setStep(Steps.EjectKelp);
     } else {
-      returnToCoral();
+      setStep(Steps.Normal);
     }
-  }, [animate, kelpAmount, kelpAnimate, strokeWidth, reset]);
+  }, [dyingFactor, reset]);
+
+  // 1 - eject kelp
+  useEffect(() => {
+    switch (step) {
+      case Steps.EjectKelp:
+        kelpAnimate(`.un0`, { x: -40, y: -40 }, { duration: 5 });
+        break;
+      case Steps.LooseColor:
+        kelpAnimate(`.un1`, { x: -40, y: -40 }, { duration: 5 });
+        break;
+      case Steps.DisappearBody:
+        break;
+      default:
+        returnToCoral();
+    }
+  }, [step]);
+
+  // 2 - loose color
+  const color = transform(
+    dyingFactor,
+    [2, DEATH_DAY],
+    [CORAL_COLOR, '#ffffff00'],
+  );
+  const cellOpacity = transform(dyingFactor, [DEATH_DAY, 3], [0, 0.7]);
+
+  // 3 - body disappear
+  console.log(dyingFactor);
+  const bodyOpacity = transform(dyingFactor, [DEATH_DAY, 4.5], [0, 1]);
 
   // on reset
   useEffect(() => {
@@ -66,6 +100,90 @@ const MicroCoral = (): ReactNode => {
           d="
         M0,300 l100 -100 l100 0 l100 100 z"
         />
+
+        {/* background */}
+        {Array.from({ length: 5 }, (v, k) => (
+          <rect
+            x="70"
+            y={240 + 13 * k}
+            width="17"
+            height="10"
+            rx="3"
+            fill="lightgrey"
+          />
+        ))}
+        {Array.from({ length: 5 }, (v, k) => (
+          <rect
+            x="112"
+            y={230 + 13 * k}
+            width="20"
+            height="10"
+            rx="3"
+            fill="lightgrey"
+          />
+        ))}
+        {Array.from({ length: 5 }, (v, k) => (
+          <rect
+            x="90"
+            y={230 + 13 * k}
+            width="20"
+            height="10"
+            rx="3"
+            fill="lightgrey"
+          />
+        ))}
+        {Array.from({ length: 7 }, (v, k) => (
+          <rect
+            x="140"
+            y={212 + 13 * k}
+            width="10"
+            height="10"
+            rx="3"
+            fill="lightgrey"
+          />
+        ))}
+        {Array.from({ length: 7 }, (v, k) => (
+          <rect
+            x="157"
+            y={210 + 13 * k}
+            width="10"
+            height="10"
+            rx="3"
+            fill="lightgrey"
+          />
+        ))}
+        {Array.from({ length: 5 }, (v, k) => (
+          <rect
+            x="192"
+            y={230 + 13 * k}
+            width="20"
+            height="10"
+            rx="3"
+            fill="lightgrey"
+          />
+        ))}
+        {Array.from({ length: 5 }, (v, k) => (
+          <rect
+            x="214"
+            y={234 + 13 * k}
+            width="18"
+            height="10"
+            rx="3"
+            fill="lightgrey"
+          />
+        ))}
+        {Array.from({ length: 5 }, (v, k) => (
+          <rect
+            x="170"
+            y={230 + 13 * k}
+            width="20"
+            height="10"
+            rx="3"
+            fill="lightgrey"
+          />
+        ))}
+
+        {/* ---- */}
         <path
           className="body border"
           fill={color}
@@ -84,29 +202,22 @@ const MicroCoral = (): ReactNode => {
           className="body below dead"
           fill="#70cfed"
           d="
-       M100 200 v40h30V206Q130 201 133 200h36Q173 200 173 204v36h27V200z"
+    M 100 200 v 40 Q 106 278 114 205 Q 119 279 129 240 V 204 Q 130 201 133 200 h 36 Q 173 200 173 204 v 35 Q 183 279 186 203 Q 195 266 201 240 V 200 z"
         />
         <path
           className="body below"
           fill="pink"
           opacity={bodyOpacity}
           d="
-       M100 200 v40h30V206Q130 201 133 200h36Q173 200 173 204v36h27V200z"
-        />
-        <path
-          className="mouth"
-          fill="#f59fad"
-          opacity={bodyOpacity}
-          d="
-M145 192Q128 192 128 171V148Q121 123 128 120h12v-15Q140 103 142 103h19Q163 103 163 105v15h13Q183 120 179 148V170Q177 192 163 192z"
+   M 100 200 v 40 Q 106 278 114 205 Q 119 279 129 240 V 204 Q 130 201 133 200 h 36 Q 173 200 173 204 v 35 Q 183 279 186 203 Q 195 266 201 240 V 200 z"
         />
         {[100, 120, 140].map((x, idx) => (
           <g>
             {/* mirror */}
             <path
               className="tentacule"
-              fill="pink"
-              opacity={bodyOpacity}
+              fill={x === 100 ? 'pink' : color}
+              opacity={bodyOpacity - 0.3}
               d={'m' + x + ' 100q-23-22-28-50l8 0q2 21 42 50z'}
               transform="scale(-1,1)"
               transform-origin="center"
@@ -116,7 +227,7 @@ M145 192Q128 192 128 171V148Q121 123 128 120h12v-15Q140 103 142 103h19Q163 103 1
               className="tentacule top"
               cx={x - 22}
               cy={55 + -idx * 4}
-              fill="pink"
+              fill={x === 100 ? 'pink' : color}
               opacity={bodyOpacity}
               r={7}
               transform="scale(-1,1)"
@@ -124,20 +235,27 @@ M145 192Q128 192 128 171V148Q121 123 128 120h12v-15Q140 103 142 103h19Q163 103 1
             />
             <path
               className="tentacule"
-              fill="pink"
-              opacity={bodyOpacity}
+              fill={x === 100 ? 'pink' : color}
+              opacity={bodyOpacity - 0.3}
               d={'m' + x + ' 100q-23-22-28-50l8 0q2 21 42 50z'}
             />
             <circle
               className="tentacule top"
               cx={x - 22}
               cy={55 + -idx * 4}
-              fill="pink"
+              fill={x === 100 ? 'pink' : color}
               opacity={bodyOpacity}
               r={7}
             />
           </g>
         ))}
+        <path
+          className="mouth"
+          fill="#f59fad"
+          opacity={bodyOpacity}
+          d="
+M 145 192 Q 128 192 128 171 V 148 Q 121 123 128 120 q 6 0 12 0 q 12 0 0 -8 Q 121 98 148 98 h 8 Q 187 98 163 113 q -10 7 -1 7 h 13 Q 183 120 179 148 V 170 Q 177 192 163 192 z"
+        />
         {[115, 125, 140, 151, 160].map((y) => (
           <>
             <rect
@@ -158,7 +276,7 @@ M145 192Q128 192 128 171V148Q121 123 128 120h12v-15Q140 103 142 103h19Q163 103 1
                 cx={90 + 4}
                 cy={y + 4}
                 fill="green"
-                stroke={'lightgreen'}
+                stroke="lightgreen"
                 r={3}
               />
             </motion.g>
