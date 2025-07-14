@@ -9,15 +9,13 @@ import { Polype } from './Polype';
 
 // eslint-disable-next-line arrow-body-style
 const MicroCoral = (): ReactNode => {
-  const { data: kelpAmount } = useKelpAmount();
+  const kelpAmount = useKelpAmount();
   const [scope, animate] = useAnimate();
   const [kelpScope, kelpAnimate] = useAnimate();
   const color = transform(kelpAmount, [20, 40], ['#ffffff00', CORAL_COLOR]);
   const bodyOpacity = transform(kelpAmount, [10, 30], [0, 1]);
   const cellOpacity = transform(kelpAmount, [20, 40], [0, 0.4]);
-  const {
-    data: { reset },
-  } = useContext();
+  const { reset } = useContext();
   const strokeWidth = transform(kelpAmount, [0, 40], [0, 40]);
 
   // const [zCellFill, setzCellFill] = useState(CORAL_COLOR);

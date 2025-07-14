@@ -1,36 +1,3 @@
-export const DRAWER_WIDTH = 430;
-export const DEFAULT_THEME_DIRECTION = 'rtl';
-export const FORM_CONTROL_MIN_WIDTH = 120;
-export const LOGO_SIZE = 48;
-export const LOGO_MARGIN = 8;
-export const HEADER_HEIGHT = LOGO_SIZE + 2 * LOGO_MARGIN;
-export const DEFAULT_HEADER_VISIBLE = false;
-export const MAXIMUM_Z_INDEX = 999999;
-
-export const BACKGROUND_COLOR = 'lightgrey';
-
-// constants used in the lattice of positive ions
-export const POSITIVE_ION_RADIUS = 15;
-export const POSITIVE_ION_COLOR = 'darkred';
-export const NUMBER_OF_ROWS_IN_LATTICE = 3;
-export const VERTICAL_DISTANCE_BETWEEN_POSITIVE_IONS = 30;
-export const HORIZONTAL_DISTANCE_BETWEEN_POSITIVE_IONS = 20;
-export const IONS_OSCILLATION_SPEED_FACTOR = 2;
-export const IONS_OSCILLATION_OFFSET = 10.1;
-export const IONS_OSCILLATION_RADIUS = 5;
-export const LATTICE_HEIGHT =
-  NUMBER_OF_ROWS_IN_LATTICE *
-  (POSITIVE_ION_RADIUS + VERTICAL_DISTANCE_BETWEEN_POSITIVE_IONS);
-
-// constants used in the electrons between positive ions
-export const ELECTRON_RADIUS = 6;
-export const ELECTRON_COLOR = '#0000AF';
-
-export const CANVAS_ATOM_POSITIVE_CHARGE_LENGTH = 4.5;
-export const CANVAS_ATOM_NEGATIVE_CHARGE_LENGTH = 2.5;
-export const CANVAS_ATOM_CHARGE_STROKE_WIDTH = 1.25;
-export const CANVAS_ATOM_CHARGE_STROKE_COLOR = 'white';
-
 export const THERMOMETER_COLOR = 'red';
 export const THERMOMETER_WIDTH = 20;
 export const THERMOMETER_RADIUS = 20;
@@ -79,59 +46,6 @@ export const THERMOMETER_TOTAL_WIDTH =
   SLIDER_RADIUS +
   SCALE_TEXT_WIDTH_FACTOR * 2;
 
-// spectrum bar constants
-export const WAVELENGTH_DISTRIBUTION_WIDTH = 350;
-export const WAVELENGTH_DISTRIBUTION_HEIGHT = 120;
-export const WAVELENGTH_DISTRIBUTION_STROKE_COLOR = 'black';
-export const WAVELENGTH_DISTRIBUTION_STROKE_WIDTH = 0.5;
-export const WAVELENGTH_DISTRIBUTION_PADDING = 30;
-export const WAVELENGTH_DISTRIBUTION_PADDING_TOP = 10;
-export const WAVELENGTH_DISTRIBUTION_AXIS_HEIGHT = 50;
-export const WAVELENGTH_DISTRIBUTION_AXIS_NB_TICKS = 4; // will actually display one more
-export const WAVELENGTH_DISTRIBUTION_MARGIN = 20;
-export const WAVELENGTH_DISTRIBUTION_LABELS_FONT_SIZE = 12;
-export const WAVELENGTH_LABELS_Y_AXIS_ADJUSTMENT_FACTOR = 5;
-export const WAVELENGTH_DISTRIBUTION_DISTRIBUTION_POINTS_NUMBER = 50;
-export const WAVELENGTH_DISTRIBUTION_MAX_WAVELENGTH = 15000;
-export const WAVELENGTH_DISTRIBUTION_MIN_WAVELENGTH = 3000;
-export const WAVELENGTH_DISTRIBUTION_BACKGROUND_COLOR = 'white';
-export const WAVELENGTH_DISTRIBUTION_LABELS_PADDING_TOP = 7;
-export const WAVELENGTH_DISTRIBUTION_PEAK_WAVELENGTH_COLOR = 'red';
-export const WAVELENGTH_DISTRIBUTION_AXIS_FONT_SIZE = 15;
-export const WAVELENGTH_LABELS_X_AXIS_ADJUSTMENT_FACTOR = 20;
-export const WAVELENGTH_DISTRIBUTION_TICK_LINE_LENGTH = 7;
-
-export const PLANCK_CONSTANT = 6.63 * 10e-34;
-export const SPEED_OF_LIGHT_CONSTANT = 299792458; // m/s
-export const LINE_STROKE_COLOR = 'black';
-export const DEFAULT_TENSION = 0.3;
-
-export const NUMBER_OF_LINES = 5;
-export const LINE_STEP = 10;
-export const LINE_AMPLITUDE = 30;
-export const LINE_ANGLE = Math.PI / 2;
-export const LINE_STARTING_POSITION_Y = 550;
-
-export const GROUND_FILL_DARK_COLOR = '#ad7e4e';
-export const GROUND_FILL_LIGHT_COLOR = '#cfae67';
-export const GROUND_GRASS_HEIGHT = 20;
-export const GROUND_GRASS_LINE_TENSION = 0.3;
-export const GROUND_GRASS_BACKGROUND = '#a14e06';
-
-// grid constants
-export const GRID_AXES_COLOR = '#000';
-export const GRID_AXES_STROKE_WIDTH = 0.5;
-export const GRID_SQUARE_WIDTH_AND_HEIGHT = 33;
-export const GRID_LEGEND_LABEL_TEXT = '1000nm\n1µm';
-export const GRID_UNIT_SQUARE_LENGTH = 35;
-
-export const DEFAULT_SHOW_MICROSCOPIC_VIEW = true;
-export const GRID_SCALE_FONT_SIZE = 14;
-export const GRID_SCALE_TEXT_WIDTH = 60;
-export const DEFAULT_SHOW_THERMOMETER_LABELS = true;
-
-export const SCALE_STROKE_MARGIN = 2;
-
 export const MICROSCOPIC_STRING = 'microscopic';
 export const MACROSCOPIC_STRING = 'macroscopic';
 export const KELVIN_STRING = 'kelvin';
@@ -142,3 +56,14 @@ export const PLAYING_STRING = 'playing';
 // ------
 
 export const CORAL_COLOR = '#F08080';
+
+export const INIT_KELP_AMOUNT = 50;
+export const INIT_GROWTH_SCALE = 50;
+export const INIT_CURRENT_TEMPERATURE = 300.1;
+
+export const KELP_SPEED = 0.6;
+export const TIME_SPEED = 0.1;
+export const DEATH_DAY = 3;
+
+export const MIN_TEMP_GROWTH = 296.15;
+export const MAX_TEMP_GROWTH = 302.15;

@@ -5,7 +5,6 @@ import { motion } from 'motion/react';
 import { useUpdateCurrentTemperature } from '@/utils/hooks';
 
 import {
-  BACKGROUND_COLOR,
   SCALE_LABEL_NOTES_STROKE_WIDTH,
   SCALE_WIDTH,
   SLIDER_FILL_COLOR,
@@ -74,7 +73,7 @@ const Slider = ({
       }}
       dragElastic={false}
       dragMomentum={false}
-      stroke={BACKGROUND_COLOR}
+      stroke="black"
       strokeWidth={SCALE_LABEL_NOTES_STROKE_WIDTH}
       onDrag={() => {
         if (ref.current) {

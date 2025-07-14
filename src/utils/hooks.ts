@@ -3,6 +3,16 @@ import React, { useEffect, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
+import {
+  DEATH_DAY,
+  INIT_CURRENT_TEMPERATURE,
+  INIT_GROWTH_SCALE,
+  INIT_KELP_AMOUNT,
+  KELP_SPEED,
+  MAX_TEMP_GROWTH,
+  MIN_TEMP_GROWTH,
+  TIME_SPEED,
+} from '@/config/constants';
 import { View } from '@/config/types';
 
 export type UpdateArgument<T extends object> =
@@ -32,14 +42,19 @@ export function useObjectState<T extends object>(
   return [state, handleUpdate];
 }
 
-const INIT_KELP_AMOUNT = 50;
-const INIT_GROWTH_SCALE = 50;
-const INIT_CURRENT_TEMPERATURE = 300.1;
+const KEYS = {
+  currentTemperature: ['currentTemperature'],
+  time: ['time'],
+  context: ['context'],
+  kelpAmount: ['kelpAmount'],
+  temperatureHistory: ['temperatureHistory'],
+};
 
 export const useTime = () => {
+  const queryClient = useQueryClient();
   const value = useQuery({
-    // queryFn: () => {},
-    queryKey: ['time'],
+    queryKey: KEYS.time,
+    queryFn: () => queryClient.getQueryData(KEYS.time) ?? 0,
     initialData: 0,
   });
   return value;
@@ -48,14 +63,40 @@ export const useUpdateTime = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: async () => {
-      queryClient.setQueryData<number>(['time'], (t) => (t ?? 0) + 1);
+      const newTime = queryClient.getQueryData<number>(KEYS.time) ?? 0;
+      const currentTemperature =
+        queryClient.getQueryData<number>(KEYS.currentTemperature) ?? 0;
+
+      queryClient.setQueryData<number>(KEYS.time, newTime + TIME_SPEED);
+
+      // save current temperature at point of time
+      queryClient.setQueryData<{ t: number; temp: number }[]>(
+        KEYS.temperatureHistory,
+        (d) => d?.concat([{ t: newTime, temp: currentTemperature }]),
+      );
     },
   });
 };
+export const useTemperatureHistory = () => {
+  const queryClient = useQueryClient();
+  const value = useQuery({
+    queryKey: KEYS.temperatureHistory,
+    queryFn: () =>
+      queryClient.getQueryData<{ t: number; temp: number }[]>(
+        KEYS.temperatureHistory,
+      ) ?? [],
+    initialData: [],
+  });
+  return value;
+};
 
 export const useCurrentTemperature = () => {
+  const queryClient = useQueryClient();
   const value = useQuery({
-    queryKey: ['temperature'],
+    queryKey: KEYS.currentTemperature,
+    queryFn: () =>
+      queryClient.getQueryData<number>(KEYS.currentTemperature) ??
+      INIT_CURRENT_TEMPERATURE,
     initialData: INIT_CURRENT_TEMPERATURE,
   });
   return value;
@@ -65,7 +106,7 @@ export const useUpdateCurrentTemperature = () => {
   return useMutation({
     mutationFn: async (newTemperature) => {
       // do nothing
-      queryClient.setQueryData(['temperature'], newTemperature);
+      queryClient.setQueryData(KEYS.currentTemperature, newTemperature);
     },
   });
 };
@@ -73,9 +114,14 @@ export const useUpdateCurrentTemperature = () => {
 type Context = { view: View; reset: number };
 
 export const useContext = () => {
+  const queryClient = useQueryClient();
   const value = useQuery({
-    // queryFn: () => {},
-    queryKey: ['context'],
+    queryKey: KEYS.context,
+    queryFn: () => {
+      console.log(queryClient.getQueryData(KEYS.context));
+
+      return queryClient.getQueryData(KEYS.context);
+    },
     initialData: { view: View.Macro, reset: 0 },
   });
   return value;
@@ -94,10 +140,15 @@ export const useSetView = () => {
 };
 
 export const useStageDimensions = ({ select = undefined } = {}) => {
+  const queryClient = useQueryClient();
   const value = useQuery({
     queryKey: ['stageDimensions'],
-    initialData: { width: window?.innerWidth, height: window?.innerHeight },
+    queryFn: () => queryClient.getQueryData(['stageDimensions']),
     select,
+    initialData: {
+      width: window?.innerWidth,
+      height: window?.innerHeight,
+    },
   });
   return value;
 };
@@ -110,10 +161,11 @@ export const useGrowthScale = () => {
   return value;
 };
 export const useKelpAmount = () => {
+  const queryClient = useQueryClient();
   const value = useQuery<number>({
-    // queryFn: () => {},
-    queryKey: ['kelpAmount'],
-    initialData: INIT_KELP_AMOUNT,
+    queryKey: KEYS.kelpAmount,
+    queryFn: () =>
+      queryClient.getQueryData(KEYS.kelpAmount) ?? INIT_KELP_AMOUNT,
   });
   return value;
 };
@@ -125,8 +177,6 @@ export const useIsDead = () => {
   return value;
 };
 
-const SPEED = 0.5;
-
 export enum CoralStatus {
   Normal = 'normal',
   Dying = 'dying',
@@ -135,7 +185,7 @@ export enum CoralStatus {
 
 export const useStatus = (
   coralId: string,
-  { deathSpeed = 5, initialKelpAmount = INIT_KELP_AMOUNT } = {},
+  { deathSpeed = 3, initialKelpAmount = INIT_KELP_AMOUNT } = {},
 ): { kelpAmount: number; status: CoralStatus } => {
   const { data: time } = useTime();
 
@@ -147,6 +197,10 @@ export const useStatus = (
   const [kelpAmount, setKelpAmount] = useState(initialKelpAmount);
 
   const reset = data?.reset;
+
+  const isGrowing =
+    currentTemperature > MIN_TEMP_GROWTH &&
+    currentTemperature < MAX_TEMP_GROWTH;
 
   useEffect(() => {
     if (reset) {
@@ -169,9 +223,7 @@ export const useStatus = (
       const newValue = Math.max(
         0,
         Math.min(
-          currentTemperature < 296.15 || currentTemperature > 302.15
-            ? kelpAmount - deathSpeed
-            : kelpAmount + SPEED,
+          isGrowing ? kelpAmount + KELP_SPEED : kelpAmount - deathSpeed,
           150,
         ),
       );
@@ -183,20 +235,19 @@ export const useStatus = (
   useEffect(() => {
     switch (status) {
       case CoralStatus.Normal:
-        if (kelpAmount < 40) {
+        if (!isGrowing) {
           setStatus(CoralStatus.Dying);
         } else {
           setDyingFactor(0);
         }
         break;
       case CoralStatus.Dying:
-        if (kelpAmount > 40) {
+        if (isGrowing) {
           setStatus(CoralStatus.Normal);
-        }
-        if (dyingFactor > 7) {
+        } else if (dyingFactor > DEATH_DAY) {
           setStatus(CoralStatus.Dead);
         } else {
-          setDyingFactor((d) => d + 1);
+          setDyingFactor((d) => d + TIME_SPEED);
         }
         break;
       case CoralStatus.Dead:
@@ -205,7 +256,7 @@ export const useStatus = (
       default:
         break;
     }
-  }, [time, kelpAmount, status]);
+  }, [time]);
 
   return { kelpAmount, status };
 };
@@ -215,15 +266,16 @@ export const useReset = () => {
   return useMutation({
     onMutate: () => {
       queryClient.setQueryData(
-        ['currentTemperature'],
+        KEYS.currentTemperature,
         INIT_CURRENT_TEMPERATURE,
       );
-      queryClient.setQueryData(['kelpAmount'], INIT_KELP_AMOUNT);
+      queryClient.setQueryData(KEYS.kelpAmount, INIT_KELP_AMOUNT);
       queryClient.setQueryData(['growthScale'], INIT_GROWTH_SCALE);
       queryClient.setQueryData(['animation'], false);
       queryClient.setQueryData(['isDead'], false);
-      queryClient.setQueryData(['time'], 0);
-      queryClient.setQueryData<Context>(['context'], (d) => ({
+      queryClient.setQueryData(KEYS.temperatureHistory, []);
+      queryClient.setQueryData(KEYS.time, 0);
+      queryClient.setQueryData<Context>(KEYS.context, (d) => ({
         ...(d ?? { reset: 0, view: View.Macro }),
         reset: (d?.reset ?? 0) + 1,
       }));
@@ -241,8 +293,12 @@ export const useSetAnimation = () => {
 };
 
 export const useAnimation = () => {
+  const queryClient = useQueryClient();
   const value = useQuery({
     queryKey: ['animation'],
+    queryFn: () => {
+      return queryClient.getQueryData(['animation']);
+    },
     initialData: false,
   });
   return value;

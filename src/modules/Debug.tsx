@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import React from 'react';
 
-import { Button } from '@mui/material';
+import { Box, Button, Typography } from '@mui/material';
 
 import {
   useAnimation,
@@ -10,6 +10,7 @@ import {
   useKelpAmount,
   useReset,
   useSetAnimation,
+  useTemperatureHistory,
   useTime,
 } from '@/utils/hooks';
 
@@ -21,7 +22,6 @@ const Debug = () => {
   const { mutate: reset } = useReset();
   const { mutate: setAnimation } = useSetAnimation();
   // const { data: isDead } = useIsDead();
-  const { data: time } = useTime();
 
   return (
     <div style={{ position: 'absolute', top: 0, left: 200, zIndex: 1000000 }}>
@@ -30,8 +30,6 @@ const Debug = () => {
       {/* isDead : {isDead ? 'isDead' : 'alive'}
       <br />
       kelpAmount : {kelpAmount} */}
-      <br />
-      time : {time} jours
       <br />
       <Button title="reset" onClick={reset}>
         Reset

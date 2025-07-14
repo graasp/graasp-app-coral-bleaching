@@ -9,8 +9,7 @@ import {
 } from '@/utils/hooks';
 
 import i18n, { DEFAULT_LANGUAGE } from '../../config/i18n';
-import Coral from '../components/coral/Coral';
-import MicroCoral from '../components/coral/MicroCoral';
+import DayCounter from '../DayCounter';
 import { SettingsButton } from '../components/settings/SettingsButton';
 import { Thermometer } from '../components/thermometer/Thermometer';
 import MacroView from './MacroView';
@@ -57,43 +56,21 @@ const App = (): JSX.Element => {
 
   return (
     <>
+      <DayCounter />
       <Thermometer />
       <SettingsButton />
 
       {/* TODO move in macro */}
       {data.view === View.Macro ? (
-        <>
-          <MacroView
-            width={stageDimensions.width}
-            height={stageDimensions.height}
-          />
-          <Coral
-            offsetX={200}
-            offsetY={20}
-            height={700}
-            coralColor="#800000"
-            deathSpeed={3}
-            initialKelpAmount={80}
-            id="3"
-          />
-          <Coral offsetX={500} offsetY={30} height={550} id={1} />
-          <Coral
-            offsetX={150}
-            offsetY={20}
-            height={400}
-            coralColor="#ffa500"
-            deathSpeed={10}
-            id="2"
-          />
-        </>
+        <MacroView
+          width={stageDimensions.width}
+          height={stageDimensions.height}
+        />
       ) : (
-        <>
-          <MicroView
-            width={stageDimensions.width}
-            height={stageDimensions.height}
-          />
-          <MicroCoral />
-        </>
+        <MicroView
+          width={stageDimensions.width}
+          height={stageDimensions.height}
+        />
       )}
     </>
   );
