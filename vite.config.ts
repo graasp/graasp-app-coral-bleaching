@@ -3,6 +3,7 @@ import react from '@vitejs/plugin-react';
 import { resolve } from 'path';
 import { UserConfigExport, defineConfig, loadEnv } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
+import svgr from 'vite-plugin-svgr';
 
 // https://vitejs.dev/config/
 export default ({ mode }: { mode: string }): UserConfigExport => {
@@ -40,6 +41,7 @@ export default ({ mode }: { mode: string }): UserConfigExport => {
       //       },
       //     }),
       react(),
+      svgr(),
       istanbul({
         include: 'src/*',
         exclude: ['node_modules', 'test/', '.nyc_output', 'coverage'],

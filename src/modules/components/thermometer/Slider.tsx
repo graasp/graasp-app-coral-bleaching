@@ -1,8 +1,9 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 
-import { motion } from 'motion/react';
+import { animate, motion } from 'motion/react';
 
-import { useUpdateCurrentTemperature } from '@/utils/hooks';
+import { useContext, useUpdateCurrentTemperature } from '@/utils/hooks';
+import { kelvinToCelsius } from '@/utils/utils';
 
 import {
   SCALE_LABEL_NOTES_STROKE_WIDTH,
@@ -48,6 +49,10 @@ const Slider = ({
   maxTemperature: number;
   deltaTemperatureHeight: number;
 }): ReactNode => {
+  const {
+    data: { reset },
+  } = useContext();
+
   const [drag, setDrag] = useState<'y' | false>(false);
   const ref = useRef(null);
   useEffect(() => {
@@ -55,6 +60,13 @@ const Slider = ({
   }, []);
 
   const { mutate: updateCurrentTemperature } = useUpdateCurrentTemperature();
+
+  // reset slider position on reset
+  useEffect(() => {
+    if (ref.current) {
+      animate('#slider', { y }, { duration: 0 });
+    }
+  }, [reset]);
 
   const sliderPositionX =
     THERMOMETER_POSITION_X + THERMOMETER_WIDTH + SCALE_WIDTH;
@@ -91,7 +103,7 @@ const Slider = ({
             thermometerHeight,
           });
 
-          updateCurrentTemperature(newTemperature);
+          updateCurrentTemperature(kelvinToCelsius(newTemperature));
         }
       }}
       style={{ x: sliderPositionX, y }}

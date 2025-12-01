@@ -55,12 +55,7 @@ const Root = (): ReactNode => (
             <ToastContainer />
 
             <App />
-            {import.meta.env.DEV && (
-              <>
-                <ReactQueryDevtools position="bottom" />
-                <Debug />
-              </>
-            )}
+            {import.meta.env.DEV && <ReactQueryDevtools position="bottom" />}
           </QueryClientProvider>
         </I18nextProvider>
       </ThemeProvider>

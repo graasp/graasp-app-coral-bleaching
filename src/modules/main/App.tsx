@@ -9,9 +9,12 @@ import {
 } from '@/utils/hooks';
 
 import i18n, { DEFAULT_LANGUAGE } from '../../config/i18n';
-import DayCounter from '../DayCounter';
+import Controls from '../Controls';
+import DayGraph from '../DayGraph';
+import Debug from '../Debug';
 import { SettingsButton } from '../components/settings/SettingsButton';
 import { Thermometer } from '../components/thermometer/Thermometer';
+import Footer from './Footer';
 import MacroView from './MacroView';
 import MicroView from './MicroView';
 
@@ -56,7 +59,8 @@ const App = (): JSX.Element => {
 
   return (
     <>
-      <DayCounter />
+      <Debug />
+      <Footer />
       <Thermometer />
       <SettingsButton />
 

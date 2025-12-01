@@ -1,11 +1,11 @@
 export const THERMOMETER_COLOR = 'red';
 export const THERMOMETER_WIDTH = 20;
 export const THERMOMETER_RADIUS = 20;
-export const THERMOMETER_POSITION_X = 50;
+export const THERMOMETER_POSITION_X = 70;
 export const THERMOMETER_STROKE_WIDTH = 3;
 export const THERMOMETER_STROKE_COLOR = 'black';
 // these factors are used as percentage depending on stage dimensions
-export const THERMOMETER_POSITION_Y_FACTOR = 0.2;
+export const THERMOMETER_POSITION_Y_FACTOR = 0.15;
 export const THERMOMETER_HEIGHT_FACTOR = 0.5;
 export const SCALE_UNITS = {
   KELVIN: { name: 'kelvin', unit: 'K' },
@@ -57,12 +57,12 @@ export const PLAYING_STRING = 'playing';
 
 export const CORAL_COLOR = '#F08080';
 
-export const INIT_KELP_AMOUNT = 50;
+export const INIT_KELP_AMOUNT = 100;
 export const INIT_GROWTH_SCALE = 50;
 export const INIT_CURRENT_TEMPERATURE = 25;
 
-export const KELP_SPEED = 0.6;
-export const TIME_SPEED = 0.1; // Macro: 0.1 Micro: 0.02
+export const KELP_SPEED = 1.2;
+export const TIME_SPEED = 0.2; // Macro: 0.1 Micro: 0.02
 export const DEATH_DAY = 14;
 
 export const MIN_TEMP_GROWTH = 23;

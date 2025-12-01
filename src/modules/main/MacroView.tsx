@@ -1,6 +1,10 @@
 import { ReactNode } from 'react';
 
-import Coral from '../components/coral/Coral';
+import { useAnimation } from '@/utils/hooks';
+
+import PinkCoral from '../components/coral/PinkCoral';
+import PurpleCoral from '../components/coral/PurpleCoral';
+import YellowCoral from '../components/coral/YellowCoral';
 import Background from '../components/elements/Background';
 import { Sunshine } from '../components/elements/Sunshine';
 
@@ -12,29 +16,34 @@ function MacroView({
   width: number;
   height: number;
 }): ReactNode {
+  const { data: isPlaying } = useAnimation();
+
   return (
     <>
       <svg width={width} height={height}>
-        <Background width={width} height={height} withSand />
-        <Sunshine width={width} height={height} />
+        <Background
+          width={width}
+          height={height}
+          withSand
+          isPlaying={isPlaying}
+        />
+        {isPlaying && <Sunshine width={width} height={height} />}
       </svg>
-      <Coral
-        offsetX={200}
-        offsetY={20}
-        height={700}
-        coralColor="#800000"
-        deathSpeed={0.7}
+
+      <PinkCoral
         initialKelpAmount={80}
-        id="3"
+        scale="50%"
+        style={{ position: 'absolute', bottom: 200, left: '20%' }}
       />
-      <Coral offsetX={500} offsetY={30} height={550} id={1} deathSpeed={1.5} />
-      <Coral
-        offsetX={150}
-        offsetY={20}
-        height={400}
-        coralColor="#ffa500"
-        deathSpeed={2}
-        id="2"
+      <YellowCoral
+        initialKelpAmount={80}
+        scale="40%"
+        style={{ position: 'absolute', bottom: 200, left: '70%' }}
+      />
+      <PurpleCoral
+        initialKelpAmount={80}
+        scale="20%"
+        style={{ position: 'absolute', bottom: 200, left: '60%' }}
       />
     </>
   );

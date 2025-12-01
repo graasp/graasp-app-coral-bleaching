@@ -8,18 +8,27 @@ import Switch from '@mui/material/Switch';
 import Typography from '@mui/material/Typography';
 
 import { View } from '@/config/types';
-import { useContext, useSetView } from '@/utils/hooks';
+import {
+  useContext,
+  useSetAnimation,
+  useSetShowStatus,
+  useSetView,
+} from '@/utils/hooks';
 
 // eslint-disable-next-line @typescript-eslint/explicit-function-return-type, react/function-component-definition
 export function SettingsButton() {
   const [open, setOpen] = useState(false);
   const {
-    data: { view },
+    data: { view, showStatus },
   } = useContext();
+  console.log(showStatus);
+  const { mutate: setShowStatus } = useSetShowStatus();
   const { mutate: setView } = useSetView();
+  const { mutate: setAnimation } = useSetAnimation();
 
   const handleClickOpen = () => {
     setOpen(true);
+    setAnimation(false);
   };
 
   const handleClose = (value: string) => {
@@ -40,6 +49,16 @@ export function SettingsButton() {
               }}
             />
             <Typography>Micro</Typography>
+          </Stack>
+          <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+            <Typography>Show status</Typography>
+            <Switch
+              checked={showStatus}
+              onChange={(e) => {
+                console.log(e.target.checked);
+                setShowStatus(e.target.checked);
+              }}
+            />
           </Stack>
         </DialogContent>
       </Dialog>
