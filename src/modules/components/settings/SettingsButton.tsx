@@ -26,10 +26,11 @@ export function SettingsButton() {
   const { mutate: setShowStatus } = useSetShowStatus();
   const { mutate: setView } = useSetView();
   const { mutate: reset } = useReset();
+  const { mutate: setAnimation } = useSetAnimation();
 
   const handleClickOpen = () => {
     setOpen(true);
-    reset();
+    setAnimation(false);
   };
 
   const handleClose = (value: string) => {
@@ -47,6 +48,7 @@ export function SettingsButton() {
               checked={view !== View.Macro}
               onChange={(e) => {
                 setView(e.target.checked ? View.Micro : View.Macro);
+                reset();
               }}
             />
             <Typography>Micro</Typography>

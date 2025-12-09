@@ -45,7 +45,7 @@ const SvgComponent = (props) => {
       // on recovering 75%, recover kelp animation
     } else if (
       Math.abs(kelpAmount - 75) <= KELP_SPEED &&
-      status === CoralStatus.Normal
+      status === CoralStatus.Growing
     ) {
       // eslint-disable-next-line no-restricted-syntax
       recover();
