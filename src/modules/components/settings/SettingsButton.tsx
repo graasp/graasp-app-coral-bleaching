@@ -10,6 +10,7 @@ import Typography from '@mui/material/Typography';
 import { View } from '@/config/types';
 import {
   useContext,
+  useReset,
   useSetAnimation,
   useSetShowStatus,
   useSetView,
@@ -21,14 +22,14 @@ export function SettingsButton() {
   const {
     data: { view, showStatus },
   } = useContext();
-  console.log(showStatus);
+
   const { mutate: setShowStatus } = useSetShowStatus();
   const { mutate: setView } = useSetView();
-  const { mutate: setAnimation } = useSetAnimation();
+  const { mutate: reset } = useReset();
 
   const handleClickOpen = () => {
     setOpen(true);
-    setAnimation(false);
+    reset();
   };
 
   const handleClose = (value: string) => {

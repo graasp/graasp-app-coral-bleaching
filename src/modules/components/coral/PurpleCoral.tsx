@@ -66,7 +66,7 @@ const YellowCoral = (props) => {
             background: 'white',
           }}
         >
-          {status}
+          {status}: {kelpAmount.toFixed(0)}%
         </div>
       )}
       <svg
@@ -404,7 +404,7 @@ const YellowCoral = (props) => {
             x2={1}
             y2={0}
             gradientUnits="userSpaceOnUse"
-            gradientTransform="matrix(2.669134,-0.000002,-47.930123,-0,1068.069427,202.224799)"
+            gradientTransform="matrix(-1.749566,81.646412,-81.646412,-1.749566,1070.57235,198.406761)"
           >
             <motion.stop
               offset={0}

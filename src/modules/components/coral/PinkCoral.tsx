@@ -68,7 +68,7 @@ const PinkCoral = (props) => {
             background: 'white',
           }}
         >
-          {status}
+          {status}: {kelpAmount.toFixed(0)}%
         </div>
       )}
       <motion.svg

@@ -69,7 +69,7 @@ const YellowCoral = (props) => {
             background: 'white',
           }}
         >
-          {status}
+          {status}: {kelpAmount.toFixed(0)}%
         </div>
       )}
       <svg

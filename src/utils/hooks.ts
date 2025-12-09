@@ -62,10 +62,9 @@ export const useContext = () => {
       queryClient.getQueryData<{
         view: View;
         reset: number;
-        alive: number;
         showStatus: boolean;
       }>(KEYS.context),
-    initialData: { view: View.Macro, reset: 0, alive: 3, showStatus: false },
+    initialData: { view: View.Macro, reset: 0, showStatus: false },
   });
   return value;
 };
@@ -135,7 +134,7 @@ export const useSetView = () => {
   return useMutation({
     mutationFn: async (view: View) => {
       queryClient.setQueryData<Context>(['context'], (d) => ({
-        ...(d ?? { alive: view === View.Macro ? 3 : 1, reset: 0, view }),
+        ...(d ?? { reset: 0, view }),
         view,
       }));
     },
@@ -196,6 +195,7 @@ export const useIsDead = () => {
 };
 
 export enum CoralStatus {
+  Growing = 'growing',
   Normal = 'normal',
   Dying = 'dying',
   Dead = 'dead',
@@ -213,7 +213,6 @@ export const useStatus = (
   kelpAmount: number;
   status: CoralStatus;
   dyingFactor: number;
-  speed: number;
 } => {
   const queryClient = useQueryClient();
   const { data: time } = useTime();
@@ -228,9 +227,13 @@ export const useStatus = (
 
   const reset = data?.reset;
 
+  const isDying =
+    currentTemperature <= MIN_TEMP_GROWTH ||
+    currentTemperature >= maxTempThreshould;
+
   const isGrowing =
     currentTemperature > MIN_TEMP_GROWTH &&
-    currentTemperature < maxTempThreshould;
+    currentTemperature < maxTempThreshould - 1;
 
   useEffect(() => {
     if (reset) {
@@ -251,13 +254,14 @@ export const useStatus = (
     }
     // non-dead coral
     else if (status !== CoralStatus.Dead && currentTemperature) {
-      const newValue = Math.max(
-        0,
-        Math.min(
-          isGrowing ? kelpAmount + growthSpeed : kelpAmount - deathSpeed,
-          100,
-        ),
-      );
+      let value = kelpAmount;
+      if (isGrowing) {
+        value = kelpAmount + growthSpeed;
+      }
+      if (isDying) {
+        value = kelpAmount - deathSpeed;
+      }
+      const newValue = Math.max(0, Math.min(value, 100));
       setKelpAmount(newValue);
     }
   }, [time]);
@@ -266,23 +270,27 @@ export const useStatus = (
   useEffect(() => {
     if (status !== CoralStatus.Dead) {
       switch (status) {
-        case CoralStatus.Normal:
+        case CoralStatus.Growing:
           if (!isGrowing) {
+            setStatus(CoralStatus.Normal);
+          }
+          break;
+        case CoralStatus.Normal:
+          if (isDying) {
             setStatus(CoralStatus.Dying);
+          } else if (isGrowing) {
+            setStatus(CoralStatus.Growing);
           } else {
             setDyingFactor((d) => Math.max(d - TIME_SPEED, 0));
           }
           break;
         case CoralStatus.Dying:
-          if (isGrowing) {
+          if (!isDying) {
             setStatus(CoralStatus.Normal);
           } else if (kelpAmount <= 0) {
             setStatus(CoralStatus.Dead);
             console.log(coralId, 'is dead');
-            queryClient.setQueryData<Context>(KEYS.context, (d) => ({
-              ...d,
-              alive: d.alive - 1,
-            }));
+
             // } else {
             //   setDyingFactor((d) => d + TIME_SPEED * deathSpeed);
           }
