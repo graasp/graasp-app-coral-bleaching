@@ -23,7 +23,7 @@ function MicroView({
         <Sunshine width={width} height={height} />
       </svg>
       <Polyp
-        style={{ position: 'absolute', bottom: 180, left: 200 }}
+        style={{ position: 'absolute', bottom: 190, left: '22%' }}
         width={700}
       />
       {/* <MicroCoral /> */}

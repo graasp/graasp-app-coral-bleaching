@@ -10,7 +10,7 @@ const PinkCoral = (props) => {
   } = useContext();
   const { kelpAmount, status } = useStatus('pink', {
     initialKelpAmount: props.initialKelpAmount,
-    maxTempThreshould: 25
+    maxTempThreshould: 25,
   });
   const [maxKelpAmount, setMax] = useMaxValue(
     props.initialKelpAmount,
@@ -61,8 +61,11 @@ const PinkCoral = (props) => {
         <div
           style={{
             position: 'absolute',
-            top: 170,
-            left: 300,
+            ...props.style,
+            bottom: props.style.bottom + 200,
+            paddingLeft: '2%',
+            paddingRight: '2%',
+            background: 'white',
           }}
         >
           {status}

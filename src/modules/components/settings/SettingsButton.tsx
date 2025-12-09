@@ -55,14 +55,16 @@ export function SettingsButton() {
             <Switch
               checked={showStatus}
               onChange={(e) => {
-                console.log(e.target.checked);
                 setShowStatus(e.target.checked);
               }}
             />
           </Stack>
         </DialogContent>
       </Dialog>
-      <Fab sx={{ position: 'absolute' }} onClick={handleClickOpen}>
+      <Fab
+        sx={{ position: 'absolute', right: 0, m: 2 }}
+        onClick={handleClickOpen}
+      >
         <EditIcon />
       </Fab>
     </>

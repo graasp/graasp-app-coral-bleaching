@@ -33,17 +33,17 @@ function MacroView({
       <PinkCoral
         initialKelpAmount={80}
         scale="50%"
-        style={{ position: 'absolute', bottom: 200, left: '20%' }}
+        style={{ position: 'absolute', bottom: 280, left: '10%' }}
       />
       <YellowCoral
         initialKelpAmount={80}
         scale="40%"
-        style={{ position: 'absolute', bottom: 200, left: '70%' }}
+        style={{ position: 'absolute', bottom: 280, left: '50%' }}
       />
       <PurpleCoral
         initialKelpAmount={80}
         scale="20%"
-        style={{ position: 'absolute', bottom: 200, left: '60%' }}
+        style={{ position: 'absolute', bottom: 220, left: '45%' }}
       />
     </>
   );

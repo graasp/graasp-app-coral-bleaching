@@ -1,7 +1,7 @@
 export const THERMOMETER_COLOR = 'red';
 export const THERMOMETER_WIDTH = 20;
 export const THERMOMETER_RADIUS = 20;
-export const THERMOMETER_POSITION_X = 70;
+export const THERMOMETER_POSITION_X = 80;
 export const THERMOMETER_STROKE_WIDTH = 3;
 export const THERMOMETER_STROKE_COLOR = 'black';
 // these factors are used as percentage depending on stage dimensions

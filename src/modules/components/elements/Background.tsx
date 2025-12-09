@@ -14,7 +14,7 @@ function Background({
   withSand?: boolean;
   isPlaying?: boolean;
 }): ReactNode {
-  const offsetY = withSand ? height * 0.35 : 0;
+  const offsetY = withSand ? height * 0.45 : 0;
 
   return (
     <>

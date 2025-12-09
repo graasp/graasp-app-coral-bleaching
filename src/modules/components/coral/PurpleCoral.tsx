@@ -6,7 +6,7 @@ import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
 
 const YellowCoral = (props) => {
   const {
-    data: { reset },
+    data: { reset, showStatus },
   } = useContext();
   const { kelpAmount, status } = useStatus('purple', {
     initialKelpAmount: props.initialKelpAmount,
@@ -55,15 +55,20 @@ const YellowCoral = (props) => {
 
   return (
     <>
-      <div
-        style={{
-          position: 'absolute',
-          top: 370,
-          left: 600,
-        }}
-      >
-        {status}
-      </div>
+      {showStatus && (
+        <div
+          style={{
+            position: 'absolute',
+            ...props.style,
+            bottom: props.style.bottom + 150,
+            paddingLeft: '2%',
+            paddingRight: '2%',
+            background: 'white',
+          }}
+        >
+          {status}
+        </div>
+      )}
       <svg
         width={props.scale}
         height={props.scale}
