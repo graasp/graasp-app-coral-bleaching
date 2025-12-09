@@ -1,3 +1,5 @@
+import { JSX } from 'react';
+
 import { Stack, Typography } from '@mui/material';
 
 export const NetworkErrorToast = ({
