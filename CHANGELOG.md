@@ -1,5 +1,21 @@
 # Changelog
 
+## 1.0.0 (2025-12-09)
+
+
+### Features
+
+* add some logic for the simulation ([a303923](https://github.com/graasp/graasp-app-coral-bleaching/commit/a303923dc6829fa8d31644b142f6cf6d2bfb77d5))
+* add temp chart ([e01f408](https://github.com/graasp/graasp-app-coral-bleaching/commit/e01f408ba00cc0a811c6a3fe5cd6f000a5b494e1))
+* add thermometer, background, start coral ([f6cdb36](https://github.com/graasp/graasp-app-coral-bleaching/commit/f6cdb36a523514ddec4c75479f69183f4a008cce))
+* use final pink coral, move graph below ([232e6a9](https://github.com/graasp/graasp-app-coral-bleaching/commit/232e6a919b548d0d1a2e9cd552f40bbd371b40e2))
+* use motion and svg ([86bddef](https://github.com/graasp/graasp-app-coral-bleaching/commit/86bddefd282b9e5345dfc469d03acc7957c833a1))
+
+
+### Bug Fixes
+
+* fix micro ([cce0d44](https://github.com/graasp/graasp-app-coral-bleaching/commit/cce0d44cab37ae31fbf07fed33c4f86a4452a9a1))
+
 ## [1.2.7](https://github.com/graasp/graasp-app-starter-ts-vite/compare/v1.2.6...v1.2.7) (2024-09-26)
 
 
