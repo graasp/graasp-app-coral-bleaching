@@ -64,7 +64,7 @@ export const useContext = () => {
         reset: number;
         showStatus: boolean;
       }>(KEYS.context),
-    initialData: { view: View.Macro, reset: 0, showStatus: false },
+    initialData: { view: View.Micro, reset: 0, showStatus: false },
   });
   return value;
 };

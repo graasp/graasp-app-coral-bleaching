@@ -103,20 +103,16 @@ const YellowCoral = (props) => {
               />
             </g>
             <g transform="matrix(0.9814,-0.191974,0.133499,0.682464,-54.733742,341.932689)">
-              <clipPath id="_clip2">
-                <path d="M912.003,539.791C918.398,550.364 919.257,566.22 913.443,578.244C906.575,592.444 892.983,595.956 883.107,586.081C880.745,583.718 874.905,574.432 869.77,558.374C859.109,525.031 839.953,448.428 836.713,437.318C835.372,432.719 820.752,351.055 817.494,292.42C816.536,275.178 825.493,260.062 837.483,258.684C849.473,257.307 859.985,270.187 860.943,287.429C863.764,338.2 875.746,409.093 876.908,413.075C880.329,424.804 910.286,533.556 912.003,539.791Z" />
-              </clipPath>
-              <g clipPath="url(#_clip2)">
-                <g transform="matrix(0.9814,0.276064,-0.191974,1.411277,838.907716,15.768079)">
-                  <use
-                    xlinkHref="#_Image3"
-                    x={15.107}
-                    y={165.244}
-                    width="135px"
-                    height="218px"
-                  />
-                </g>
-              </g>
+              <path
+                xmlns="http://www.w3.org/2000/svg"
+                d="M839.219,289.924C842.258,344.627 855.559,420.906 856.811,425.197C860.828,438.971 889.468,554.269 895.55,560.351"
+                style={{
+                  fill: 'none',
+                  stroke: 'url(#_Yellow111)',
+                  strokeWidth: '63.33px',
+                }}
+                strokeLinecap="round"
+              />
             </g>
             <path
               d="M1047.139,329.225C1047.139,346.871 1027.033,368.714 996.609,475.199C995.51,479.047 983.509,521.05 981.637,522.922"
@@ -192,20 +188,15 @@ const YellowCoral = (props) => {
               />
             </g>
             <g transform="matrix(0.528598,0,0,0.748024,406.164617,166.463235)">
-              <clipPath id="_clip11">
-                <path d="M1010.426,415.036C1014.296,387.944 1048.564,368.169 1086.902,370.904C1125.239,373.639 1153.223,397.855 1149.352,424.946C1148.299,432.317 1128.573,529.69 1128.573,529.69C1128.387,530.602 1128.166,531.51 1127.909,532.413C1127.909,532.413 1099.723,622.425 1072.138,651.119C1050.484,673.642 1007.027,679.505 975.154,664.203C943.281,648.902 934.985,618.192 956.638,595.669C973.515,578.114 987.519,526.556 990.462,515.155C991.978,507.707 1009.458,421.81 1010.426,415.036Z" />
-              </clipPath>
-              <g clipPath="url(#_clip11)">
-                <g transform="matrix(1.891795,-0,-0,1.336856,689.579462,33.664635)">
-                  <use
-                    xlinkHref="#_Image12"
-                    x={134.791}
-                    y={252.074}
-                    width="109px"
-                    height="226px"
-                  />
-                </g>
-              </g>
+              <path
+                d="M1079.889,419.991C1078.857,427.217 1059.465,522.68 1059.465,522.68C1059.465,522.68 1037.685,599.161 1014.388,623.394"
+                style={{
+                  fill: 'none',
+                  stroke: 'url(#_Yellow11)',
+                  strokeWidth: '113.96px',
+                }}
+                strokeLinecap="round"
+              />
             </g>
           </g>
         </g>
@@ -408,12 +399,55 @@ const YellowCoral = (props) => {
               }}
             />
           </linearGradient>
-          <image
-            id="_Image12"
-            width="109px"
-            height="226px"
-            xlinkHref="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQEAYABgAAD/2wBDAAUDBAQEAwUEBAQFBQUGBwwIBwcHBw8LCwkMEQ8SEhEPERETFhwXExQaFRERGCEYGh0dHx8fExciJCIeJBweHx7/2wBDAQUFBQcGBw4ICA4eFBEUHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh4eHh7/wAARCADiAG0DAREAAhEBAxEB/8QAGwABAQADAQEBAAAAAAAAAAAAAgABAwYFBAj/xAAYEAEBAQEBAAAAAAAAAAAAAAAAAgFhEv/EABsBAQEAAwEBAQAAAAAAAAAAAAABAgQFAwYH/8QAFREBAQAAAAAAAAAAAAAAAAAAABH/2gAMAwEAAhEDEQA/AP0K/En2CBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIECBAgQIGvKZRYWUkQkECBAgQIECBAgQPkm3pGRzSRDykhDykiM5uEGUECBAgQIECB5uU94zPKSEObSIeUkDykiQ8pIhZqQZQQIECBAgeNNtmPSHlJA8pIh5SQObSJDm0geUkQ8pIQspIhIIECBA5/Kbkex5SRDy0iQ8tIHlJEPKYwPLSJDmyBzTGIeUkIWUkQs3CDKCBzGW3o94eWkQ8pIHlJEPLSBzaRIeUkQ8pIFNJCNk2kQ8pIHlJEh5SRC9YkHJZToRsHlJAspIkbJtIHlJEPKSBZXWMRsm0iQ8pIHlJELK6kGzLSJDy0geV1IjkJp0Gy2TZEh5TGIeUkCmkiHlpBsykiHlJAspIh5aRGzLSB5SRCykgeUkI5HLdCNiHlpEPK6kDm0iRsy0iHlJAspIHlpEjZNsYhzSQLKSIeUkGybSJCyupByOU6EbB5SRDykDm0iQ5pIHlojZNpCHlJELKSBzSRIc2kGzKSIWUkDyupEcjlN+NiHNgeUkSHlMYh5QHlpEh5bGB5SBzZEjZlMYhZSQPK6kQ8tIQ8tIjkct0I2DykgeUkIc2iHlpEh5SRDykDykhDm0iHldQPLSIeWkI2ZSRCysSDkcp0I2Dy2MSHlpA8pIh5SQh5SRDm0iQ8pIHlJEPKQObSJDykgeWiHlpCORm3QjYh5SRDykgeUkIc2kQ8pIh5SQOaSJDm0Dy0iQ8pjEPKA5tIQ8tIjkcp0I2Dykgc2kQ8pjCHlJEPKSB5aRIeWkQ8pIHlJCHloh5aRIeUkQ8pByM26EbB5SQPKSJDykgc2kQ5tIQ8pIh5SQPLSJDm0geUxiHlJCHlJEPLRHI5ToxsnlJEh5aRDy0geUxiQ8pIHlpA5tIkPKSIeUkDykhDm0iQ8pIh5SQcjluhGweWgeUkQ8pIkPLSBzaRDykhDykiHlJA5tIh5TGEPKSIeUkCy0iRyzfe7IM5W4kDy0geUkQ8pIh5SQPLSIeWkDykiQ8pIHlpEPLSEPK6kRzjceyBAgZzdwgeWkDy0iHlJAspIkPLSDZNpEPKYxIeUkCyiDxGy9ECBAgQM5oFlJA8tIHlJELKSJDykg2TaRCykhHlvdmgQIECBAgZBnK3EgU2kGzKSIeUkCyuokfE9WSBAgQIECBAgQM5u4QLLSB5SRGlkqBAgQIECBAgQIEDIMAgQIECBAgQIECBAgQIECBAgQIECBAgQIH//Z"
-          />
+          <linearGradient
+            xmlns="http://www.w3.org/2000/svg"
+            id="_Yellow11"
+            x1="0"
+            y1="0"
+            x2="1"
+            y2="0"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="matrix(-52.384115,174.60766,-1.871462,-0.280374,1013.452165,419.991103)"
+          >
+            <motion.stop
+              offset="0"
+              style={{
+                stopColor: lightColor,
+                stopOpacity: 1,
+              }}
+            />
+            <motion.stop
+              offset="1"
+              style={{
+                stopColor: darkColor,
+                stopOpacity: 1,
+              }}
+            />
+          </linearGradient>
+          <linearGradient
+            id="_Yellow111"
+            x1="0"
+            y1="0"
+            x2="1"
+            y2="0"
+            gradientUnits="userSpaceOnUse"
+            gradientTransform="matrix(16.176338,164.501481,-701.649173,68.997035,847.552129,313.98777)"
+          >
+            <motion.stop
+              offset="0"
+              style={{
+                stopColor: lightColor,
+                stopOpacity: 1,
+              }}
+            />
+            <motion.stop
+              offset="1"
+              style={{
+                stopColor: darkColor,
+                stopOpacity: 1,
+              }}
+            />
+          </linearGradient>
         </defs>
       </svg>
     </>

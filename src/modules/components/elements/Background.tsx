@@ -1,6 +1,6 @@
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 
-import { useAnimation } from '@/utils/hooks';
+import { Bubble } from '../coral/Bubble';
 
 // eslint-disable-next-line react/function-component-definition
 function Background({
@@ -32,6 +32,13 @@ function Background({
         height={height - offsetY}
         fill="url(#ocean-grad)"
       />
+      {isPlaying && (
+        <>
+          <Bubble duration={10} x="60%" y={500} />
+          <Bubble r={10} duration={5} x="25%" y={500} />
+          <Bubble r={12} duration={7} x="75%" y={500} />
+        </>
+      )}
       {withSand && (
         <rect
           x={0}
