@@ -15,7 +15,7 @@ import {
 
 import { useTemperatureHistory, useTime } from '@/utils/hooks';
 
-const DAY_INTERVAL = 10;
+const DAY_INTERVAL = 20;
 const controlsWidth = 150;
 
 function humanizeDays(value) {
