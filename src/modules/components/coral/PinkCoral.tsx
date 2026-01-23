@@ -4,6 +4,8 @@ import { mapValue, motion, motionValue } from 'motion/react';
 
 import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
 
+import { StatusLabel } from '../StatusLabel';
+
 const PinkCoral = (props) => {
   const {
     data: { reset, showStatus },
@@ -58,26 +60,21 @@ const PinkCoral = (props) => {
   return (
     <>
       {showStatus && (
-        <div
-          style={{
-            position: 'absolute',
-            ...props.style,
-            bottom: props.style.bottom + 200,
-            paddingLeft: '2%',
-            paddingRight: '2%',
-            background: 'white',
-          }}
-        >
-          {status}: {kelpAmount.toFixed(0)}%
-        </div>
+        <StatusLabel
+          name="Acropora"
+          status={status}
+          kelpAmount={kelpAmount}
+          left={props.style.left}
+          offsetLeft={7}
+          bottom={props.style.bottom}
+          bottomOffset={200}
+          color="pink"
+        />
       )}
       <motion.svg
         width={props.scale}
         height={props.scale}
         viewBox="0 0 565 440"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        xmlSpace="preserve"
         {...props}
         style={{
           fillRule: 'evenodd',
@@ -94,7 +91,7 @@ const PinkCoral = (props) => {
               d="M1753.937,3194.087C1751.394,3191.543 1614.096,3157.161 1579.162,3139.694C1524.658,3071.564 1559.896,2974.045 1474.465,2951.924C1429.125,2940.184 1280.774,2713.959 995.911,2589.435"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear1)',
+                stroke: 'url(#_Pink1)',
                 strokeWidth: '174.34px',
               }}
             />
@@ -102,7 +99,7 @@ const PinkCoral = (props) => {
               d="M790.531,2618.413C801.2,2629.082 992.191,2916.136 1106.222,2926.503C1115.168,2927.316 1113.794,2928.926 1215.775,2951.096C1316.559,2973.006 1412.861,2949.198 1557.849,3094.186C1569.784,3106.12 1565.682,3108.726 1577.971,3121.015"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear2)',
+                stroke: 'url(#_Pink2)',
                 strokeWidth: '123.41px',
               }}
             />
@@ -110,7 +107,7 @@ const PinkCoral = (props) => {
               d="M1224.718,2977.925C1203.827,2982.104 1049.297,3012.528 1043.62,3015.934C1006.357,3038.291 873.004,3038.291 858.051,3038.291"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear3)',
+                stroke: 'url(#_Pink3)',
                 strokeWidth: '60.85px',
               }}
             />
@@ -118,7 +115,7 @@ const PinkCoral = (props) => {
               d="M1014.555,2897.438C961.711,2888.63 668.68,2823.569 621.506,2729.22"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear4)',
+                stroke: 'url(#_Pink4)',
                 strokeWidth: '84.13px',
               }}
             />
@@ -126,7 +123,7 @@ const PinkCoral = (props) => {
               d="M1243.027,2729.22C1220.613,2684.392 1284.902,2682.972 1083.146,2367.024C1006.382,2246.811 855.551,2218.063 756.746,2075.876"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear5)',
+                stroke: 'url(#_Pink5)',
                 strokeWidth: '110.32px',
               }}
             />
@@ -134,7 +131,7 @@ const PinkCoral = (props) => {
               d="M1120.758,2432.281C1087.793,2424.039 788.885,2349.312 710.283,2323.112C606.311,2288.454 615.105,2272.491 566.181,2174.642"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear6)',
+                stroke: 'url(#_Pink6)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -142,7 +139,7 @@ const PinkCoral = (props) => {
               d="M1173.159,2528.349C1173.787,2510.768 1179.541,2349.648 1199.36,2310.012C1220.881,2266.968 1416.223,1952.98 1417.173,1937.79"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear7)',
+                stroke: 'url(#_Pink7)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -150,7 +147,7 @@ const PinkCoral = (props) => {
               d="M1753.937,3147.659C1778.618,3098.298 2124.285,3011.169 2208.079,2759.787C2362.813,2295.585 2621.347,2159.535 2736.456,1986.872"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear8)',
+                stroke: 'url(#_Pink8)',
                 strokeWidth: '137.96px',
                 pathLength,
               }}
@@ -169,7 +166,7 @@ const PinkCoral = (props) => {
               style={{
                 pathLength: subPathLength,
                 fill: 'none',
-                stroke: 'url(#_Linear9)',
+                stroke: 'url(#_Pink9)',
                 strokeWidth: '60.85px',
               }}
               strokeLinecap={subPathLength.get() ? 'round' : 'butt'}
@@ -189,7 +186,7 @@ const PinkCoral = (props) => {
               d="M2046.509,2969.391C2293.7,2876.695 2420.244,2844.562 2430.784,2834.022C2589.76,2675.045 2712.14,2657.071 2761.869,2647.125"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear10)',
+                stroke: 'url(#_Pink10)',
                 strokeWidth: '139.42px',
               }}
             />
@@ -197,7 +194,7 @@ const PinkCoral = (props) => {
               d="M1784.015,3187.379C1805.696,3181.185 2078.604,2973.329 2107.644,2799.088C2143.638,2583.125 2190.175,2289.357 2274.279,2247.306"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear11)',
+                stroke: 'url(#_Pink11)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -205,7 +202,7 @@ const PinkCoral = (props) => {
               d="M2116.377,2834.022C2158.101,2708.85 2350.099,2736.822 2383.972,2702.949"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear12)',
+                stroke: 'url(#_Pink12)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -213,7 +210,7 @@ const PinkCoral = (props) => {
               d="M1714.636,3165.895C1776.967,2885.406 1702.67,2677.374 1688.436,2637.518C1641.414,2505.856 1597.041,2129.441 1640.401,1912.637C1668.331,1772.989 1677.581,1777.144 1740.837,1650.632"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear13)',
+                stroke: 'url(#_Pink13)',
                 strokeWidth: '174.34px',
               }}
             />
@@ -221,7 +218,7 @@ const PinkCoral = (props) => {
               d="M1614.201,1995.606C1561.8,1969.405 1518.873,1748.039 1518.873,1716.666"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear14)',
+                stroke: 'url(#_Pink14)',
                 strokeWidth: '56.48px',
               }}
             />
@@ -229,7 +226,7 @@ const PinkCoral = (props) => {
               d="M1681.786,2537.083C1684.391,2496.709 1546.567,2544.178 1816.993,2270.187C1893.849,2192.317 2007.927,2170.521 2014.858,2011.099"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear15)',
+                stroke: 'url(#_Pink15)',
                 strokeWidth: '68.12px',
               }}
             />
@@ -237,7 +234,7 @@ const PinkCoral = (props) => {
               d="M1781.888,2072.12C1794.075,2092.433 1790.314,2205.813 1790.902,2177.184C1791.267,2159.453 1790.323,2268.768 1791.654,2274.091"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear16)',
+                stroke: 'url(#_Pink16)',
                 strokeWidth: '52.12px',
               }}
             />
@@ -246,7 +243,7 @@ const PinkCoral = (props) => {
                 d="M1650.078,3141.93C1633.762,2734.019 1368.687,2745.98 1374.03,1860.236C1374.43,1793.792 1371.111,1783.148 1351.933,1670.99C1341.5,1609.976 1292.459,1525.743 1292.459,1525.743"
                 style={{
                   fill: 'none',
-                  stroke: 'url(#_Linear17)',
+                  stroke: 'url(#_Pink17)',
                   strokeWidth: '130.69px',
                 }}
               />
@@ -255,7 +252,7 @@ const PinkCoral = (props) => {
               d="M1763.534,3200.319C1954.924,3157.788 2065.002,3082.103 2202.506,3082.103C2252.51,3082.103 2345.414,3010.482 2394.297,2998.261"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear18)',
+                stroke: 'url(#_Pink18)',
                 strokeWidth: '92.86px',
               }}
             />
@@ -263,7 +260,7 @@ const PinkCoral = (props) => {
               d="M2333.656,3184.961C2314.575,3183.768 2154.794,3173.782 2103.092,3122.079"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear19)',
+                stroke: 'url(#_Pink19)',
                 strokeWidth: '60.85px',
               }}
             />
@@ -271,7 +268,7 @@ const PinkCoral = (props) => {
               d="M2541.785,2758.614C2550.36,2775.765 2617.434,2819.146 2622.133,2821.495C2629.962,2825.41 2631.276,2821.05 2726.935,2852.936"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear20)',
+                stroke: 'url(#_Pink20)',
                 strokeWidth: '38.16px',
               }}
             >
@@ -300,7 +297,7 @@ const PinkCoral = (props) => {
                 d="M1459.475,2550.892C1449.583,2541 1441.227,2421.941 1475.125,2354.144C1514.066,2276.263 1505.566,2272.28 1510.898,2266.949"
                 style={{
                   fill: 'none',
-                  stroke: 'url(#_Linear21)',
+                  stroke: 'url(#_Pink21)',
                   strokeWidth: '80.39px',
                 }}
               />
@@ -309,7 +306,7 @@ const PinkCoral = (props) => {
               d="M670.246,2441.339C686.778,2435.828 808.849,2431.656 860.287,2414.51C867.669,2412.049 921.82,2397.158 922.888,2396.624"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear22)',
+                stroke: 'url(#_Pink22)',
                 strokeWidth: '55.03px',
               }}
             />
@@ -317,7 +314,7 @@ const PinkCoral = (props) => {
               d="M2411.103,2282.192C2397.995,2300.762 2407.444,2191.186 2415.168,2149.977C2422.42,2111.284 2481.733,2044.287 2494.944,2018.269"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear23)',
+                stroke: 'url(#_Pink23)',
                 strokeWidth: '57.94px',
                 pathLength: subPathLength,
               }}
@@ -328,7 +325,7 @@ const PinkCoral = (props) => {
                 d="M1379.117,1846.963C1442.733,1719.731 1469.275,1702.028 1469.275,1702.028L1515.85,1485.537"
                 style={{
                   fill: 'none',
-                  stroke: 'url(#_Linear24)',
+                  stroke: 'url(#_Pink24)',
                   strokeWidth: '60.85px',
                 }}
               />
@@ -338,7 +335,7 @@ const PinkCoral = (props) => {
                 d="M1395.759,2284.23C1379.816,2262.974 1345.121,2262.379 1243.027,1973.772C1216.146,1897.783 1154.874,1759.552 1129.492,1737.967"
                 style={{
                   fill: 'none',
-                  stroke: 'url(#_Linear25)',
+                  stroke: 'url(#_Pink25)',
                   strokeWidth: '80.39px',
                 }}
               />
@@ -349,7 +346,7 @@ const PinkCoral = (props) => {
                   d="M1297.245,2131.289C1264.716,2149.431 1019.882,1932.087 1025.144,1875.712"
                   style={{
                     fill: 'none',
-                    stroke: 'url(#_Linear26)',
+                    stroke: 'url(#_Pink26)',
                     strokeWidth: '62.3px',
                   }}
                 >
@@ -379,7 +376,7 @@ const PinkCoral = (props) => {
               d="M1758.304,3174.628C1783.401,3164.59 2008.832,2977.641 1985.375,2637.518C1984.865,2630.119 1896.641,2160.625 1893.673,2056.74C1892.444,2013.726 1880.937,1610.967 1967.908,1523.996"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear27)',
+                stroke: 'url(#_Pink27)',
                 strokeWidth: '105.95px',
               }}
             />
@@ -387,7 +384,7 @@ const PinkCoral = (props) => {
               d="M1898.04,1965.038C1925.989,1959.454 2091.058,1747.808 2095.941,1668.518"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear28)',
+                stroke: 'url(#_Pink28)',
                 strokeWidth: '53.57px',
               }}
             />
@@ -395,7 +392,7 @@ const PinkCoral = (props) => {
               d="M1972.275,2681.186C1862.502,2534.822 1687.537,2502.11 1675.091,2402.548"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear29)',
+                stroke: 'url(#_Pink29)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -403,7 +400,7 @@ const PinkCoral = (props) => {
               d="M2081.443,2868.956C2076.832,2850.511 2034.865,2682.641 1998.475,2646.252"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear30)',
+                stroke: 'url(#_Pink30)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -411,7 +408,7 @@ const PinkCoral = (props) => {
               d="M1941.707,2419.18C1953.222,2390.393 2070.465,2316.872 2133.844,1999.972C2145.275,1942.822 2248.302,1650.759 2250.175,1648.885"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear31)',
+                stroke: 'url(#_Pink31)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -419,7 +416,7 @@ const PinkCoral = (props) => {
               d="M2063.976,2200.843C2101.208,2126.38 2247.02,2148.476 2334.715,2021.806C2397.715,1930.807 2377.885,1922.365 2391.483,1895.17"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear32)',
+                stroke: 'url(#_Pink32)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -428,7 +425,7 @@ const PinkCoral = (props) => {
                 d="M2177.512,1895.17C2197.37,1855.453 2426.564,1755.14 2522.485,1563.297"
                 style={{
                   fill: 'none',
-                  stroke: 'url(#_Linear33)',
+                  stroke: 'url(#_Pink33)',
                   strokeWidth: '80.39px',
                 }}
               />
@@ -437,7 +434,7 @@ const PinkCoral = (props) => {
               d="M1676.294,3010.054C1578.561,3037.594 1449.756,2899.865 1417.173,2813.329"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear34)',
+                stroke: 'url(#_Pink34)',
                 strokeWidth: '80.39px',
               }}
             />
@@ -445,7 +442,7 @@ const PinkCoral = (props) => {
               d="M2365.073,1729.234C2343.239,1696.483 2352.182,1522.499 2352.182,1502.163"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear35)',
+                stroke: 'url(#_Pink35)',
                 strokeWidth: '53.57px',
               }}
             >
@@ -473,7 +470,7 @@ const PinkCoral = (props) => {
               d="M2529.612,2240.458C2602.533,2234.117 2580.55,2240.928 2753.923,2179.009C2762.311,2176.014 2815.058,2157.175 2854.358,2130.975"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear36)',
+                stroke: 'url(#_Pink36)',
                 strokeWidth: '49.21px',
                 pathLength: subPathLength,
               }}
@@ -483,7 +480,7 @@ const PinkCoral = (props) => {
               d="M1187.799,3153.52C1334.354,3169.818 1418.697,3174.911 1534.726,3153.52C1543.176,3151.962 1707.304,3203.814 1731.321,3227.831"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear37)',
+                stroke: 'url(#_Pink37)',
                 strokeWidth: '111.77px',
               }}
             />
@@ -491,7 +488,7 @@ const PinkCoral = (props) => {
               d="M1838.712,2845.173C1793.235,2917.603 1769.854,2986.598 1763.534,3023.364C1757.922,3056.01 1745.237,3092.69 1740.837,3099.29"
               style={{
                 fill: 'none',
-                stroke: 'url(#_Linear38)',
+                stroke: 'url(#_Pink38)',
                 strokeWidth: '84.13px',
               }}
             />
@@ -499,7 +496,7 @@ const PinkCoral = (props) => {
         </motion.g>
         <defs>
           <motion.linearGradient
-            id="_Linear1"
+            id="_Pink1"
             x1={0}
             y1={0}
             x2={1}
@@ -523,7 +520,7 @@ const PinkCoral = (props) => {
             />
           </motion.linearGradient>
           <linearGradient
-            id="_Linear2"
+            id="_Pink2"
             x1={0}
             y1={0}
             x2={1}
@@ -547,7 +544,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear3"
+            id="_Pink3"
             x1={0}
             y1={0}
             x2={1}
@@ -571,7 +568,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear4"
+            id="_Pink4"
             x1={0}
             y1={0}
             x2={1}
@@ -595,7 +592,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear5"
+            id="_Pink5"
             x1={0}
             y1={0}
             x2={1}
@@ -619,7 +616,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear6"
+            id="_Pink6"
             x1={0}
             y1={0}
             x2={1}
@@ -643,7 +640,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear7"
+            id="_Pink7"
             x1={0}
             y1={0}
             x2={1}
@@ -667,7 +664,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear8"
+            id="_Pink8"
             x1={0}
             y1={0}
             x2={1}
@@ -691,7 +688,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear9"
+            id="_Pink9"
             x1={0}
             y1={0}
             x2={1}
@@ -715,7 +712,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear10"
+            id="_Pink10"
             x1={0}
             y1={0}
             x2={1}
@@ -739,7 +736,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear11"
+            id="_Pink11"
             x1={0}
             y1={0}
             x2={1}
@@ -763,7 +760,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear12"
+            id="_Pink12"
             x1={0}
             y1={0}
             x2={1}
@@ -787,7 +784,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear13"
+            id="_Pink13"
             x1={0}
             y1={0}
             x2={1}
@@ -811,7 +808,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear14"
+            id="_Pink14"
             x1={0}
             y1={0}
             x2={1}
@@ -835,7 +832,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear15"
+            id="_Pink15"
             x1={0}
             y1={0}
             x2={1}
@@ -859,7 +856,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear16"
+            id="_Pink16"
             x1={0}
             y1={0}
             x2={1}
@@ -883,7 +880,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear17"
+            id="_Pink17"
             x1={0}
             y1={0}
             x2={1}
@@ -907,7 +904,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear18"
+            id="_Pink18"
             x1={0}
             y1={0}
             x2={1}
@@ -931,7 +928,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear19"
+            id="_Pink19"
             x1={0}
             y1={0}
             x2={1}
@@ -955,7 +952,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear20"
+            id="_Pink20"
             x1={0}
             y1={0}
             x2={1}
@@ -979,7 +976,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear21"
+            id="_Pink21"
             x1={0}
             y1={0}
             x2={1}
@@ -1003,7 +1000,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear22"
+            id="_Pink22"
             x1={0}
             y1={0}
             x2={1}
@@ -1027,7 +1024,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear23"
+            id="_Pink23"
             x1={0}
             y1={0}
             x2={1}
@@ -1051,7 +1048,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear24"
+            id="_Pink24"
             x1={0}
             y1={0}
             x2={1}
@@ -1075,7 +1072,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear25"
+            id="_Pink25"
             x1={0}
             y1={0}
             x2={1}
@@ -1099,7 +1096,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear26"
+            id="_Pink26"
             x1={0}
             y1={0}
             x2={1}
@@ -1123,7 +1120,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear27"
+            id="_Pink27"
             x1={0}
             y1={0}
             x2={1}
@@ -1147,7 +1144,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear28"
+            id="_Pink28"
             x1={0}
             y1={0}
             x2={1}
@@ -1171,7 +1168,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear29"
+            id="_Pink29"
             x1={0}
             y1={0}
             x2={1}
@@ -1195,7 +1192,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear30"
+            id="_Pink30"
             x1={0}
             y1={0}
             x2={1}
@@ -1219,7 +1216,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear31"
+            id="_Pink31"
             x1={0}
             y1={0}
             x2={1}
@@ -1243,7 +1240,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear32"
+            id="_Pink32"
             x1={0}
             y1={0}
             x2={1}
@@ -1267,7 +1264,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear33"
+            id="_Pink33"
             x1={0}
             y1={0}
             x2={1}
@@ -1291,7 +1288,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear34"
+            id="_Pink34"
             x1={0}
             y1={0}
             x2={1}
@@ -1315,7 +1312,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear35"
+            id="_Pink35"
             x1={0}
             y1={0}
             x2={1}
@@ -1339,7 +1336,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear36"
+            id="_Pink36"
             x1={0}
             y1={0}
             x2={1}
@@ -1363,7 +1360,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear37"
+            id="_Pink37"
             x1={0}
             y1={0}
             x2={1}
@@ -1387,7 +1384,7 @@ const PinkCoral = (props) => {
             />
           </linearGradient>
           <linearGradient
-            id="_Linear38"
+            id="_Pink38"
             x1={0}
             y1={0}
             x2={1}

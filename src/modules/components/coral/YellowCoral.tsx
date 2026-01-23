@@ -4,6 +4,8 @@ import { mapValue, motion, motionValue } from 'motion/react';
 
 import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
 
+import { StatusLabel } from '../StatusLabel';
+
 const YellowCoral = (props) => {
   const {
     data: { reset, showStatus },
@@ -58,27 +60,21 @@ const YellowCoral = (props) => {
   return (
     <>
       {showStatus && (
-        <div
-          style={{
-            position: 'absolute',
-            ...props.style,
-            bottom: props.style.bottom + 250,
-            marginLeft: '5%',
-            paddingLeft: '2%',
-            paddingRight: '2%',
-            background: 'white',
-          }}
-        >
-          {status}: {kelpAmount.toFixed(0)}%
-        </div>
+        <StatusLabel
+          name="Porite"
+          status={status}
+          kelpAmount={kelpAmount}
+          left={props.style.left}
+          bottom={props.style.bottom}
+          offsetLeft={7}
+          bottomOffset={180}
+          color="gold"
+        />
       )}
       <svg
         width={props.scale}
         height={props.scale}
-        viewBox="0 0 338 479"
-        xmlns="http://www.w3.org/2000/svg"
-        xmlnsXlink="http://www.w3.org/1999/xlink"
-        xmlSpace="preserve"
+        viewBox="0 0 308 479"
         style={{
           fillRule: 'evenodd',
           clipRule: 'evenodd',
