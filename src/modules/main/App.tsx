@@ -59,7 +59,7 @@ const App = (): JSX.Element => {
 
   return (
     <>
-      <Debug />
+      {/* <Debug /> */}
       <Footer />
       <Thermometer />
       <SettingsButton />

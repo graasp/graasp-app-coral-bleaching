@@ -66,8 +66,8 @@ const YellowCoral = (props) => {
           kelpAmount={kelpAmount}
           left={props.style.left}
           bottom={props.style.bottom}
-          offsetLeft={7}
-          bottomOffset={180}
+          offsetLeft={props.offsetLeft}
+          bottomOffset={props.bottomOffset}
           color="gold"
         />
       )}

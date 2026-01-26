@@ -67,7 +67,8 @@ const PinkCoral = (props) => {
           left={props.style.left}
           offsetLeft={7}
           bottom={props.style.bottom}
-          bottomOffset={200}
+          offsetLeft={props.offsetLeft}
+          bottomOffset={props.bottomOffset}
           color="pink"
         />
       )}

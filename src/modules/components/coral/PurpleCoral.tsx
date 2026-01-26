@@ -66,7 +66,8 @@ const YellowCoral = (props) => {
           bottom={props.style.bottom}
           scale={props.scale}
           color="purple"
-          bottomOffset={100}
+          bottomOffset={props.bottomOffset}
+          offsetLeft={props.offsetLeft}
         />
       )}
       <svg
