@@ -58,7 +58,7 @@ const App = (): JSX.Element => {
   // }, [context]);
 
   return (
-    <>
+    <div>
       {/* <Debug /> */}
       <Footer />
       <Thermometer />
@@ -76,7 +76,7 @@ const App = (): JSX.Element => {
           height={stageDimensions.height}
         />
       )}
-    </>
+    </div>
   );
 };
 
