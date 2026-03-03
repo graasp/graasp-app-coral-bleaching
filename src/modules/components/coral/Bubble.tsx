@@ -1,17 +1,17 @@
+import { JSX } from 'react';
+
 // eslint-disable-next-line react/function-component-definition
 export function Bubble({
-  duration = '4s',
+  duration,
   x,
   y = 380,
   r = 18,
 }: {
   duration?: number;
-  x: number | string;
+  x: string;
   y?: number | string;
   r?: number;
-}) {
-  console.log(duration);
-
+}): JSX.Element {
   return (
     <>
       <defs>
@@ -30,7 +30,7 @@ export function Bubble({
         </filter>
       </defs>
       <rect width="100%" height="100%" fill="transparent" />
-      <g id="bubble" transform-box="fill-box" transform-origin="50% 50%">
+      <g id="bubble">
         <circle
           id="main"
           cx={x}

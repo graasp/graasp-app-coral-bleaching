@@ -1,24 +1,43 @@
-import { useCallback, useEffect } from 'react';
+import { JSX, useCallback, useEffect } from 'react';
 
 import { mapValue, motion, motionValue } from 'motion/react';
 
-import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
+import { CoralStatus, useContext, useStatus } from '@/utils/hooks';
 
 import { StatusLabel } from '../StatusLabel';
 
-const YellowCoral = (props) => {
+export const PurpleCoral = ({
+  style,
+  offsetLeft = 7,
+  bottomOffset,
+  scale,
+  initialKelpAmount,
+}: {
+  initialKelpAmount: number;
+  style?: {
+    left?: number | string;
+    right?: number | string;
+    bottom: number;
+    position: string;
+    transform?: string;
+    filter?: string;
+  };
+  scale: string | number;
+  offsetLeft?: number;
+  bottomOffset?: number;
+}): JSX.Element => {
   const {
     data: { reset, showStatus },
   } = useContext();
+  // exposition égale ou supérieur à 31°C pendant 10j = blanchiment, 14j=mortalité
+  // death is controlled from useStatus
+  // bleaching is controlled with the light color, varing depending on deathSpeed
   const { kelpAmount, status } = useStatus('purple', {
-    initialKelpAmount: props.initialKelpAmount,
-    deathSpeed: 0.7,
-    maxTempThreshould: 30,
+    initialKelpAmount,
+    deathSpeed: 1.14,
+    maxTempThreshould: 31,
   });
-  const [maxKelpAmount, setMax] = useMaxValue(
-    props.initialKelpAmount,
-    kelpAmount,
-  );
+  const BLEACHING_MAX_THRESHOLD = 21;
 
   const recover = useCallback(() => {
     // eslint-disable-next-line no-restricted-syntax
@@ -40,18 +59,17 @@ const YellowCoral = (props) => {
   // reset animations
   useEffect(() => {
     recover();
-    setMax(0);
-  }, [reset]);
+  }, [recover, reset]);
 
   const lightColor = mapValue(
     motionValue(kelpAmount),
-    [100, 10],
+    [BLEACHING_MAX_THRESHOLD, 10],
     ['rgb(226,166,255)', 'rgb(255,255,255)'],
   );
 
   const darkColor = mapValue(
     motionValue(kelpAmount),
-    [100, 10],
+    [BLEACHING_MAX_THRESHOLD, 10],
     ['rgb(70,0,109)', 'rgb(205,205,205)'],
   );
 
@@ -61,28 +79,27 @@ const YellowCoral = (props) => {
         <StatusLabel
           status={status}
           kelpAmount={kelpAmount}
-          left={props.style.left}
+          left={style?.left}
           name="Pocillopora"
-          bottom={props.style.bottom}
-          scale={props.scale}
+          bottom={style?.bottom}
           color="purple"
-          bottomOffset={props.bottomOffset}
-          offsetLeft={props.offsetLeft}
+          bottomOffset={bottomOffset}
+          offsetLeft={offsetLeft}
         />
       )}
       <svg
-        width={props.scale}
-        height={props.scale}
+        width={scale}
+        height={scale}
         viewBox="0 0 399 272"
+        scale={scale}
         style={{
           fillRule: 'evenodd',
           clipRule: 'evenodd',
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeMiterlimit: 1.5,
-          ...props.style,
+          ...style,
         }}
-        {...props}
       >
         <g transform="matrix(1,0,0,1,-978.325356,-548.014035)">
           <g transform="matrix(1.714711,0,0,1.714711,-760.34287,186.526643)">
@@ -902,4 +919,3 @@ const YellowCoral = (props) => {
     </>
   );
 };
-export default YellowCoral;

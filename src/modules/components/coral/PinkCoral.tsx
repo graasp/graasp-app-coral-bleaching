@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { JSX, useCallback, useEffect } from 'react';
 
 import { mapValue, motion, motionValue } from 'motion/react';
 
@@ -6,18 +6,41 @@ import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
 
 import { StatusLabel } from '../StatusLabel';
 
-const PinkCoral = (props) => {
+export const PinkCoral = ({
+  style,
+  offsetLeft = 7,
+  bottomOffset,
+  hideStatus,
+  scale,
+  initialKelpAmount,
+}: {
+  initialKelpAmount: number;
+  style?: {
+    left?: number | string;
+    right?: number | string;
+    bottom: number;
+    position: string;
+    transform?: string;
+    filter?: string;
+  };
+  scale: string | number;
+  offsetLeft?: number;
+  bottomOffset?: number;
+  hideStatus?: boolean;
+}): JSX.Element => {
   const {
     data: { reset, showStatus },
   } = useContext();
+  // exposition égale ou supérieur à 31°C pendant 7j = blanchiment, 14j=mortalité
+  // death is controlled from useStatus
+  // bleaching is controlled with the light color, varing depending on deathSpeed
   const { kelpAmount, status } = useStatus('pink', {
-    initialKelpAmount: props.initialKelpAmount,
-    maxTempThreshould: 25,
+    initialKelpAmount,
+    maxTempThreshould: 31,
+    deathSpeed: 1.14,
   });
-  const [maxKelpAmount, setMax] = useMaxValue(
-    props.initialKelpAmount,
-    kelpAmount,
-  );
+  const BLEACHING_MAX_THRESHOLD = 40;
+  const [maxKelpAmount, setMax] = useMaxValue(initialKelpAmount, kelpAmount);
 
   const recover = useCallback(() => {
     // eslint-disable-next-line no-restricted-syntax
@@ -39,51 +62,54 @@ const PinkCoral = (props) => {
   // reset animations
   useEffect(() => {
     recover();
+    // @ts-expect-error
     setMax(0);
-  }, [reset]);
+  }, [reset, recover, setMax]);
 
+  // @ts-expect-error
   const pathLength = mapValue(motionValue(maxKelpAmount), [80, 95], [0, 1]);
+  // @ts-expect-error
   const subPathLength = mapValue(motionValue(maxKelpAmount), [90, 100], [0, 1]);
 
   const lightColor = mapValue(
     motionValue(kelpAmount),
-    [80, 10],
+    [BLEACHING_MAX_THRESHOLD, 10],
     ['rgb(250, 167, 146)', 'rgb(255,255,255)'],
   );
 
   const darkColor = mapValue(
     motionValue(kelpAmount),
-    [80, 10],
+    [BLEACHING_MAX_THRESHOLD, 10],
     ['rgb(205,9,76)', 'rgb(205,205,205)'],
   );
 
   return (
     <>
-      {showStatus && (
+      {!hideStatus && showStatus && (
         <StatusLabel
           name="Acropora"
           status={status}
           kelpAmount={kelpAmount}
-          left={props.style.left}
-          offsetLeft={7}
-          bottom={props.style.bottom}
-          offsetLeft={props.offsetLeft}
-          bottomOffset={props.bottomOffset}
+          left={style?.left}
+          bottom={style?.bottom}
+          offsetLeft={offsetLeft}
+          bottomOffset={bottomOffset}
           color="pink"
         />
       )}
       <motion.svg
-        width={props.scale}
-        height={props.scale}
+        width={scale}
+        height={scale}
         viewBox="0 0 565 440"
-        {...props}
+        scale={scale}
+        // @ts-expect-error
         style={{
           fillRule: 'evenodd',
           clipRule: 'evenodd',
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeMiterlimit: 1.5,
-          ...props.style,
+          ...style,
         }}
       >
         <motion.g transform="matrix(1,0,0,1,-8.001789,-375.534159)">
@@ -1413,4 +1439,3 @@ const PinkCoral = (props) => {
     </>
   );
 };
-export default PinkCoral;

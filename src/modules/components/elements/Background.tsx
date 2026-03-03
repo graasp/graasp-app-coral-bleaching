@@ -3,7 +3,7 @@ import { ReactNode } from 'react';
 import { Bubble } from '../coral/Bubble';
 
 // eslint-disable-next-line react/function-component-definition
-function Background({
+export function Background({
   width,
   height,
   isPlaying = false,
@@ -20,14 +20,7 @@ function Background({
           <stop offset="100%" stopColor={isPlaying ? '#70cfed' : '#88b8c6ff'} />
         </linearGradient>
       </defs>
-      <rect
-        id="ocean"
-        // x={0}
-        // y={0}
-        width={width}
-        height={height}
-        fill="url(#ocean-grad)"
-      />
+      <rect id="ocean" width={width} height={height} fill="url(#ocean-grad)" />
       {isPlaying && (
         <>
           <Bubble duration={10} x="60%" y={500} />
@@ -38,5 +31,3 @@ function Background({
     </>
   );
 }
-
-export default Background;

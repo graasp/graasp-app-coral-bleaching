@@ -2,15 +2,15 @@ import { ReactNode } from 'react';
 
 import { useAnimation } from '@/utils/hooks';
 
-import PinkCoral from '../components/coral/PinkCoral';
-import PurpleCoral from '../components/coral/PurpleCoral';
-import YellowCoral from '../components/coral/YellowCoral';
+import { PinkCoral } from '../components/coral/PinkCoral';
+import { PurpleCoral } from '../components/coral/PurpleCoral';
+import { YellowCoral } from '../components/coral/YellowCoral';
 import CoralRose from '../components/coral/corailrose.svg';
-import Background from '../components/elements/Background';
+import { Background } from '../components/elements/Background';
 import { Sunshine } from '../components/elements/Sunshine';
 
 // eslint-disable-next-line react/function-component-definition
-function MacroView({
+export function MacroView({
   width,
   height,
 }: {
@@ -25,11 +25,11 @@ function MacroView({
         <Background width={width} height={height} isPlaying={isPlaying} />
         <path
           d={`
-    M0 ${height - height * 0.45} 
-    Q ${width * 0.15} ${height - height * 0.49}, ${width * 0.3} ${height - height * 0.45} 
-    Q ${width * 0.75} ${height - height * 0.435}, ${width} ${height - height * 0.45} 
-    L ${width} ${height} 
-    L 0 ${height} 
+    M0 ${height - height * 0.45}
+    Q ${width * 0.15} ${height - height * 0.49}, ${width * 0.3} ${height - height * 0.45}
+    Q ${width * 0.75} ${height - height * 0.435}, ${width} ${height - height * 0.45}
+    L ${width} ${height}
+    L 0 ${height}
     Z
   `}
           fill="#f7dc6b"
@@ -40,6 +40,7 @@ function MacroView({
 
       {/* decorative background coral */}
       <img
+        alt="pink coral background"
         style={{
           position: 'absolute',
           bottom: 350,
@@ -51,6 +52,7 @@ function MacroView({
         width={350}
       />
       <img
+        alt="pink coral background"
         style={{
           position: 'absolute',
           bottom: 350,
@@ -205,5 +207,3 @@ function MacroView({
     </>
   );
 }
-
-export default MacroView;

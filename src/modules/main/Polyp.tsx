@@ -1,64 +1,125 @@
-import { useCallback, useEffect } from 'react';
+import { JSX, useCallback, useEffect } from 'react';
 
 import { animate, mapValue, motion, motionValue } from 'motion/react';
 
-import { DEATH_DAY, KELP_SPEED } from '@/config/constants';
-import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
+import { KELP_SPEED } from '@/config/constants';
+import { CoralStatus, useContext, useStatus } from '@/utils/hooks';
 
-const zooxanthelesAnimations = (
-  <>
-    <animateTransform
-      className="zooAnimate"
-      attributeName="transform"
-      begin="indefinite"
-      dur="6s"
-      type="translate"
-      from="0 0"
-      to="0 -150"
-      fill="freeze"
-    />
-    <animateTransform
-      className="zooAnimateReset"
-      attributeName="transform"
-      begin="indefinite"
-      dur="1s"
-      type="translate"
-      to="0 0"
-      fill="freeze"
-    />
-  </>
+const zooxantheles = [
+  { cx: 130, cy: 370 },
+  { cx: 150, cy: 360 },
+  { cx: 180, cy: 350 },
+  { cx: 180, cy: 200 },
+  { cx: 160, cy: 170 },
+  { cx: 120, cy: 100 },
+  { cx: 80, cy: 110 },
+  { cx: 250, cy: 140 },
+  { cx: 270, cy: 150 },
+  { cx: 320, cy: 130 },
+  { cx: 340, cy: 150 },
+  { cx: 420, cy: 120 },
+  { cx: 400, cy: 130 },
+  { cx: 600, cy: 150 },
+  { cx: 650, cy: 320 },
+  { cx: 670, cy: 350 },
+  { cx: 550, cy: 350 },
+  { cx: 600, cy: 450 },
+];
+
+const Zooxanthele = ({
+  gTransform,
+  r = 4.504,
+}: {
+  gTransform: string;
+  r?: number;
+}): JSX.Element => (
+  <g transform={gTransform}>
+    <motion.circle cx={875.504} cy={459.578} r={r} fill="#499f29" opacity={1}>
+      <>
+        <animateTransform
+          className="zooAnimate"
+          attributeName="transform"
+          begin="indefinite"
+          dur="5s"
+          type="translate"
+          from="0 0"
+          to={`0 ${-150 + gTransform.length * 2}`}
+          fill="freeze"
+        />
+        <animateTransform
+          className="zooAnimateReset"
+          attributeName="transform"
+          begin="indefinite"
+          dur="3s"
+          type="translate"
+          to="0 0"
+          fill="freeze"
+        />
+      </>
+    </motion.circle>
+  </g>
 );
 
-const SvgComponent = (props) => {
+// The polyp contains 2 groups of zooxantheles
+// zooGroup is visible inside the tentacle and each circle has a well defined position
+// zooFree's circles are dynamically to appear and disappear right after to show the expulsion effect
+export const Polyp = (props: {
+  position: string;
+  bottom: number;
+  left: string;
+  width: string;
+  style: object;
+}): JSX.Element => {
   const {
     data: { reset },
   } = useContext();
-  const { kelpAmount, status, dyingFactor } = useStatus('id', {
-    initialKelpAmount: props.initialKelpAmount,
-    deathSpeed: props.deathSpeed,
+  // exposition égale ou supérieur à 31°C pendant 7j = blanchiment, 14j=mortalité
+  // death is controlled from useStatus
+  // bleaching is controlled with the light color, varing depending on deathSpeed
+  const { kelpAmount, status } = useStatus('id', {
+    initialKelpAmount: 80,
+    maxTempThreshould: 31,
+    deathSpeed: 1.14,
   });
-
-  const maxKelpAmount = useMaxValue(props.initialKelpAmount, kelpAmount);
+  const BLEACHING_MAX_THRESHOLD = 40;
+  const BLEACHING_MIN_THRESHOLD = 20;
+  const motionKelpAmount = motionValue(kelpAmount);
 
   const recover = useCallback(() => {
-    animate('#polyp #zooGroup circle', { fill: '#499f29' }, { duration: 1 });
+    animate('#polyp #zooGroup circle', { fill: '#499f29' }, { duration: 3 });
     // eslint-disable-next-line no-restricted-syntax
     for (const c of document.getElementsByClassName('zooAnimateReset')) {
       (c as SVGAnimateTransformElement).beginElement();
     }
+
+    // free zooxantheles
+    animate([
+      // small transparent delay to avoid the top border overflow
+      [
+        '#polyp #zooFree circle',
+        { fill: 'rgba(0, 0, 0, 0)' },
+        { duration: 0.5 },
+      ],
+      [
+        '#polyp #zooFree circle',
+        { fill: '#499f29' },
+        {
+          duration: 1,
+        },
+      ],
+      ['#polyp #zooFree circle', { fill: 'rgba(0, 0, 0, 0)' }, { duration: 2 }],
+    ]);
   }, []);
 
   // reset animations
   useEffect(() => {
     recover();
-  }, [reset]);
-
-  console.log(Math.abs(kelpAmount - 75), status, KELP_SPEED * 2);
+  }, [reset, recover]);
 
   useEffect(() => {
-    // on loosing 75%, loose kelp animation
+    // on reaching bleaching state, loose kelp animation
     if (
-      Math.abs(kelpAmount - 75) <= KELP_SPEED &&
+      Math.abs(kelpAmount - BLEACHING_MAX_THRESHOLD) <= KELP_SPEED &&
       status === CoralStatus.Dying
     ) {
       // zooxantheles in polyp
@@ -88,53 +149,37 @@ const SvgComponent = (props) => {
         ],
       ]);
 
-      // on recovering 75%, recover kelp animation
+      // on recovering from bleaching, recover kelp animation
     } else if (
-      Math.abs(kelpAmount - 75) <= KELP_SPEED &&
+      Math.abs(kelpAmount - BLEACHING_MAX_THRESHOLD) <= KELP_SPEED &&
       status === CoralStatus.Growing
     ) {
-      // eslint-disable-next-line no-restricted-syntax
       recover();
     }
-  }, [status, kelpAmount]);
+  }, [status, kelpAmount, recover]);
 
   const lightColor = mapValue(
-    motionValue(kelpAmount),
-    [100, 60],
+    motionKelpAmount,
+    [BLEACHING_MAX_THRESHOLD, BLEACHING_MIN_THRESHOLD],
     ['rgba(255, 179, 188, 1)', 'rgb(255,255,255)'],
   );
 
   const darkColor = mapValue(
-    motionValue(kelpAmount),
-    [100, 60],
+    motionKelpAmount,
+    [BLEACHING_MAX_THRESHOLD, BLEACHING_MIN_THRESHOLD],
     ['rgba(255, 110, 127, 1)', 'rgb(205,205,205)'],
   );
 
-  const opacity = mapValue(motionValue(kelpAmount), [0, 75], [0, 1]);
-  const centerOpacity = mapValue(motionValue(kelpAmount), [10, 75], [0, 1]);
-
-  const zooOpacity = 1; //mapValue(motionValue(kelpAmount), [50, 75], [0, 1]);
-
-  const zooxantheles = [
-    { cx: 130, cy: 370 },
-    { cx: 150, cy: 360 },
-    { cx: 180, cy: 350 },
-    { cx: 180, cy: 200 },
-    { cx: 160, cy: 170 },
-    { cx: 120, cy: 100 },
-    { cx: 80, cy: 110 },
-    { cx: 250, cy: 140 },
-    { cx: 270, cy: 150 },
-    { cx: 320, cy: 130 },
-    { cx: 340, cy: 150 },
-    { cx: 420, cy: 120 },
-    { cx: 400, cy: 130 },
-    { cx: 600, cy: 150 },
-    { cx: 650, cy: 320 },
-    { cx: 670, cy: 350 },
-    { cx: 550, cy: 350 },
-    { cx: 600, cy: 450 },
-  ];
+  const opacity = mapValue(
+    motionKelpAmount,
+    [0, BLEACHING_MIN_THRESHOLD + 15],
+    [0, 1],
+  );
+  const centerOpacity = mapValue(
+    motionKelpAmount,
+    [10, BLEACHING_MAX_THRESHOLD + 15],
+    [0, 1],
+  );
 
   return (
     <svg
@@ -142,30 +187,24 @@ const SvgComponent = (props) => {
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       xmlSpace="preserve"
-      style={{
-        fillRule: 'evenodd',
-        clipRule: 'evenodd',
-        strokeLinecap: 'round',
-        strokeLinejoin: 'round',
-        strokeMiterlimit: 1.5,
-      }}
       viewBox="0 0 695 509"
       {...props}
     >
       <g id="zooFree">
         {zooxantheles.map(({ cx, cy }) => (
           <motion.circle
+            key={`${cx} ${cy}`}
             cx={cx}
             cy={cy}
             r={4.504}
             fill="transparent"
-            opacity={zooOpacity}
+            opacity={1}
           >
             <animateTransform
               className="zooAnimate"
               attributeName="transform"
               begin="indefinite"
-              dur={(cx % 2) + 5 + 's'}
+              dur={`${(cx % 2) + 5}s`}
               type="translate"
               from="0 0"
               to="0 -150"
@@ -175,7 +214,7 @@ const SvgComponent = (props) => {
               className="zooAnimateReset"
               attributeName="transform"
               begin="indefinite"
-              dur="1s"
+              dur="3s"
               type="translate"
               to="0 0"
               fill="freeze"
@@ -437,19 +476,7 @@ const SvgComponent = (props) => {
           transform="translate(-654.945 -208.304)"
           opacity={opacity}
         />
-        <g transform="matrix(.94232 .26807 -.26807 .94232 -655.187 -445.98)">
-          <motion.circle
-            cx={875.504}
-            cy={459.578}
-            r={4.504}
-            style={{
-              fill: '#31641e',
-            }}
-            opacity={zooOpacity}
-          >
-            {zooxanthelesAnimations}
-          </motion.circle>
-        </g>
+        <Zooxanthele gTransform="matrix(.94232 .26807 -.26807 .94232 -655.187 -445.98)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -460,35 +487,7 @@ const SvgComponent = (props) => {
           transform="matrix(.6289 .1789 -.16513 .58045 -429.729 -204.025)"
           opacity={opacity}
         />
-        <g transform="matrix(.95004 .23926 -.23927 .95004 -657.455 -419.701)">
-          <motion.circle
-            cx={875.504}
-            cy={459.578}
-            r={4.504}
-            fill="#499f29"
-            opacity={zooOpacity}
-          >
-            <animateTransform
-              className="zooAnimate"
-              attributeName="transform"
-              begin="indefinite"
-              dur="6s"
-              type="translate"
-              from="0 0"
-              to="0 -150"
-              fill="freeze"
-            />
-            <animateTransform
-              className="zooAnimateReset"
-              attributeName="transform"
-              begin="indefinite"
-              dur="1s"
-              type="translate"
-              to="0 0"
-              fill="freeze"
-            />
-          </motion.circle>
-        </g>
+        <Zooxanthele gTransform="matrix(.95004 .23926 -.23927 .95004 -657.455 -419.701)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -499,13 +498,7 @@ const SvgComponent = (props) => {
           transform="matrix(.63405 .15968 -.14738 .5852 -424.737 -184.721)"
           opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#499f29"
-          transform="matrix(.9571 .2093 -.2093 .9571 -659.566 -392.659)"
-        />
+        <Zooxanthele gTransform="matrix(.9571 .2093 -.2093 .9571 -659.566 -392.659)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -516,11 +509,7 @@ const SvgComponent = (props) => {
           transform="matrix(.63875 .13968 -.12892 .58955 -419.58 -165.107)"
           opacity={opacity}
         />
-        <g transform="matrix(.96335 .1783 -.1783 .96335 -661.314 -364.914)">
-          <motion.circle cx={875.504} cy={459.578} r={4.504} fill="#499f29">
-            {zooxanthelesAnimations}
-          </motion.circle>
-        </g>
+        <Zooxanthele gTransform="matrix(.96335 .1783 -.1783 .96335 -661.314 -364.914)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -531,11 +520,7 @@ const SvgComponent = (props) => {
           transform="matrix(.64293 .11899 -.10982 .5934 -414.107 -145.228)"
           opacity={opacity}
         />
-        <g transform="matrix(.96868 .14663 -.14663 .96868 -662.45 -336.758)">
-          <motion.circle cx={875.504} cy={459.578} r={4.504} fill="#499f29">
-            {zooxanthelesAnimations}
-          </motion.circle>
-        </g>
+        <Zooxanthele gTransform="matrix(.96868 .14663 -.14663 .96868 -662.45 -336.758)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -546,11 +531,7 @@ const SvgComponent = (props) => {
           transform="matrix(.64648 .09786 -.09032 .59668 -408.178 -125.29)"
           opacity={opacity}
         />
-        <g transform="matrix(.97296 .11482 -.11482 .97296 -662.696 -308.589)">
-          <motion.circle cx={875.504} cy={459.578} r={4.504} fill="#499f29">
-            {zooxanthelesAnimations}
-          </motion.circle>
-        </g>
+        <Zooxanthele gTransform="matrix(.97296 .11482 -.11482 .97296 -662.696 -308.589)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -561,11 +542,7 @@ const SvgComponent = (props) => {
           transform="matrix(.64934 .07663 -.07072 .59932 -401.632 -105.564)"
           opacity={opacity}
         />
-        <g transform="matrix(.97617 .0832 -.0832 .97617 -661.747 -280.68)">
-          <motion.circle cx={875.504} cy={459.578} r={4.504} fill="#31641e">
-            {zooxanthelesAnimations}
-          </motion.circle>
-        </g>
+        <Zooxanthele gTransform="matrix(.97617 .0832 -.0832 .97617 -661.747 -280.68)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -576,18 +553,8 @@ const SvgComponent = (props) => {
           transform="matrix(.65149 .05553 -.05125 .6013 -394.235 -86.23)"
           opacity={opacity}
         />
-        <g transform="matrix(.97828 .05286 -.05286 .97828 -659.288 -253.97)">
-          <motion.circle
-            cx={875.504}
-            cy={459.578}
-            r={4.504}
-            fill="#31641e"
-            transform="matrix(.97828 .05286 -.05286 .97828 -659.288 -253.97)"
-          >
-            {zooxanthelesAnimations}
-          </motion.circle>
-        </g>
-        <path
+        <Zooxanthele gTransform="matrix(.97828 .05286 -.05286 .97828 -659.288 -253.97)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -597,11 +564,7 @@ const SvgComponent = (props) => {
           transform="matrix(.6529 .03528 -.03256 .6026 -385.87 -67.915)"
           opacity={opacity}
         />
-        <g transform="matrix(.9794 .0245 -.0245 .9794 -654.978 -229.076)">
-          <motion.circle cx={875.504} cy={459.578} r={4.504} fill="#499f29">
-            {zooxanthelesAnimations}
-          </motion.circle>
-        </g>
+        <Zooxanthele gTransform="matrix(.9794 .0245 -.0245 .9794 -654.978 -229.076)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -612,13 +575,7 @@ const SvgComponent = (props) => {
           transform="matrix(.65364 .01636 -.0151 .6033 -376.287 -51.018)"
           opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.97965 .01095 -.01095 .97965 -643.082 -217.136)"
-        />
+        <Zooxanthele gTransform="matrix(.97965 .01095 -.01095 .97965 -643.082 -217.136)" />
         <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
@@ -629,14 +586,8 @@ const SvgComponent = (props) => {
           transform="matrix(.6538 .0073 -.00674 .60344 -361.952 -42.954)"
           opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.97948 -.02128 .02128 .97948 -639.387 -189.237)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.97948 -.02128 .02128 .97948 -639.387 -189.237)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -644,15 +595,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.6537 -.0142 .01311 .60334 -352.68 -24.396)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.97906 -.03582 .03582 .97906 -627.114 -176.935)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.97906 -.03582 .03582 .97906 -627.114 -176.935)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -660,15 +606,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.65341 -.0239 .02207 .60308 -337.99 -16.37)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#499f29"
-          transform="matrix(.97881 -.04193 .04193 .97881 -611.187 -172.257)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.97881 -.04193 .04193 .97881 -611.187 -172.257)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -676,15 +617,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.65325 -.02798 .02583 .60293 -321.068 -13.498)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.979 -.0371 .0371 .979 -590.432 -177.334)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.979 -.0371 .0371 .979 -590.432 -177.334)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -692,15 +628,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.65338 -.02476 .02285 .60305 -301.1 -17.143)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.97956 -.01729 .01729 .97956 -567.86 -194.17)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.97956 -.01729 .01729 .97956 -567.86 -194.17)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.874 3.731-4.182 3.731h-17.636c-2.308 0-4.182-1.672-4.182-3.731v-7.463c0-2.06 1.874-3.732 4.182-3.732h17.636c2.308 0 4.182 1.672 4.182 3.732Z"
           style={{
             fill: 'none',
@@ -708,15 +639,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.75px',
           }}
           transform="matrix(.53837 -.0095 .01065 .60339 -177.345 -29.922)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.96331 .17849 -.17849 .96331 -585.812 -315.607)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.96331 .17849 -.17849 .96331 -585.812 -315.607)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -724,15 +650,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.6429 .11912 -.10994 .59338 -338.65 -95.87)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.93047 .30669 -.30669 .93047 -533.003 -421.001)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.93047 .30669 -.30669 .93047 -533.003 -421.001)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -740,15 +661,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.62099 .20468 -.18891 .57315 -317.71 -169.959)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.8611 .46726 -.46726 .8611 -481.475 -567.485)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.8611 .46726 -.46726 .8611 -481.475 -567.485)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -756,15 +672,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.5747 .31184 -.28782 .53042 -314.253 -282.16)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.90948 .36424 -.36424 .90948 -505.102 -467.62)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.90948 .36424 -.36424 .90948 -505.102 -467.62)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -772,15 +683,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.60698 .24309 -.22436 .56022 -305.92 -203.612)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#499f29"
-          transform="matrix(.89001 .40953 -.40953 .89001 -483.986 -505.287)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.89001 .40953 -.40953 .89001 -483.986 -505.287)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -788,15 +694,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.59398 .27331 -.25226 .54823 -298.336 -231.595)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#499f29"
-          transform="matrix(.97907 .03545 -.03545 .97907 -611.347 -192.771)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.97907 .03545 -.03545 .97907 -611.347 -192.771)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -804,15 +705,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.65342 .02366 -.02184 .60309 -334.662 -11.61)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.97063 .13305 -.13305 .97063 -595.288 -276.636)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.97063 .13305 -.13305 .97063 -595.288 -276.636)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -820,15 +716,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.64779 .0888 -.08195 .59789 -338.078 -68.75)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.87513 .44043 -.44043 .87513 -473.262 -533.29)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.87513 .44043 -.44043 .87513 -473.262 -533.29)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -836,15 +727,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.58405 .29393 -.2713 .53906 -297.304 -253.268)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#499f29"
-          transform="matrix(.86567 .45874 -.45874 .86567 -473.026 -553.39)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.86567 .45874 -.45874 .86567 -473.026 -553.39)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -852,15 +738,10 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.57774 .30616 -.28257 .53324 -302.998 -269.728)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#499f29"
-          transform="matrix(.94934 .24204 -.24204 .94934 -561.918 -368.35)"
-        />
-        <path
+        <Zooxanthele gTransform="matrix(.94934 .24204 -.24204 .94934 -561.918 -368.35)" />
+        <motion.path
           d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
           style={{
             fill: 'none',
@@ -868,16 +749,11 @@ const SvgComponent = (props) => {
             strokeWidth: '1.59px',
           }}
           transform="matrix(.63358 .16153 -.14909 .58477 -329.886 -132.692)"
+          opacity={opacity}
         />
-        <motion.circle
-          cx={875.504}
-          cy={459.578}
-          r={4.504}
-          fill="#31641e"
-          transform="matrix(.97691 .07397 -.07397 .97691 -609.943 -226.324)"
-        />
+        <Zooxanthele gTransform="matrix(.97691 .07397 -.07397 .97691 -609.943 -226.324)" />
       </g>
-      <path
+      <motion.path
         d="M889 458.806v7.463c0 2.059-1.543 3.731-3.444 3.731h-19.112c-1.901 0-3.444-1.672-3.444-3.731v-7.463c0-2.06 1.543-3.732 3.444-3.732h19.112c1.901 0 3.444 1.672 3.444 3.732Z"
         style={{
           fill: 'none',
@@ -885,8 +761,8 @@ const SvgComponent = (props) => {
           strokeWidth: '1.59px',
         }}
         transform="matrix(.65198 .04937 -.04556 .60176 -340.605 -34.41)"
+        opacity={opacity}
       />
-
       <path
         d="M835.539 355.901c-43.734 7.331-31.244 49.882-143.341 122.78-38.281 4.049-1.884 25.872 9.901 3.007 114.094-59.213 144.869-41.972 185.57-116.431-22.108-17.922-47.293-9.533-52.13-9.356Z"
         style={{
@@ -1166,7 +1042,6 @@ const SvgComponent = (props) => {
           y2={0}
           gradientTransform="matrix(103.50028 -11.28821 15.09912 77.37754 758.245 401.03)"
           gradientUnits="userSpaceOnUse"
-          opacity={opacity}
         >
           <motion.stop
             offset={0}
@@ -1191,7 +1066,6 @@ const SvgComponent = (props) => {
           y2={0}
           gradientTransform="matrix(67.32042 3.7129 -6.3522 39.34929 782.187 365.488)"
           gradientUnits="userSpaceOnUse"
-          opacity={opacity}
         >
           <motion.stop
             offset={0}
@@ -1216,7 +1090,6 @@ const SvgComponent = (props) => {
           y2={0}
           gradientTransform="matrix(149.96187 -100.46121 -95.61646 -157.56023 757.854 498.815)"
           gradientUnits="userSpaceOnUse"
-          opacity={opacity}
         >
           <motion.stop
             offset={0}
@@ -1407,4 +1280,3 @@ const SvgComponent = (props) => {
     </svg>
   );
 };
-export default SvgComponent;

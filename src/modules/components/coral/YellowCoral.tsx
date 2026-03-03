@@ -1,4 +1,4 @@
-import { useCallback, useEffect } from 'react';
+import { JSX, useCallback, useEffect } from 'react';
 
 import { mapValue, motion, motionValue } from 'motion/react';
 
@@ -6,19 +6,39 @@ import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
 
 import { StatusLabel } from '../StatusLabel';
 
-const YellowCoral = (props) => {
+// exposition égale ou supérieur à 32°C pendant 21j = blanchiment, 28j=mortalité
+// death is controlled from useStatus
+// bleaching is controlled with the light color, varing depending on deathSpeed
+export const YellowCoral = ({
+  style,
+  offsetLeft = 7,
+  bottomOffset,
+  scale,
+  initialKelpAmount,
+}: {
+  initialKelpAmount: number;
+  style?: {
+    left?: number | string;
+    right?: number | string;
+    bottom: number;
+    position: string;
+    transform?: string;
+    filter?: string;
+  };
+  scale: string | number;
+  offsetLeft?: number;
+  bottomOffset?: number;
+}): JSX.Element => {
   const {
     data: { reset, showStatus },
   } = useContext();
   const { kelpAmount, status } = useStatus('yellow', {
-    initialKelpAmount: props.initialKelpAmount,
-    deathSpeed: 0.9,
-    maxTempThreshould: 28,
+    initialKelpAmount,
+    deathSpeed: 0.57,
+    maxTempThreshould: 32,
   });
-  const [maxKelpAmount, setMax] = useMaxValue(
-    props.initialKelpAmount,
-    kelpAmount,
-  );
+  const BLEACHING_MAX_THRESHOLD = 20;
+  const [maxKelpAmount, setMax] = useMaxValue(initialKelpAmount, kelpAmount);
 
   const recover = useCallback(() => {
     // eslint-disable-next-line no-restricted-syntax
@@ -41,19 +61,19 @@ const YellowCoral = (props) => {
   useEffect(() => {
     recover();
     setMax(0);
-  }, [reset]);
+  }, [reset, setMax, recover]);
 
   const pathLength = mapValue(motionValue(maxKelpAmount), [80, 100], [0, 1]);
 
   const lightColor = mapValue(
     motionValue(kelpAmount),
-    [100, 10],
+    [BLEACHING_MAX_THRESHOLD, 10],
     ['rgb(253,213,91)', 'rgb(255,255,255)'],
   );
 
   const darkColor = mapValue(
     motionValue(kelpAmount),
-    [100, 10],
+    [BLEACHING_MAX_THRESHOLD, 10],
     ['rgb(194,115,61)', 'rgb(205,205,205)'],
   );
 
@@ -64,16 +84,17 @@ const YellowCoral = (props) => {
           name="Porite"
           status={status}
           kelpAmount={kelpAmount}
-          left={props.style.left}
-          bottom={props.style.bottom}
-          offsetLeft={props.offsetLeft}
-          bottomOffset={props.bottomOffset}
+          left={style?.left}
+          bottom={style?.bottom}
+          offsetLeft={offsetLeft}
+          bottomOffset={bottomOffset}
           color="gold"
         />
       )}
       <svg
-        width={props.scale}
-        height={props.scale}
+        width={scale}
+        height={scale}
+        scale={scale}
         viewBox="0 0 308 479"
         style={{
           fillRule: 'evenodd',
@@ -81,9 +102,8 @@ const YellowCoral = (props) => {
           strokeLinecap: 'round',
           strokeLinejoin: 'round',
           strokeMiterlimit: 1.5,
-          ...props.style,
+          ...style,
         }}
-        {...props}
       >
         <g transform="matrix(1,0,0,1,-574.440728,-332.940435)">
           <g transform="matrix(1,0,0,1,-196.234552,141.295253)">
@@ -449,4 +469,3 @@ const YellowCoral = (props) => {
     </>
   );
 };
-export default YellowCoral;

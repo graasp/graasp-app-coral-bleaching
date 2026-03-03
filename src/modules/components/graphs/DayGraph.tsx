@@ -1,47 +1,29 @@
 import { JSX } from 'react';
+import { useTranslation } from 'react-i18next';
 
 import {
   Area,
   AreaChart,
-  Bar,
   CartesianGrid,
-  ComposedChart,
-  DotItemDotProps,
-  Line,
   Tooltip,
+  TooltipContentProps,
   XAxis,
   YAxis,
 } from 'recharts';
 
 import { useTemperatureHistory, useTime } from '@/utils/hooks';
 
+import { humanizeDays } from './utils';
+
 const DAY_INTERVAL = 20;
 const controlsWidth = 150;
-
-function humanizeDays(value) {
-  const days = Math.floor(value);
-  const hours = Math.round((value - days) * 24);
-
-  let result = [];
-
-  if (days > 0) {
-    result.push(days === 1 ? '1 day' : `${days} days`);
-  }
-
-  if (hours > 0) {
-    result.push(hours === 1 ? '1 hour' : `${hours} hours`);
-  }
-
-  return result.join(' and ');
-}
 
 const CustomTooltip = ({
   active,
   payload,
   label,
-}: TooltipContentProps<string | number, string>) => {
+}: TooltipContentProps<string | number, string>): JSX.Element => {
   const isVisible = active && payload && payload.length;
-  console.log(payload);
   return (
     <div
       style={{
@@ -51,8 +33,9 @@ const CustomTooltip = ({
         border: '1px solid #ccc',
       }}
     >
-      {isVisible && (
+      {isVisible && label && (
         <>
+          {/* @ts-expect-error */}
           <div>{`${humanizeDays(label)}`}</div>
           <div style={{ fontWeight: 'bold' }}>
             {`${payload[0].value.toFixed(1)}°C`}{' '}
@@ -64,16 +47,21 @@ const CustomTooltip = ({
 };
 
 // eslint-disable-next-line react/function-component-definition
-export function CompleteGraph(): JSX.Element {
+export function DayGraph(): JSX.Element {
   const { data: time } = useTime();
+  const { t } = useTranslation();
   const { data: log } = useTemperatureHistory();
+
+  const slicedData = log.filter(
+    ({ t: value }) => value > Math.max(time - DAY_INTERVAL, 0),
+  );
 
   return (
     <AreaChart
       // minus padding, minus controls width
       width={window.innerWidth - 100 - controlsWidth}
-      height={450}
-      data={log}
+      height={150}
+      data={slicedData}
       margin={{ right: 20 }}
       style={{
         borderRadius: 30,
@@ -88,26 +76,28 @@ export function CompleteGraph(): JSX.Element {
       />
       <XAxis
         dataKey="t"
-        tickFormatter={(t) => Math.floor(t).toString()}
+        tickFormatter={(v) => Math.round(v).toString()}
         type="number"
-        label={{ value: 'days', position: 'insideBottom' }}
-        // minTickGap={3}
-        // ticks={log.map(({ t }) => Math.floor(t))}
-        tickCount={20}
+        label={{ value: t('days'), position: 'insideBottom' }}
+        minTickGap={0}
+        ticks={Array.from(
+          { length: DAY_INTERVAL },
+          (x, k) => Math.max(time - DAY_INTERVAL, 0) + k,
+        )}
         style={{
           fontSize: '0.8rem',
         }}
       />
       <YAxis
         label={{
-          value: 'temperature',
+          value: t('temperature'),
           angle: -90,
           position: 'inside',
           textAnchor: 'middle',
         }}
         includeHidden
         domain={[20, 38]}
-        tickFormatter={(t) => Math.floor(t).toString()}
+        tickFormatter={(v) => Math.floor(v).toString()}
         style={{
           fontSize: '0.8rem',
         }}

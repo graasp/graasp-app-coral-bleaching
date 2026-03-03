@@ -1,15 +1,12 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
 import React, { useEffect, useState } from 'react';
 
-import { setContext } from '@sentry/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { use } from 'chai';
 
 import {
   INIT_CURRENT_TEMPERATURE,
   INIT_GROWTH_SCALE,
   INIT_KELP_AMOUNT,
-  KELP_SPEED,
   MAX_TEMP_GROWTH,
   MIN_TEMP_GROWTH,
   TIME_SPEED,
@@ -52,19 +49,21 @@ const KEYS = {
   animation: ['animation'],
 };
 
-type Context = { view: View; reset: number };
+type Context = { view: View; reset: number; showStatus: boolean };
+
+const DEFAULT_CONTEXT = {
+  view: View.Micro,
+  reset: 0,
+  showStatus: true,
+};
 
 export const useContext = () => {
   const queryClient = useQueryClient();
   const value = useQuery({
     queryKey: KEYS.context,
     queryFn: () =>
-      queryClient.getQueryData<{
-        view: View;
-        reset: number;
-        showStatus: boolean;
-      }>(KEYS.context),
-    initialData: { view: View.Macro, reset: 0, showStatus: true },
+      queryClient.getQueryData<Context>(KEYS.context) ?? DEFAULT_CONTEXT,
+    initialData: DEFAULT_CONTEXT,
   });
   return value;
 };
@@ -134,7 +133,7 @@ export const useSetView = () => {
   return useMutation({
     mutationFn: async (view: View) => {
       queryClient.setQueryData<Context>(['context'], (d) => ({
-        ...(d ?? { reset: 0, view }),
+        ...(d ?? DEFAULT_CONTEXT),
         view,
       }));
     },
@@ -146,7 +145,7 @@ export const useSetShowStatus = () => {
   return useMutation({
     mutationFn: async (value: boolean) => {
       queryClient.setQueryData<Context>(['context'], (d) => ({
-        ...d,
+        ...(d ?? DEFAULT_CONTEXT),
         showStatus: value,
       }));
     },
@@ -155,19 +154,29 @@ export const useSetShowStatus = () => {
 
 export const useStageDimensions = ({ select = undefined } = {}) => {
   const queryClient = useQueryClient();
+  const defaultData = {
+    width: window?.innerWidth,
+    height: window?.innerHeight,
+  };
   const value = useQuery({
     queryKey: ['stageDimensions'],
     queryFn: () =>
       queryClient.getQueryData<{ height: number; width: number }>([
         'stageDimensions',
-      ]),
+      ]) ?? defaultData,
     select,
-    initialData: {
-      width: window?.innerWidth,
-      height: window?.innerHeight,
-    },
+    initialData: defaultData,
   });
   return value;
+};
+
+export const useSetStageDimensions = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: async (dimensions: { height: number; width: number }) => {
+      queryClient.setQueryData(['stageDimensions'], dimensions);
+    },
+  });
 };
 
 export const useGrowthScale = () => {
@@ -214,7 +223,6 @@ export const useStatus = (
   status: CoralStatus;
   dyingFactor: number;
 } => {
-  const queryClient = useQueryClient();
   const { data: time } = useTime();
 
   const [status, setStatus] = useState(CoralStatus.Normal);
@@ -242,7 +250,7 @@ export const useStatus = (
       setKelpAmount(initialKelpAmount);
       updateTemperature(INIT_CURRENT_TEMPERATURE);
     }
-  }, [reset]);
+  }, [initialKelpAmount, reset, updateTemperature]);
 
   // update kelp value
   useEffect(() => {
@@ -264,6 +272,7 @@ export const useStatus = (
       const newValue = Math.max(0, Math.min(value, 100));
       setKelpAmount(newValue);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   // state machine per status
@@ -289,19 +298,14 @@ export const useStatus = (
             setStatus(CoralStatus.Normal);
           } else if (kelpAmount <= 0) {
             setStatus(CoralStatus.Dead);
-            console.log(coralId, 'is dead');
-
-            // } else {
-            //   setDyingFactor((d) => d + TIME_SPEED * deathSpeed);
+            console.debug(coralId, 'is dead');
           }
-          break;
-        case CoralStatus.Dead:
-          // setKelpAmount(0);
           break;
         default:
           break;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   return { kelpAmount, status, dyingFactor };
@@ -322,7 +326,7 @@ export const useReset = () => {
       queryClient.setQueryData(KEYS.temperatureHistory, []);
       queryClient.setQueryData(KEYS.time, 0);
       queryClient.setQueryData<Context>(KEYS.context, (d) => ({
-        ...(d ?? { reset: 0, view: View.Micro }),
+        ...(d ?? DEFAULT_CONTEXT),
         reset: (d?.reset ?? 0) + 1,
       }));
     },
@@ -348,7 +352,7 @@ export const useAnimation = () => {
   return value;
 };
 
-export const useMaxValue = (initialValue, newValue) => {
+export const useMaxValue = (initialValue: number, newValue: number) => {
   const [max, setMax] = useState(initialValue);
 
   // prevent shrinking
@@ -356,6 +360,7 @@ export const useMaxValue = (initialValue, newValue) => {
     if (newValue > max) {
       setMax(newValue);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newValue]);
 
   return [max, setMax];
