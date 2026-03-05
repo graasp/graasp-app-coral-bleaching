@@ -5,64 +5,33 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Scatter,
   Tooltip,
-  TooltipContentProps,
   XAxis,
   YAxis,
 } from 'recharts';
 
-import { useTemperatureHistory, useTime } from '@/utils/hooks';
+import { useTime } from '@/utils/hooks';
 
-import { humanizeDays } from './utils';
+import { Tooltip as CustomTooltip } from './Tooltip';
+import { useMergedLogs } from './useMergedLogs';
 
 const DAY_INTERVAL = 20;
 const controlsWidth = 150;
-
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: TooltipContentProps<string | number, string>): JSX.Element => {
-  const isVisible = active && payload && payload.length;
-  return (
-    <div
-      style={{
-        visibility: isVisible ? 'visible' : 'hidden',
-        backgroundColor: 'white',
-        padding: '2px',
-        border: '1px solid #ccc',
-      }}
-    >
-      {isVisible && label && (
-        <>
-          {/* @ts-expect-error */}
-          <div>{`${humanizeDays(label)}`}</div>
-          <div style={{ fontWeight: 'bold' }}>
-            {`${payload[0].value.toFixed(1)}°C`}{' '}
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
 
 // eslint-disable-next-line react/function-component-definition
 export function DayGraph(): JSX.Element {
   const { data: time } = useTime();
   const { t } = useTranslation();
-  const { data: log } = useTemperatureHistory();
-
-  const slicedData = log.filter(
-    ({ t: value }) => value > Math.max(time - DAY_INTERVAL, 0),
-  );
+  const log = useMergedLogs({ interval: DAY_INTERVAL });
 
   return (
     <AreaChart
       // minus padding, minus controls width
       width={window.innerWidth - 100 - controlsWidth}
       height={150}
-      data={slicedData}
-      margin={{ right: 20 }}
+      data={log}
+      margin={{ right: 20, bottom: 5 }}
       style={{
         borderRadius: 30,
       }}
@@ -74,11 +43,23 @@ export function DayGraph(): JSX.Element {
         stroke="#8884d8"
         isAnimationActive={false}
       />
+      <Scatter
+        activeShape={{ fill: 'red' }}
+        name="A school"
+        dataKey="death"
+        fill="red"
+        isAnimationActive={false}
+      />
       <XAxis
         dataKey="t"
         tickFormatter={(v) => Math.round(v).toString()}
         type="number"
-        label={{ value: t('days'), position: 'insideBottom' }}
+        label={{
+          value: t('days'),
+          position: 'insideBottom',
+          offset: '0',
+          fontSize: '0.8rem',
+        }}
         minTickGap={0}
         ticks={Array.from(
           { length: DAY_INTERVAL },
@@ -92,10 +73,9 @@ export function DayGraph(): JSX.Element {
         label={{
           value: t('temperature'),
           angle: -90,
+          fontSize: '0.8rem',
           position: 'inside',
-          textAnchor: 'middle',
         }}
-        includeHidden
         domain={[20, 38]}
         tickFormatter={(v) => Math.floor(v).toString()}
         style={{

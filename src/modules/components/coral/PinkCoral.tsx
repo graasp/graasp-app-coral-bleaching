@@ -34,10 +34,10 @@ export const PinkCoral = ({
   // exposition égale ou supérieur à 31°C pendant 7j = blanchiment, 14j=mortalité
   // death is controlled from useStatus
   // bleaching is controlled with the light color, varing depending on deathSpeed
-  const { kelpAmount, status } = useStatus('pink', {
+  const { kelpAmount, status } = useStatus('Acropora', {
     initialKelpAmount,
-    maxTempThreshould: 31,
     deathSpeed: 1.14,
+    maxTempThreshould: 31,
   });
   const BLEACHING_MAX_THRESHOLD = 40;
   const [maxKelpAmount, setMax] = useMaxValue(initialKelpAmount, kelpAmount);

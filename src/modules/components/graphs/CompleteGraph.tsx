@@ -5,52 +5,21 @@ import {
   Area,
   AreaChart,
   CartesianGrid,
+  Scatter,
   Tooltip,
-  TooltipContentProps,
   XAxis,
   YAxis,
 } from 'recharts';
 
-import { useTemperatureHistory } from '@/utils/hooks';
-
-import { humanizeDays } from './utils';
+import { Tooltip as CustomTooltip } from './Tooltip';
+import { useMergedLogs } from './useMergedLogs';
 
 const controlsWidth = 150;
-
-const CustomTooltip = ({
-  active,
-  payload,
-  label,
-}: TooltipContentProps<string | number, string>): JSX.Element => {
-  const isVisible = active && payload && payload.length;
-
-  const humanizedLabel = humanizeDays(Number.parseFloat(String(label)));
-
-  return (
-    <div
-      style={{
-        visibility: isVisible ? 'visible' : 'hidden',
-        backgroundColor: 'white',
-        padding: '2px',
-        border: '1px solid #ccc',
-      }}
-    >
-      {isVisible && (
-        <>
-          {label && <div>{humanizedLabel}</div>}
-          <div style={{ fontWeight: 'bold' }}>
-            {`${payload[0].value.toFixed(1)}°C`}{' '}
-          </div>
-        </>
-      )}
-    </div>
-  );
-};
 
 // eslint-disable-next-line react/function-component-definition
 export function CompleteGraph(): JSX.Element {
   const { t: translate } = useTranslation();
-  const { data: log } = useTemperatureHistory();
+  const log = useMergedLogs();
 
   return (
     <AreaChart
@@ -69,6 +38,13 @@ export function CompleteGraph(): JSX.Element {
         dataKey="temp"
         stroke="#8884d8"
         isAnimationActive={false}
+      />
+      <Scatter
+        activeShape={{ fill: 'red' }}
+        name="A school"
+        dataKey="death"
+        isAnimationActive={false}
+        fill="red"
       />
       <XAxis
         dataKey="t"

@@ -32,7 +32,7 @@ export const PurpleCoral = ({
   // exposition égale ou supérieur à 31°C pendant 10j = blanchiment, 14j=mortalité
   // death is controlled from useStatus
   // bleaching is controlled with the light color, varing depending on deathSpeed
-  const { kelpAmount, status } = useStatus('purple', {
+  const { kelpAmount, status } = useStatus('Pocillopora', {
     initialKelpAmount,
     deathSpeed: 1.14,
     maxTempThreshould: 31,

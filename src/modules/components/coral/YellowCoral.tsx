@@ -32,7 +32,7 @@ export const YellowCoral = ({
   const {
     data: { reset, showStatus },
   } = useContext();
-  const { kelpAmount, status } = useStatus('yellow', {
+  const { kelpAmount, status } = useStatus('Porite', {
     initialKelpAmount,
     deathSpeed: 0.57,
     maxTempThreshould: 32,

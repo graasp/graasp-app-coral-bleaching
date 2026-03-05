@@ -20,14 +20,18 @@ const KEYS = {
   kelpAmount: ['kelpAmount'],
   temperatureHistory: ['temperatureHistory'],
   animation: ['animation'],
+  deathHistory: ['deathHistory'],
 };
 
 type Context = { view: View; reset: number; showStatus: boolean };
 
+export type Log = { t: number; name: string };
+
 const DEFAULT_CONTEXT = {
   view: View.Macro,
+  showStatus: false,
+  // changes on this value trigger reset
   reset: 0,
-  showStatus: true,
 };
 
 export const useContext = () => {
@@ -77,6 +81,16 @@ export const useTemperatureHistory = () => {
       queryClient.getQueryData<{ t: number; temp: number }[]>(
         KEYS.temperatureHistory,
       ) ?? [],
+    initialData: [],
+  });
+  return value;
+};
+
+export const useDeathHistory = () => {
+  const queryClient = useQueryClient();
+  const value = useQuery({
+    queryKey: KEYS.deathHistory,
+    queryFn: () => queryClient.getQueryData<Log[]>(KEYS.deathHistory) ?? [],
     initialData: [],
   });
   return value;
@@ -175,6 +189,7 @@ export const useStatus = (
   dyingFactor: number;
 } => {
   const { data: time } = useTime();
+  const queryClient = useQueryClient();
 
   const [status, setStatus] = useState(CoralStatus.Normal);
   const { data: currentTemperature } = useCurrentTemperature();
@@ -250,6 +265,12 @@ export const useStatus = (
           } else if (kelpAmount <= 0) {
             setStatus(CoralStatus.Dead);
             console.debug(coralId, 'is dead');
+
+            // save death timestamp
+            queryClient.setQueryData<{ t: number; name: string }[]>(
+              KEYS.deathHistory,
+              (d) => (d ?? []).concat([{ t: time, name: coralId }]),
+            );
           }
           break;
         default:
