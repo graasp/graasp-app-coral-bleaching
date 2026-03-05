@@ -3,10 +3,8 @@
   "include": [
     "vite.config.ts",
     "eslint.config.mjs",
-    "cypress.config.ts",
     "src/**/*.tsx",
     "src/**/*.ts",
-    "test/**/*.ts",
-    "cypress/**/*.ts"
+    "test/**/*.ts"
   ]
 }

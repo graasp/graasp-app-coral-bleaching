@@ -4,7 +4,7 @@ const {
   VITE_SENTRY_ENV,
   VITE_SENTRY_DSN,
   VITE_API_HOST,
-} = globalThis.Cypress ? Cypress.env() : import.meta.env;
+} = import.meta.env;
 
 export const API_HOST = VITE_API_HOST;
 export const VERSION = VITE_VERSION || 'latest';

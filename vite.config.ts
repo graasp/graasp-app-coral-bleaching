@@ -1,6 +1,6 @@
 /// <reference types="./src/env"/>
 import react from '@vitejs/plugin-react';
-import { resolve } from 'path';
+import { resolve } from 'node:path';
 import { UserConfigExport, defineConfig, loadEnv } from 'vite';
 import istanbul from 'vite-plugin-istanbul';
 import svgr from 'vite-plugin-svgr';
@@ -17,29 +17,20 @@ export default ({ mode }: { mode: string }): UserConfigExport => {
   return defineConfig({
     base: '',
     server: {
-      port: parseInt(process.env.VITE_PORT, 10) || 4001,
+      port: Number.parseInt(process.env.VITE_PORT, 10) || 4001,
       open: mode !== 'test', // open only when mode is different from test
       watch: {
-        ignored: ['**/coverage/**', '**/cypress/downloads/**'],
+        ignored: ['**/coverage/**'],
       },
     },
     preview: {
-      port: parseInt(process.env.VITE_PORT || '3333', 10),
+      port: Number.parseInt(process.env.VITE_PORT || '3333', 10),
       strictPort: true,
     },
     build: {
       outDir: 'build',
     },
     plugins: [
-      // mode === 'test'
-      //   ? undefined
-      //   : checker({
-      //       typescript: true,
-      //       eslint: {
-      //         lintCommand: 'eslint "src/**/*.{ts,tsx}"',
-      //         useFlatConfig: true,
-      //       },
-      //     }),
       react(),
       svgr(),
       istanbul({

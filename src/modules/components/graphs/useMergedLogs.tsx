@@ -20,7 +20,7 @@ export const useMergedLogs = ({
   const { data: time } = useTime();
 
   const deathTimeNames = groupby(deathLog, (dt) => dt.name);
-  const deathTimes = Object.entries(deathTimeNames).map(([k, v]) => v[0]);
+  const deathTimes = Object.entries(deathTimeNames).map(([_k, v]) => v[0]);
 
   const slicedData = log
     .filter(({ t: value }) =>
