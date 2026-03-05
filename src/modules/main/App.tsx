@@ -4,67 +4,76 @@ import { View } from '@/config/types';
 import {
   useAnimation,
   useContext,
+  useSetStageDimensions,
   useStageDimensions,
   useUpdateTime,
 } from '@/utils/hooks';
 
-import i18n, { DEFAULT_LANGUAGE } from '../../config/i18n';
-import Controls from '../Controls';
-import DayGraph from '../DayGraph';
-import Debug from '../Debug';
 import { SettingsButton } from '../components/settings/SettingsButton';
 import { Thermometer } from '../components/thermometer/Thermometer';
-import Footer from './Footer';
-import MacroView from './MacroView';
-import MicroView from './MicroView';
+import { Footer } from './Footer';
+import { MacroView } from './MacroView';
+import { MicroView } from './MicroView';
 
 const App = (): JSX.Element => {
   const { data } = useContext();
-  const interval = createRef();
+  const interval = createRef<number>();
   const { data: stageDimensions } = useStageDimensions();
   const { mutate: updateTime } = useUpdateTime();
   const { data: isPlaying } = useAnimation();
+  const { mutate: setStageDimensions } = useSetStageDimensions();
 
-  // const checkSize = (): void => {
-  //   const stageWidth = window?.innerWidth || 0;
-  //   const stageHeight = window?.innerHeight || 0;
-  //   setStageDimensions({ width: stageWidth, height: stageHeight });
-  // };
+  const checkSize = (): void => {
+    const stageWidth = window?.innerWidth || 0;
+    const stageHeight = window?.innerHeight || 0;
+    setStageDimensions({ width: stageWidth, height: stageHeight });
+  };
+
+  useEffect(() => {
+    checkSize();
+
+    const ro = new ResizeObserver(() => {
+      checkSize();
+    });
+    const root = document.querySelector(`#root`);
+    if (root) {
+      ro.observe(root);
+
+      return () => {
+        ro.unobserve(root);
+      };
+    }
+
+    return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (isPlaying) {
       interval.current = setInterval(() => {
         updateTime();
       }, 100);
-      // checkSize();
-      // const ro = new ResizeObserver(() => {
-      //   checkSize();
-      // });
-      // ro.observe(document.querySelector(`#container`));
 
       return () => {
-        clearInterval(interval.current);
+        if (interval && interval.current) {
+          clearInterval(interval.current);
+        }
       };
     }
-    clearInterval(interval.current);
-  }, [isPlaying]);
-
-  // useEffect(() => {
-  //   // handle a change of language
-  //   const lang = context?.lang ?? DEFAULT_LANGUAGE;
-  //   if (i18n.language !== lang) {
-  //     i18n.changeLanguage(lang);
-  //   }
-  // }, [context]);
+    return () => {
+      if (interval.current) {
+        clearInterval(interval.current);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isPlaying, updateTime]);
 
   return (
-    <>
-      <Debug />
+    <div>
       <Footer />
       <Thermometer />
       <SettingsButton />
 
-      {/* TODO move in macro */}
       {data.view === View.Macro ? (
         <MacroView
           width={stageDimensions.width}
@@ -76,7 +85,7 @@ const App = (): JSX.Element => {
           height={stageDimensions.height}
         />
       )}
-    </>
+    </div>
   );
 };
 

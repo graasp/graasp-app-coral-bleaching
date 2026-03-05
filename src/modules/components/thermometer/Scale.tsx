@@ -12,8 +12,8 @@ import {
   THERMOMETER_WIDTH,
   TICK_STEP_FACTOR,
 } from '../../../config/constants';
-import { celsiusToKelvin, kelvinToCelsius } from '../../../utils/utils.js';
 import Slider from './Slider.js';
+import { celsiusToKelvin, kelvinToCelsius } from './utils.js';
 
 // compute the corresponding height in px given the temperature
 const temperatureToHeight = ({
@@ -60,6 +60,7 @@ const renderScales = ({
         <g key={text}>
           <text
             style={{
+              // @ts-expect-error
               '-webkit-user-select': 'none',
               '-moz-user-select': 'none',
               '-ms-user-select': 'none',

@@ -1,30 +1,38 @@
-import React from 'react';
+import { JSX } from 'react';
 
 import { Stack } from '@mui/material';
 
 import Controls from '../Controls';
-import DayGraph from '../DayGraph';
+import CompleteGraphModal from '../components/graphs/CompleteGraphModal';
+import { DayGraph } from '../components/graphs/DayGraph';
 
-function Footer() {
-  return (
+export const Footer = (): JSX.Element => (
+  <Stack
+    px={2}
+    py={2}
+    style={{
+      width: '100%',
+      position: 'absolute',
+      bottom: 0,
+      left: 0,
+      zIndex: 1000,
+    }}
+  >
     <Stack
+      borderRadius={5}
       justifyContent="center"
       direction="row"
-      pb={2}
-      pt={2}
+      p={2}
       style={{
         width: '100%',
-        position: 'absolute',
-        bottom: 0,
-        left: 0,
-        zIndex: 1000,
         background: 'white',
       }}
     >
       <Controls />
       <DayGraph />
+      <span>
+        <CompleteGraphModal />
+      </span>
     </Stack>
-  );
-}
-
-export default Footer;
+  </Stack>
+);

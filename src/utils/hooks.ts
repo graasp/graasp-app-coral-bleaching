@@ -1,47 +1,17 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React, { useEffect, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 
-import { setContext } from '@sentry/react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { use } from 'chai';
 
 import {
   INIT_CURRENT_TEMPERATURE,
   INIT_GROWTH_SCALE,
   INIT_KELP_AMOUNT,
-  KELP_SPEED,
   MAX_TEMP_GROWTH,
   MIN_TEMP_GROWTH,
   TIME_SPEED,
 } from '@/config/constants';
 import { View } from '@/config/types';
-
-export type UpdateArgument<T extends object> =
-  | T
-  | ((previousArg: T) => Partial<T>);
-
-/* istanbul ignore next */
-export function useObjectState<T extends object>(
-  initialValue: T,
-): [T, (arg: UpdateArgument<T>) => void] {
-  const [state, setState] = React.useState(initialValue);
-
-  const handleUpdate = React.useCallback((arg: UpdateArgument<T>) => {
-    if (typeof arg === 'function') {
-      setState((s) => {
-        const newState = arg(s);
-
-        return { ...s, ...newState };
-      });
-    }
-
-    if (typeof arg === 'object') {
-      setState((s) => ({ ...s, ...arg }));
-    }
-  }, []);
-
-  return [state, handleUpdate];
-}
 
 const KEYS = {
   currentTemperature: ['currentTemperature'],
@@ -50,22 +20,27 @@ const KEYS = {
   kelpAmount: ['kelpAmount'],
   temperatureHistory: ['temperatureHistory'],
   animation: ['animation'],
+  deathHistory: ['deathHistory'],
 };
 
-type Context = { view: View; reset: number };
+type Context = { view: View; reset: number; showStatus: boolean };
+
+export type Log = { t: number; name: string };
+
+const DEFAULT_CONTEXT = {
+  view: View.Macro,
+  showStatus: false,
+  // changes on this value trigger reset
+  reset: 0,
+};
 
 export const useContext = () => {
   const queryClient = useQueryClient();
   const value = useQuery({
     queryKey: KEYS.context,
     queryFn: () =>
-      queryClient.getQueryData<{
-        view: View;
-        reset: number;
-        alive: number;
-        showStatus: boolean;
-      }>(KEYS.context),
-    initialData: { view: View.Macro, reset: 0, alive: 3, showStatus: false },
+      queryClient.getQueryData<Context>(KEYS.context) ?? DEFAULT_CONTEXT,
+    initialData: DEFAULT_CONTEXT,
   });
   return value;
 };
@@ -79,6 +54,7 @@ export const useTime = () => {
   });
   return value;
 };
+
 export const useUpdateTime = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -110,6 +86,16 @@ export const useTemperatureHistory = () => {
   return value;
 };
 
+export const useDeathHistory = () => {
+  const queryClient = useQueryClient();
+  const value = useQuery({
+    queryKey: KEYS.deathHistory,
+    queryFn: () => queryClient.getQueryData<Log[]>(KEYS.deathHistory) ?? [],
+    initialData: [],
+  });
+  return value;
+};
+
 export const useCurrentTemperature = () => {
   const queryClient = useQueryClient();
   const value = useQuery({
@@ -121,6 +107,7 @@ export const useCurrentTemperature = () => {
   });
   return value;
 };
+
 export const useUpdateCurrentTemperature = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -135,7 +122,7 @@ export const useSetView = () => {
   return useMutation({
     mutationFn: async (view: View) => {
       queryClient.setQueryData<Context>(['context'], (d) => ({
-        ...(d ?? { alive: view === View.Macro ? 3 : 1, reset: 0, view }),
+        ...(d ?? DEFAULT_CONTEXT),
         view,
       }));
     },
@@ -147,7 +134,7 @@ export const useSetShowStatus = () => {
   return useMutation({
     mutationFn: async (value: boolean) => {
       queryClient.setQueryData<Context>(['context'], (d) => ({
-        ...d,
+        ...(d ?? DEFAULT_CONTEXT),
         showStatus: value,
       }));
     },
@@ -156,46 +143,33 @@ export const useSetShowStatus = () => {
 
 export const useStageDimensions = ({ select = undefined } = {}) => {
   const queryClient = useQueryClient();
+  const defaultData = {
+    width: window?.innerWidth,
+    height: window?.innerHeight,
+  };
   const value = useQuery({
     queryKey: ['stageDimensions'],
     queryFn: () =>
       queryClient.getQueryData<{ height: number; width: number }>([
         'stageDimensions',
-      ]),
+      ]) ?? defaultData,
     select,
-    initialData: {
-      width: window?.innerWidth,
-      height: window?.innerHeight,
-    },
+    initialData: defaultData,
   });
   return value;
 };
 
-export const useGrowthScale = () => {
-  const value = useQuery<number>({
-    // queryFn: () => {},
-    queryKey: ['growthScale'],
-  });
-  return value;
-};
-export const useKelpAmount = () => {
+export const useSetStageDimensions = () => {
   const queryClient = useQueryClient();
-  const value = useQuery<number>({
-    queryKey: KEYS.kelpAmount,
-    queryFn: () =>
-      queryClient.getQueryData(KEYS.kelpAmount) ?? INIT_KELP_AMOUNT,
+  return useMutation({
+    mutationFn: async (dimensions: { height: number; width: number }) => {
+      queryClient.setQueryData(['stageDimensions'], dimensions);
+    },
   });
-  return value;
-};
-export const useIsDead = () => {
-  const value = useQuery<boolean>({
-    queryKey: ['isDead'],
-    initialData: false,
-  });
-  return value;
 };
 
 export enum CoralStatus {
+  Growing = 'growing',
   Normal = 'normal',
   Dying = 'dying',
   Dead = 'dead',
@@ -213,10 +187,9 @@ export const useStatus = (
   kelpAmount: number;
   status: CoralStatus;
   dyingFactor: number;
-  speed: number;
 } => {
-  const queryClient = useQueryClient();
   const { data: time } = useTime();
+  const queryClient = useQueryClient();
 
   const [status, setStatus] = useState(CoralStatus.Normal);
   const { data: currentTemperature } = useCurrentTemperature();
@@ -228,9 +201,13 @@ export const useStatus = (
 
   const reset = data?.reset;
 
+  const isDying =
+    currentTemperature <= MIN_TEMP_GROWTH ||
+    currentTemperature >= maxTempThreshould;
+
   const isGrowing =
     currentTemperature > MIN_TEMP_GROWTH &&
-    currentTemperature < maxTempThreshould;
+    currentTemperature < maxTempThreshould - 1;
 
   useEffect(() => {
     if (reset) {
@@ -239,7 +216,7 @@ export const useStatus = (
       setKelpAmount(initialKelpAmount);
       updateTemperature(INIT_CURRENT_TEMPERATURE);
     }
-  }, [reset]);
+  }, [initialKelpAmount, reset, updateTemperature]);
 
   // update kelp value
   useEffect(() => {
@@ -251,49 +228,56 @@ export const useStatus = (
     }
     // non-dead coral
     else if (status !== CoralStatus.Dead && currentTemperature) {
-      const newValue = Math.max(
-        0,
-        Math.min(
-          isGrowing ? kelpAmount + growthSpeed : kelpAmount - deathSpeed,
-          100,
-        ),
-      );
+      let value = kelpAmount;
+      if (isGrowing) {
+        value = kelpAmount + growthSpeed;
+      }
+      if (isDying) {
+        value = kelpAmount - deathSpeed;
+      }
+      const newValue = Math.max(0, Math.min(value, 100));
       setKelpAmount(newValue);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   // state machine per status
   useEffect(() => {
     if (status !== CoralStatus.Dead) {
       switch (status) {
-        case CoralStatus.Normal:
+        case CoralStatus.Growing:
           if (!isGrowing) {
+            setStatus(CoralStatus.Normal);
+          }
+          break;
+        case CoralStatus.Normal:
+          if (isDying) {
             setStatus(CoralStatus.Dying);
+          } else if (isGrowing) {
+            setStatus(CoralStatus.Growing);
           } else {
             setDyingFactor((d) => Math.max(d - TIME_SPEED, 0));
           }
           break;
         case CoralStatus.Dying:
-          if (isGrowing) {
+          if (!isDying) {
             setStatus(CoralStatus.Normal);
           } else if (kelpAmount <= 0) {
             setStatus(CoralStatus.Dead);
-            console.log(coralId, 'is dead');
-            queryClient.setQueryData<Context>(KEYS.context, (d) => ({
-              ...d,
-              alive: d.alive - 1,
-            }));
-            // } else {
-            //   setDyingFactor((d) => d + TIME_SPEED * deathSpeed);
+            console.debug(coralId, 'is dead');
+
+            // save death timestamp
+            queryClient.setQueryData<{ t: number; name: string }[]>(
+              KEYS.deathHistory,
+              (d) => (d ?? []).concat([{ t: time, name: coralId }]),
+            );
           }
-          break;
-        case CoralStatus.Dead:
-          // setKelpAmount(0);
           break;
         default:
           break;
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
   return { kelpAmount, status, dyingFactor };
@@ -314,7 +298,7 @@ export const useReset = () => {
       queryClient.setQueryData(KEYS.temperatureHistory, []);
       queryClient.setQueryData(KEYS.time, 0);
       queryClient.setQueryData<Context>(KEYS.context, (d) => ({
-        ...(d ?? { reset: 0, view: View.Micro }),
+        ...(d ?? DEFAULT_CONTEXT),
         reset: (d?.reset ?? 0) + 1,
       }));
     },
@@ -340,7 +324,10 @@ export const useAnimation = () => {
   return value;
 };
 
-export const useMaxValue = (initialValue, newValue) => {
+export const useMaxValue = (
+  initialValue: number,
+  newValue: number,
+): [number, Dispatch<number>] => {
   const [max, setMax] = useState(initialValue);
 
   // prevent shrinking
@@ -348,6 +335,7 @@ export const useMaxValue = (initialValue, newValue) => {
     if (newValue > max) {
       setMax(newValue);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newValue]);
 
   return [max, setMax];

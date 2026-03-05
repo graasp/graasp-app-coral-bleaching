@@ -11,7 +11,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 
 import i18nConfig from '@/config/i18n';
 
-import Debug from './Debug';
 import App from './main/App';
 
 // declare the module to enable theme modification
@@ -42,7 +41,10 @@ const theme = createTheme({
   status: { danger: { background: orange['400'], color: '#fff' } },
 });
 
-const RootDiv = styled('div')({ flexGrow: 1, height: '100%' });
+const RootDiv = styled('div')({
+  flexGrow: 1,
+  height: '100%',
+});
 
 const Root = (): ReactNode => (
   <RootDiv>

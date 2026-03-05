@@ -2,8 +2,8 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { animate, motion } from 'motion/react';
 
+import { kelvinToCelsius } from '@/modules/components/thermometer/utils';
 import { useContext, useUpdateCurrentTemperature } from '@/utils/hooks';
-import { kelvinToCelsius } from '@/utils/utils';
 
 import {
   SCALE_LABEL_NOTES_STROKE_WIDTH,
@@ -54,7 +54,7 @@ const Slider = ({
   } = useContext();
 
   const [drag, setDrag] = useState<'y' | false>(false);
-  const ref = useRef(null);
+  const ref = useRef<SVGPolygonElement>(null);
   useEffect(() => {
     setDrag('y');
   }, []);
@@ -66,7 +66,7 @@ const Slider = ({
     if (ref.current) {
       animate('#slider', { y }, { duration: 0 });
     }
-  }, [reset]);
+  }, [reset, y]);
 
   const sliderPositionX =
     THERMOMETER_POSITION_X + THERMOMETER_WIDTH + SCALE_WIDTH;
@@ -91,7 +91,7 @@ const Slider = ({
         if (ref.current) {
           const coords =
             ref.current.style.transform.match(/translateY\((.+)px\)/);
-          const newPositionY = coords[1];
+          const newPositionY = parseInt(coords![1], 10);
 
           // compute temperature from slider y position
           const newTemperature = heightToTemperature({

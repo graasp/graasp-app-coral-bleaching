@@ -18,10 +18,13 @@ declare module 'react-i18next' {
     resources: (typeof resources)['en'];
   }
 }
+const lang =
+  new URLSearchParams(globalThis.location.search).get('lang') ??
+  DEFAULT_LANGUAGE;
 
 i18n.use(initReactI18next).init({
   resources,
-  lng: DEFAULT_LANGUAGE,
+  lng: lang,
   fallbackLng: DEFAULT_LANGUAGE,
   // debug only when not in production
   debug: import.meta.env.DEV,

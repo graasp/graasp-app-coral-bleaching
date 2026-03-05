@@ -10,8 +10,8 @@ import {
   THERMOMETER_STROKE_COLOR,
   THERMOMETER_STROKE_WIDTH,
 } from '@/config/constants';
+import { celsiusToKelvin } from '@/modules/components/thermometer/utils';
 import { useCurrentTemperature, useStageDimensions } from '@/utils/hooks';
-import { celsiusToKelvin } from '@/utils/utils';
 
 import CurrentTemperature from './CurrentTemperature';
 import Scale from './Scale';

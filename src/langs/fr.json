@@ -1,5 +1,17 @@
 {
   "translations": {
-    "Welcome to the Graasp App Starter Kit": "Bienvenue dans le kit de démarrage de l'application Graasp"
+    "days": "jours",
+    "temperature": "température",
+    "Temperature over time": "Evolution de la température",
+    "View graph in fullscreen": "Voir le graphique en plein écran",
+    "Close": "Fermer",
+    "Pause": "Arrêter",
+    "Play": "Démarrer",
+    "Reset": "Réinitialiser",
+    "Settings": "Paramètres",
+    "Macroscopic View": "Vue Macroscopique",
+    "Microscopic View": "Vue Microscopique",
+    "Show coral status": "Montrer l'état des coraux",
+    "DEATH_INDICATION": "Mort: {{names}}"
   }
 }
