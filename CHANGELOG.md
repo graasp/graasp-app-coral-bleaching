@@ -1,5 +1,32 @@
 # Changelog
 
+## 1.0.0 (2026-03-05)
+
+
+### Features
+
+* add death markers ([c73a7fa](https://github.com/graasp/graasp-app-coral-bleaching/commit/c73a7fa29a2e0cdfd33d49a3c27821b835fe5cc1))
+* add fullscreen modal ([2431839](https://github.com/graasp/graasp-app-coral-bleaching/commit/2431839583750c19a8daaca43e4cd8de6ac19c75))
+* add improvements ([10f260c](https://github.com/graasp/graasp-app-coral-bleaching/commit/10f260c3fdbd91ba660fae72e8ee74029f33a184))
+* add improvements ([3fa0072](https://github.com/graasp/graasp-app-coral-bleaching/commit/3fa007204b4240a8978a6c8d55a152a3e80684db))
+* add ocean filter ([cd4e31f](https://github.com/graasp/graasp-app-coral-bleaching/commit/cd4e31f9428ad28d1b8bee861002478e99bd8fea))
+* add some logic for the simulation ([a303923](https://github.com/graasp/graasp-app-coral-bleaching/commit/a303923dc6829fa8d31644b142f6cf6d2bfb77d5))
+* add temp chart ([e01f408](https://github.com/graasp/graasp-app-coral-bleaching/commit/e01f408ba00cc0a811c6a3fe5cd6f000a5b494e1))
+* add thermometer, background, start coral ([f6cdb36](https://github.com/graasp/graasp-app-coral-bleaching/commit/f6cdb36a523514ddec4c75479f69183f4a008cce))
+* fix status, add many corals ([ff26792](https://github.com/graasp/graasp-app-coral-bleaching/commit/ff26792fb9303c059cf6c46ffe17bf192528e46f))
+* implement improvements ([10f260c](https://github.com/graasp/graasp-app-coral-bleaching/commit/10f260c3fdbd91ba660fae72e8ee74029f33a184))
+* increase day in graph ([dcdf665](https://github.com/graasp/graasp-app-coral-bleaching/commit/dcdf6656a06d42b1cfc93d26dbcd42bda89deac0))
+* show tags, improve positions ([b9dd017](https://github.com/graasp/graasp-app-coral-bleaching/commit/b9dd017c3c0e05e617ff08dc52b0550df17d34cb))
+* use final pink coral, move graph below ([232e6a9](https://github.com/graasp/graasp-app-coral-bleaching/commit/232e6a919b548d0d1a2e9cd552f40bbd371b40e2))
+* use motion and svg ([86bddef](https://github.com/graasp/graasp-app-coral-bleaching/commit/86bddefd282b9e5345dfc469d03acc7957c833a1))
+
+
+### Bug Fixes
+
+* fix labels, add decorative corals ([1908055](https://github.com/graasp/graasp-app-coral-bleaching/commit/1908055d78b8336b3c2530e472dbe26189277c67))
+* fix micro ([cce0d44](https://github.com/graasp/graasp-app-coral-bleaching/commit/cce0d44cab37ae31fbf07fed33c4f86a4452a9a1))
+* fix reset in settings ([581a008](https://github.com/graasp/graasp-app-coral-bleaching/commit/581a008e01160e68ce5b5cb591a424485494c79e))
+
 ## [1.2.7](https://github.com/graasp/graasp-app-starter-ts-vite/compare/v1.2.6...v1.2.7) (2024-09-26)
 
 
