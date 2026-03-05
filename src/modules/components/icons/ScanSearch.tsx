@@ -1,9 +1,6 @@
 import { JSX } from 'react';
 
-export const ScanSearch = (props: {
-  size: number;
-  style: object;
-}): JSX.Element => (
+export const ScanSearch = (props: { size: number }): JSX.Element => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
     width={props.size}
@@ -15,7 +12,6 @@ export const ScanSearch = (props: {
     strokeLinecap="round"
     strokeLinejoin="round"
     className="lucide lucide-scan-search-icon lucide-scan-search"
-    style={props.style}
   >
     <path d="M3 7V5a2 2 0 0 1 2-2h2" />
     <path d="M17 3h2a2 2 0 0 1 2 2v2" />

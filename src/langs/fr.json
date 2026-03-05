@@ -1,6 +1,5 @@
 {
   "translations": {
-    "Welcome to the Graasp App Starter Kit": "Bienvenue dans le kit de démarrage de l'application Graasp",
     "days": "jours",
     "temperature": "température",
     "Temperature over time": "Evolution de la température",
@@ -10,8 +9,8 @@
     "Play": "Démarrer",
     "Reset": "Réinitialiser",
     "Settings": "Paramètres",
-    "Micro": "Micro",
-    "Macro": "Macro",
-    "Show status": "Montrer l'état"
+    "Macroscopic View": "Vue Macroscopique",
+    "Microscopic View": "Vue Microscopique",
+    "Show coral status": "Montrer l'état des coraux"
   }
 }

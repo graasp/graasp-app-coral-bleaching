@@ -6,12 +6,12 @@ export function Bubble({
   x,
   y = 380,
   r = 18,
-}: {
+}: Readonly<{
   duration?: number;
-  x: string;
+  x: number | string;
   y?: number | string;
   r?: number;
-}): JSX.Element {
+}>): JSX.Element {
   return (
     <>
       <defs>
@@ -59,6 +59,7 @@ export function Bubble({
           />
         </circle>
         <ellipse
+          // @ts-expect-error
           cx={x - 10}
           cy={y}
           rx={6.5}

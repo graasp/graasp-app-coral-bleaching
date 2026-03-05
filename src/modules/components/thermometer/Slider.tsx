@@ -2,8 +2,8 @@ import { ReactNode, useEffect, useRef, useState } from 'react';
 
 import { animate, motion } from 'motion/react';
 
+import { kelvinToCelsius } from '@/modules/components/thermometer/utils';
 import { useContext, useUpdateCurrentTemperature } from '@/utils/hooks';
-import { kelvinToCelsius } from '@/utils/utils';
 
 import {
   SCALE_LABEL_NOTES_STROKE_WIDTH,

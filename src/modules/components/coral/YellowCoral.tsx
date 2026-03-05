@@ -12,7 +12,7 @@ import { StatusLabel } from '../StatusLabel';
 export const YellowCoral = ({
   style,
   offsetLeft = 7,
-  bottomOffset,
+  offsetBottom,
   scale,
   initialKelpAmount,
 }: {
@@ -27,7 +27,7 @@ export const YellowCoral = ({
   };
   scale: string | number;
   offsetLeft?: number;
-  bottomOffset?: number;
+  offsetBottom?: number;
 }): JSX.Element => {
   const {
     data: { reset, showStatus },
@@ -87,7 +87,7 @@ export const YellowCoral = ({
           left={style?.left}
           bottom={style?.bottom}
           offsetLeft={offsetLeft}
-          bottomOffset={bottomOffset}
+          offsetBottom={offsetBottom}
           color="gold"
         />
       )}
@@ -96,6 +96,7 @@ export const YellowCoral = ({
         height={scale}
         scale={scale}
         viewBox="0 0 308 479"
+        // @ts-expect-error
         style={{
           fillRule: 'evenodd',
           clipRule: 'evenodd',

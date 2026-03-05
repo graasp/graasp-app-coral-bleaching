@@ -27,7 +27,7 @@ export const StatusLabel = ({
   status,
   color,
   offsetLeft = 0,
-  bottomOffset = 0,
+  offsetBottom = 0,
 }: {
   name: string;
   kelpAmount: number;
@@ -36,7 +36,7 @@ export const StatusLabel = ({
   status: CoralStatus;
   color: string;
   offsetLeft: number;
-  bottomOffset?: number;
+  offsetBottom?: number;
 }): JSX.Element => {
   const theme = useTheme();
 
@@ -50,7 +50,7 @@ export const StatusLabel = ({
         zIndex: 30,
         position: 'absolute',
         left: `calc(${left} + ${offsetLeft}%)`,
-        bottom: bottom + bottomOffset,
+        bottom: bottom + offsetBottom,
         paddingLeft: theme.spacing(2),
         paddingRight: theme.spacing(2),
         background: 'white',

@@ -9,7 +9,7 @@ import { StatusLabel } from '../StatusLabel';
 export const PurpleCoral = ({
   style,
   offsetLeft = 7,
-  bottomOffset,
+  offsetBottom,
   scale,
   initialKelpAmount,
 }: {
@@ -24,7 +24,7 @@ export const PurpleCoral = ({
   };
   scale: string | number;
   offsetLeft?: number;
-  bottomOffset?: number;
+  offsetBottom?: number;
 }): JSX.Element => {
   const {
     data: { reset, showStatus },
@@ -83,7 +83,7 @@ export const PurpleCoral = ({
           name="Pocillopora"
           bottom={style?.bottom}
           color="purple"
-          bottomOffset={bottomOffset}
+          offsetBottom={offsetBottom}
           offsetLeft={offsetLeft}
         />
       )}
@@ -92,6 +92,7 @@ export const PurpleCoral = ({
         height={scale}
         viewBox="0 0 399 272"
         scale={scale}
+        // @ts-expect-error
         style={{
           fillRule: 'evenodd',
           clipRule: 'evenodd',

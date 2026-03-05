@@ -23,6 +23,9 @@ const CustomTooltip = ({
   label,
 }: TooltipContentProps<string | number, string>): JSX.Element => {
   const isVisible = active && payload && payload.length;
+
+  const humanizedLabel = humanizeDays(Number.parseFloat(String(label)));
+
   return (
     <div
       style={{
@@ -34,7 +37,7 @@ const CustomTooltip = ({
     >
       {isVisible && (
         <>
-          <div>{`${humanizeDays(label)}`}</div>
+          {label && <div>{humanizedLabel}</div>}
           <div style={{ fontWeight: 'bold' }}>
             {`${payload[0].value.toFixed(1)}°C`}{' '}
           </div>

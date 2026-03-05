@@ -30,15 +30,29 @@ const App = (): JSX.Element => {
   };
 
   useEffect(() => {
+    checkSize();
+
+    const ro = new ResizeObserver(() => {
+      checkSize();
+    });
+    const root = document.querySelector(`#root`);
+    if (root) {
+      ro.observe(root);
+
+      return () => {
+        ro.unobserve(root);
+      };
+    }
+
+    return () => {};
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
     if (isPlaying) {
       interval.current = setInterval(() => {
         updateTime();
       }, 100);
-      checkSize();
-      // const ro = new ResizeObserver(() => {
-      //   checkSize();
-      // });
-      // ro.observe(document.querySelector(`#container`));
 
       return () => {
         if (interval && interval.current) {
@@ -52,7 +66,7 @@ const App = (): JSX.Element => {
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [checkSize, isPlaying, updateTime]);
+  }, [isPlaying, updateTime]);
 
   return (
     <div>

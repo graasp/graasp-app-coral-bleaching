@@ -13,10 +13,10 @@ import { Polyp } from './Polyp';
 export function MicroView({
   width,
   height,
-}: {
+}: Readonly<{
   width: number;
   height: number;
-}): ReactNode {
+}>): ReactNode {
   const { data: isPlaying } = useAnimation();
 
   const theme = useTheme();

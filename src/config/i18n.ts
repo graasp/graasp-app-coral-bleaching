@@ -19,7 +19,8 @@ declare module 'react-i18next' {
   }
 }
 const lang =
-  new URLSearchParams(window.location.search).get('lang') ?? DEFAULT_LANGUAGE;
+  new URLSearchParams(globalThis.location.search).get('lang') ??
+  DEFAULT_LANGUAGE;
 
 i18n.use(initReactI18next).init({
   resources,

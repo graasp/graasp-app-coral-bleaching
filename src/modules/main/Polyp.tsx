@@ -63,13 +63,7 @@ const Zooxanthele = ({
 // The polyp contains 2 groups of zooxantheles
 // zooGroup is visible inside the tentacle and each circle has a well defined position
 // zooFree's circles are dynamically to appear and disappear right after to show the expulsion effect
-export const Polyp = (props: {
-  position: string;
-  bottom: number;
-  left: string;
-  width: string;
-  style: object;
-}): JSX.Element => {
+export const Polyp = ({ style }: { style: object }): JSX.Element => {
   const {
     data: { reset },
   } = useContext();
@@ -188,7 +182,7 @@ export const Polyp = (props: {
       xmlnsXlink="http://www.w3.org/1999/xlink"
       xmlSpace="preserve"
       viewBox="0 0 695 509"
-      {...props}
+      style={style}
     >
       <g id="zooFree">
         {zooxantheles.map(({ cx, cy }) => (

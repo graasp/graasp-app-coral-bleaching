@@ -7,11 +7,11 @@ export function Background({
   width,
   height,
   isPlaying = false,
-}: {
+}: Readonly<{
   width: number;
   height: number;
   isPlaying?: boolean;
-}): ReactNode {
+}>): ReactNode {
   return (
     <>
       <defs>

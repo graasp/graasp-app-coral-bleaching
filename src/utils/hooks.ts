@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import React, { useEffect, useState } from 'react';
+import { Dispatch, useEffect, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -13,33 +13,6 @@ import {
 } from '@/config/constants';
 import { View } from '@/config/types';
 
-export type UpdateArgument<T extends object> =
-  | T
-  | ((previousArg: T) => Partial<T>);
-
-/* istanbul ignore next */
-export function useObjectState<T extends object>(
-  initialValue: T,
-): [T, (arg: UpdateArgument<T>) => void] {
-  const [state, setState] = React.useState(initialValue);
-
-  const handleUpdate = React.useCallback((arg: UpdateArgument<T>) => {
-    if (typeof arg === 'function') {
-      setState((s) => {
-        const newState = arg(s);
-
-        return { ...s, ...newState };
-      });
-    }
-
-    if (typeof arg === 'object') {
-      setState((s) => ({ ...s, ...arg }));
-    }
-  }, []);
-
-  return [state, handleUpdate];
-}
-
 const KEYS = {
   currentTemperature: ['currentTemperature'],
   time: ['time'],
@@ -52,7 +25,7 @@ const KEYS = {
 type Context = { view: View; reset: number; showStatus: boolean };
 
 const DEFAULT_CONTEXT = {
-  view: View.Micro,
+  view: View.Macro,
   reset: 0,
   showStatus: true,
 };
@@ -77,6 +50,7 @@ export const useTime = () => {
   });
   return value;
 };
+
 export const useUpdateTime = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -119,6 +93,7 @@ export const useCurrentTemperature = () => {
   });
   return value;
 };
+
 export const useUpdateCurrentTemperature = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -177,30 +152,6 @@ export const useSetStageDimensions = () => {
       queryClient.setQueryData(['stageDimensions'], dimensions);
     },
   });
-};
-
-export const useGrowthScale = () => {
-  const value = useQuery<number>({
-    // queryFn: () => {},
-    queryKey: ['growthScale'],
-  });
-  return value;
-};
-export const useKelpAmount = () => {
-  const queryClient = useQueryClient();
-  const value = useQuery<number>({
-    queryKey: KEYS.kelpAmount,
-    queryFn: () =>
-      queryClient.getQueryData(KEYS.kelpAmount) ?? INIT_KELP_AMOUNT,
-  });
-  return value;
-};
-export const useIsDead = () => {
-  const value = useQuery<boolean>({
-    queryKey: ['isDead'],
-    initialData: false,
-  });
-  return value;
 };
 
 export enum CoralStatus {
@@ -352,7 +303,10 @@ export const useAnimation = () => {
   return value;
 };
 
-export const useMaxValue = (initialValue: number, newValue: number) => {
+export const useMaxValue = (
+  initialValue: number,
+  newValue: number,
+): [number, Dispatch<number>] => {
   const [max, setMax] = useState(initialValue);
 
   // prevent shrinking

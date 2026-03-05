@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { JSX, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import EditIcon from '@mui/icons-material/Edit';
@@ -23,8 +23,7 @@ import {
   useSetView,
 } from '@/utils/hooks';
 
-// eslint-disable-next-line @typescript-eslint/explicit-function-return-type, react/function-component-definition
-export function SettingsButton() {
+export const SettingsButton = (): JSX.Element => {
   const { t } = useTranslation();
   const [open, setOpen] = useState(false);
   const {
@@ -51,7 +50,7 @@ export function SettingsButton() {
         <DialogTitle>{t('Settings')}</DialogTitle>
         <DialogContent>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography>{t('Macro')}</Typography>
+            <Typography>{t('Macroscopic View')}</Typography>
             <Switch
               checked={view !== View.Macro}
               onChange={(e) => {
@@ -59,10 +58,10 @@ export function SettingsButton() {
                 reset();
               }}
             />
-            <Typography>{t('Micro')}</Typography>
+            <Typography>{t('Microscopic View')}</Typography>
           </Stack>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography>{t('Show status')}</Typography>
+            <Typography>{t('Show coral status')}</Typography>
             <Switch
               checked={showStatus}
               onChange={(e) => {
@@ -83,4 +82,4 @@ export function SettingsButton() {
       </Fab>
     </>
   );
-}
+};

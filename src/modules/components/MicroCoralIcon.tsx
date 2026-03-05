@@ -1,6 +1,6 @@
 import { JSX } from 'react';
 
-import { PinkCoral } from './coral/PinkCoral';
+import CoralRose from './coral/corailrose.svg';
 import { ScanSearch } from './icons/ScanSearch';
 
 export const MicroCoralIcon = (): JSX.Element => (
@@ -17,7 +17,7 @@ export const MicroCoralIcon = (): JSX.Element => (
       borderRadius: 10,
     }}
   >
-    <PinkCoral initialKelpAmount={100} scale="100%" hideStatus />
+    <img alt="pink coral icon" src={CoralRose} width="100%" />
     <div
       style={{
         position: 'absolute',

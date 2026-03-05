@@ -44,7 +44,6 @@ export function MacroView({
         style={{
           position: 'absolute',
           bottom: 350,
-          // filter: 'grayscale(100%)',
           opacity: 0.15,
           left: 20,
         }}
@@ -56,7 +55,6 @@ export function MacroView({
         style={{
           position: 'absolute',
           bottom: 350,
-          // filter: 'grayscale(100%)',
           opacity: 0.15,
           right: 100,
           transform: 'scale(-1, 1)',
@@ -76,7 +74,7 @@ export function MacroView({
           transform: 'scale(-1, 1)',
         }}
         offsetLeft={19.5}
-        bottomOffset={125}
+        offsetBottom={125}
       />
       <PinkCoral
         initialKelpAmount={80}
@@ -89,7 +87,7 @@ export function MacroView({
           transform: 'scale(-1, 1)',
         }}
         offsetLeft={9.5}
-        bottomOffset={125}
+        offsetBottom={125}
       />
       <PinkCoral
         initialKelpAmount={80}
@@ -101,14 +99,14 @@ export function MacroView({
           filter: 'hue-rotate(25deg)',
         }}
         offsetLeft={17.5}
-        bottomOffset={125}
+        offsetBottom={125}
       />
       <PinkCoral
         initialKelpAmount={80}
         scale="22%"
         style={{ position: 'absolute', bottom: 280, left: '70%' }}
         offsetLeft={13.5}
-        bottomOffset={115}
+        offsetBottom={115}
       />
 
       <YellowCoral
@@ -120,7 +118,7 @@ export function MacroView({
           left: '25%',
         }}
         offsetLeft={22}
-        bottomOffset={70}
+        offsetBottom={70}
       />
       <YellowCoral
         initialKelpAmount={80}
@@ -133,7 +131,7 @@ export function MacroView({
           transform: 'rotate(10deg)',
         }}
         offsetLeft={6}
-        bottomOffset={20}
+        offsetBottom={20}
       />
       <YellowCoral
         initialKelpAmount={80}
@@ -145,7 +143,7 @@ export function MacroView({
           transform: 'scale(-1,1) rotate(5deg)',
         }}
         offsetLeft={10}
-        bottomOffset={25}
+        offsetBottom={25}
       />
       <PurpleCoral
         initialKelpAmount={80}
@@ -157,7 +155,7 @@ export function MacroView({
           filter: 'hue-rotate(-10deg)',
         }}
         offsetLeft={0}
-        bottomOffset={100}
+        offsetBottom={100}
       />
       <YellowCoral
         initialKelpAmount={80}
@@ -169,7 +167,7 @@ export function MacroView({
           transform: 'scale(-1,1) rotate(15deg)',
         }}
         offsetLeft={9.5}
-        bottomOffset={25}
+        offsetBottom={25}
       />
       <PurpleCoral
         initialKelpAmount={80}
@@ -182,7 +180,7 @@ export function MacroView({
           transform: 'scale(-1,1)',
         }}
         offsetLeft={-2}
-        bottomOffset={80}
+        offsetBottom={80}
       />
       <PurpleCoral
         initialKelpAmount={80}
@@ -195,14 +193,14 @@ export function MacroView({
           transform: 'rotate(-5deg)',
         }}
         offsetLeft={1}
-        bottomOffset={0}
+        offsetBottom={0}
       />
       <PurpleCoral
         initialKelpAmount={80}
         scale="20%"
         style={{ position: 'absolute', bottom: 180, left: '42%' }}
         offsetLeft={4}
-        bottomOffset={30}
+        offsetBottom={30}
       />
     </>
   );
