@@ -7,6 +7,7 @@ import { PurpleCoral } from '../components/coral/PurpleCoral';
 import { YellowCoral } from '../components/coral/YellowCoral';
 import CoralRose from '../components/coral/corailrose.svg';
 import { Background } from '../components/elements/Background';
+import { OceanFilter } from '../components/elements/OceanFilter';
 import { Sunshine } from '../components/elements/Sunshine';
 
 // eslint-disable-next-line react/function-component-definition
@@ -22,6 +23,9 @@ export function MacroView({
   return (
     <>
       <svg width={width} height={height}>
+        <defs>
+          <OceanFilter />
+        </defs>
         <Background width={width} height={height} isPlaying={isPlaying} />
         <path
           d={`
@@ -33,6 +37,7 @@ export function MacroView({
     Z
   `}
           fill="#f7dc6b"
+          filter={isPlaying ? 'url(#oceanFilter)' : ''}
         />
 
         {isPlaying && <Sunshine width={width} height={height} />}
