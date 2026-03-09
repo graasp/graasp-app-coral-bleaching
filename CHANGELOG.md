@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.1](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.0.0...v1.0.1) (2026-03-09)
+
+
+### Bug Fixes
+
+* **deps:** update dependency @mui/lab to v7.0.0-beta.17 ([#8](https://github.com/graasp/graasp-app-coral-bleaching/issues/8)) ([4845232](https://github.com/graasp/graasp-app-coral-bleaching/commit/48452322a2403483f1e1e8e81eea7b31e9f595bc))
+* **deps:** update mui (non-major) to v7.3.9 ([#15](https://github.com/graasp/graasp-app-coral-bleaching/issues/15)) ([63a9f6e](https://github.com/graasp/graasp-app-coral-bleaching/commit/63a9f6ed6fa271bbfba2ffee7c95743449820d6d))
+
 ## 1.0.0 (2026-03-05)
 
 
