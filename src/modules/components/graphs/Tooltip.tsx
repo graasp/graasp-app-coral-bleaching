@@ -1,7 +1,7 @@
 import { JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { TooltipContentProps } from 'recharts';
+import type { TooltipPayload } from 'recharts';
 
 import { humanizeDays } from './utils';
 
@@ -9,9 +9,13 @@ export const Tooltip = ({
   active,
   payload,
   label,
-}: TooltipContentProps<string | number, string>): JSX.Element | null => {
+}: {
+  active: boolean;
+  payload: TooltipPayload;
+  label?: string | number;
+}): JSX.Element | null => {
   const { t } = useTranslation();
-  const isVisible = Boolean(active && payload && payload.length);
+  const isVisible = Boolean(active && payload?.length);
 
   const data = payload[0];
 
@@ -20,6 +24,8 @@ export const Tooltip = ({
   }
 
   const humanizedLabel = humanizeDays(data.payload.t);
+
+  const temperatureValue = (data.value as number).toFixed(1);
 
   return (
     <div
@@ -32,10 +38,8 @@ export const Tooltip = ({
     >
       {isVisible && (
         <>
-          {label && <div>{humanizedLabel}</div>}
-          <div style={{ fontWeight: 'bold' }}>
-            {`${payload[0].value.toFixed(1)}°C`}{' '}
-          </div>
+          {label !== undefined && <div>{humanizedLabel}</div>}
+          <div style={{ fontWeight: 'bold' }}>{`${temperatureValue}°C`} </div>
           {data.payload.death && (
             <p>
               {t('DEATH_INDICATION', { names: data.payload.names.join(', ') })}

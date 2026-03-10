@@ -57,7 +57,7 @@ export function DayGraph(): JSX.Element {
         label={{
           value: t('days'),
           position: 'insideBottom',
-          offset: '0',
+          offset: 0,
           fontSize: '0.8rem',
         }}
         minTickGap={0}
