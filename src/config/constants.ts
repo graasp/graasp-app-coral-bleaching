@@ -5,7 +5,7 @@ export const THERMOMETER_POSITION_X = 80;
 export const THERMOMETER_STROKE_WIDTH = 3;
 export const THERMOMETER_STROKE_COLOR = 'black';
 // these factors are used as percentage depending on stage dimensions
-export const THERMOMETER_POSITION_Y_FACTOR = 0.15;
+export const THERMOMETER_POSITION_Y_FACTOR = 0.11;
 export const THERMOMETER_HEIGHT_FACTOR = 0.5;
 export const SCALE_UNITS = {
   KELVIN: { name: 'kelvin', unit: 'K' },
@@ -38,24 +38,7 @@ export const SET_INTERVAL_TIME = 50;
 // factor of the a value of pixel a kelvin should have, might want to a bigger value from small ranges
 export const DELTA_KELVIN_HEIGHT_FACTOR = 1.4;
 
-export const THERMOMETER_TOTAL_WIDTH =
-  THERMOMETER_WIDTH +
-  THERMOMETER_POSITION_X +
-  SCALE_TEXT_WIDTH_FACTOR * 2 + // approximatively left scale text width
-  SCALE_PADDING_LEFT +
-  SLIDER_RADIUS +
-  SCALE_TEXT_WIDTH_FACTOR * 2;
-
-export const MICROSCOPIC_STRING = 'microscopic';
-export const MACROSCOPIC_STRING = 'macroscopic';
-export const KELVIN_STRING = 'kelvin';
-export const CELSIUS_STRING = 'celsius';
-export const PAUSED_STRING = 'paused';
-export const PLAYING_STRING = 'playing';
-
 // ------
-
-export const CORAL_COLOR = '#F08080';
 
 export const INIT_KELP_AMOUNT = 100;
 export const INIT_GROWTH_SCALE = 50;

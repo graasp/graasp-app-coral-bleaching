@@ -1,7 +1,7 @@
 import { JSX, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import EditIcon from '@mui/icons-material/Edit';
+import TuneIcon from '@mui/icons-material/Tune';
 import {
   Button,
   DialogActions,
@@ -75,10 +75,11 @@ export const SettingsButton = (): JSX.Element => {
         </DialogActions>
       </Dialog>
       <Fab
+        size="small"
         sx={{ position: 'absolute', right: 0, m: 2 }}
         onClick={handleClickOpen}
       >
-        <EditIcon />
+        <TuneIcon />
       </Fab>
     </>
   );

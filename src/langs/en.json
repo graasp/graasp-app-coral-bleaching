@@ -1,7 +1,7 @@
 {
   "translations": {
     "days": "days",
-    "temperature": "temperature",
+    "temperature": "temperature (°C)",
     "Temperature over time": "Temperature over time",
     "Close": "Close",
     "View graph in fullscreen": "View graph in fullscreen",
