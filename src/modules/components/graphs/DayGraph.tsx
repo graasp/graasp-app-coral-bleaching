@@ -76,10 +76,11 @@ export function DayGraph(): JSX.Element {
           fontSize: '0.8rem',
           position: 'inside',
         }}
-        domain={[20, 38]}
+        domain={[20, 36]}
+        tickCount={100}
         tickFormatter={(v) => Math.floor(v).toString()}
         style={{
-          fontSize: '0.8rem',
+          fontSize: '0.6rem',
         }}
       />
       <Tooltip content={CustomTooltip} />

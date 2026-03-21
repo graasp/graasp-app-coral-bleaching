@@ -50,6 +50,7 @@ export function CompleteGraph(): JSX.Element {
         dataKey="t"
         tickFormatter={(t) => Math.round(t).toString()}
         type="number"
+        tickCount={10}
         label={{ value: translate('days'), position: 'insideBottom' }}
         style={{
           fontSize: '0.8rem',
@@ -63,7 +64,8 @@ export function CompleteGraph(): JSX.Element {
           textAnchor: 'middle',
         }}
         includeHidden
-        domain={[20, 38]}
+        domain={[20, 36]}
+        tickCount={100}
         tickFormatter={(t) => Math.floor(t).toString()}
         style={{
           fontSize: '0.8rem',
