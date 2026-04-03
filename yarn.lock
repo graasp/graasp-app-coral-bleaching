@@ -1452,30 +1452,30 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/cli@npm:20.4.3":
-  version: 20.4.3
-  resolution: "@commitlint/cli@npm:20.4.3"
+"@commitlint/cli@npm:20.4.4":
+  version: 20.4.4
+  resolution: "@commitlint/cli@npm:20.4.4"
   dependencies:
-    "@commitlint/format": "npm:^20.4.3"
-    "@commitlint/lint": "npm:^20.4.3"
-    "@commitlint/load": "npm:^20.4.3"
-    "@commitlint/read": "npm:^20.4.3"
-    "@commitlint/types": "npm:^20.4.3"
+    "@commitlint/format": "npm:^20.4.4"
+    "@commitlint/lint": "npm:^20.4.4"
+    "@commitlint/load": "npm:^20.4.4"
+    "@commitlint/read": "npm:^20.4.4"
+    "@commitlint/types": "npm:^20.4.4"
     tinyexec: "npm:^1.0.0"
     yargs: "npm:^17.0.0"
   bin:
     commitlint: ./cli.js
-  checksum: 10/73f63d032441522dfd8ed340e63d6971102def80622d3cf25902020a1c491f0305fdf3067b33f1467e8c39af0e5a223e04afd0b44b0e370f0008858ff87bcee6
+  checksum: 10/46fd79d4e4cdcf27995cfa7a2f4c45c5aafe253e0ed78b6dc51d68cbe0b8f19e55c4819aa6e7d136a83024cf0065dea05080d6986dc62a1d3cb3961c9a33a8f2
   languageName: node
   linkType: hard
 
-"@commitlint/config-conventional@npm:20.4.3":
-  version: 20.4.3
-  resolution: "@commitlint/config-conventional@npm:20.4.3"
+"@commitlint/config-conventional@npm:20.4.4":
+  version: 20.4.4
+  resolution: "@commitlint/config-conventional@npm:20.4.4"
   dependencies:
-    "@commitlint/types": "npm:^20.4.3"
+    "@commitlint/types": "npm:^20.4.4"
     conventional-changelog-conventionalcommits: "npm:^9.2.0"
-  checksum: 10/9eaaaa08770fa4dc2f4e50ca42f715a4c0b038a715edaeb0f362f7876e3053f4bd9bf57b1b57d3a4863144aad744d0946001950a746b5f6f77171d32853d0b21
+  checksum: 10/6623ff702361c42b2ef817cef299b653ba3618dcd3ac7edbdec7268be2e3662ba74afda4f58ca8e21add9134204367d21d9241e98ab5ff69e2675da1ff6d9c9c
   languageName: node
   linkType: hard
 
@@ -1510,7 +1510,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/format@npm:^20.4.3":
+"@commitlint/format@npm:^20.4.4":
   version: 20.5.0
   resolution: "@commitlint/format@npm:20.5.0"
   dependencies:
@@ -1530,7 +1530,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/lint@npm:^20.4.3":
+"@commitlint/lint@npm:^20.4.4":
   version: 20.5.0
   resolution: "@commitlint/lint@npm:20.5.0"
   dependencies:
@@ -1542,7 +1542,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/load@npm:^20.4.3":
+"@commitlint/load@npm:^20.4.4":
   version: 20.5.0
   resolution: "@commitlint/load@npm:20.5.0"
   dependencies:
@@ -1577,7 +1577,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/read@npm:^20.4.3":
+"@commitlint/read@npm:^20.4.4":
   version: 20.5.0
   resolution: "@commitlint/read@npm:20.5.0"
   dependencies:
@@ -1632,7 +1632,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@commitlint/types@npm:^20.4.3, @commitlint/types@npm:^20.5.0":
+"@commitlint/types@npm:^20.4.4, @commitlint/types@npm:^20.5.0":
   version: 20.5.0
   resolution: "@commitlint/types@npm:20.5.0"
   dependencies:
@@ -5792,8 +5792,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "graasp-app-coral-bleaching@workspace:."
   dependencies:
-    "@commitlint/cli": "npm:20.4.3"
-    "@commitlint/config-conventional": "npm:20.4.3"
+    "@commitlint/cli": "npm:20.4.4"
+    "@commitlint/config-conventional": "npm:20.4.4"
     "@emotion/react": "npm:11.14.0"
     "@emotion/styled": "npm:11.14.1"
     "@eslint/compat": "npm:^1.2.0"
