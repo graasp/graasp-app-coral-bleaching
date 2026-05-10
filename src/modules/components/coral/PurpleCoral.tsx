@@ -35,7 +35,7 @@ export const PurpleCoral = ({
   const { kelpAmount, status } = useStatus('Pocillopora', {
     initialKelpAmount,
     deathSpeed: 1.14,
-    maxTempThreshould: 31,
+    maxTempThreshold: 31,
   });
   const BLEACHING_MAX_THRESHOLD = 21;
 

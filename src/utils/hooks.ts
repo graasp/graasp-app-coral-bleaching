@@ -23,13 +23,19 @@ const KEYS = {
   deathHistory: ['deathHistory'],
 };
 
-type Context = { view: View; reset: number; showStatus: boolean };
+type Context = {
+  view: View;
+  reset: number;
+  showStatus: boolean;
+  debug: boolean;
+};
 
 export type Log = { t: number; name: string };
 
 const DEFAULT_CONTEXT = {
   view: View.Macro,
   showStatus: false,
+  debug: false,
   // changes on this value trigger reset
   reset: 0,
 };
@@ -181,7 +187,7 @@ export const useStatus = (
     deathSpeed = 1.2,
     initialKelpAmount = INIT_KELP_AMOUNT,
     growthSpeed = 0.7,
-    maxTempThreshould = MAX_TEMP_GROWTH,
+    maxTempThreshold = MAX_TEMP_GROWTH,
   } = {},
 ): {
   kelpAmount: number;
@@ -203,11 +209,11 @@ export const useStatus = (
 
   const isDying =
     currentTemperature <= MIN_TEMP_GROWTH ||
-    currentTemperature >= maxTempThreshould;
+    currentTemperature >= maxTempThreshold;
 
   const isGrowing =
     currentTemperature > MIN_TEMP_GROWTH &&
-    currentTemperature < maxTempThreshould - 1;
+    currentTemperature < maxTempThreshold - 1;
 
   useEffect(() => {
     if (reset) {
@@ -246,6 +252,9 @@ export const useStatus = (
     if (status !== CoralStatus.Dead) {
       switch (status) {
         case CoralStatus.Growing:
+          if (isDying) {
+            setStatus(CoralStatus.Dying);
+          }
           if (!isGrowing) {
             setStatus(CoralStatus.Normal);
           }

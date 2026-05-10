@@ -37,7 +37,7 @@ export const PinkCoral = ({
   const { kelpAmount, status } = useStatus('Acropora', {
     initialKelpAmount,
     deathSpeed: 1.14,
-    maxTempThreshould: 31,
+    maxTempThreshold: 31,
   });
   const BLEACHING_MAX_THRESHOLD = 40;
   const [maxKelpAmount, setMax] = useMaxValue(initialKelpAmount, kelpAmount);

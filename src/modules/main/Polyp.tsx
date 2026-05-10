@@ -72,7 +72,7 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
   // bleaching is controlled with the light color, varing depending on deathSpeed
   const { kelpAmount, status } = useStatus('id', {
     initialKelpAmount: 80,
-    maxTempThreshould: 31,
+    maxTempThreshold: 31,
     deathSpeed: 1.14,
   });
   const BLEACHING_MAX_THRESHOLD = 40;

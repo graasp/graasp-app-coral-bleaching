@@ -35,7 +35,7 @@ export const YellowCoral = ({
   const { kelpAmount, status } = useStatus('Porite', {
     initialKelpAmount,
     deathSpeed: 0.57,
-    maxTempThreshould: 32,
+    maxTempThreshold: 32,
   });
   const BLEACHING_MAX_THRESHOLD = 20;
   const [maxKelpAmount, setMax] = useMaxValue(initialKelpAmount, kelpAmount);
