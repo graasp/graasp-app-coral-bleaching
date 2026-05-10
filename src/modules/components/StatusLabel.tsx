@@ -2,7 +2,7 @@ import { JSX } from 'react';
 
 import { Typography, useTheme } from '@mui/material';
 
-import { CoralStatus, useAnimation } from '@/utils/hooks';
+import { CoralStatus, useAnimation, useContext } from '@/utils/hooks';
 
 const getBorderColor = (status: CoralStatus): string => {
   switch (status) {
@@ -39,6 +39,8 @@ export const StatusLabel = ({
   offsetBottom?: number;
 }): JSX.Element => {
   const theme = useTheme();
+  const { data } = useContext();
+  const debug = data?.debug ?? false;
 
   const { data: isPlaying } = useAnimation();
   const borderColor = isPlaying ? getBorderColor(status) : 'transparent';
@@ -60,7 +62,8 @@ export const StatusLabel = ({
       }}
     >
       <Typography variant="body1" fontWeight="bold" color={textColor}>
-        {name}: {kelpAmount.toFixed(0)}%
+        {name}
+        {debug ? `: ${kelpAmount}%` : ''}
       </Typography>
     </div>
   );

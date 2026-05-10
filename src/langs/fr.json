@@ -11,7 +11,7 @@
     "Settings": "Paramètres",
     "Macroscopic View": "Vue Macroscopique",
     "Microscopic View": "Vue Microscopique",
-    "Show coral status": "Montrer l'état des coraux",
+    "Show coral name": "Montrer le nom des coraux",
     "DEATH_INDICATION": "Mort: {{names}}"
   }
 }

@@ -23,13 +23,19 @@ const KEYS = {
   deathHistory: ['deathHistory'],
 };
 
-type Context = { view: View; reset: number; showStatus: boolean };
+type Context = {
+  view: View;
+  reset: number;
+  showStatus: boolean;
+  debug: boolean;
+};
 
 export type Log = { t: number; name: string };
 
 const DEFAULT_CONTEXT = {
   view: View.Macro,
   showStatus: false,
+  debug: false,
   // changes on this value trigger reset
   reset: 0,
 };

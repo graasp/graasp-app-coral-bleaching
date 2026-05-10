@@ -61,7 +61,7 @@ export const SettingsButton = (): JSX.Element => {
             <Typography>{t('Microscopic View')}</Typography>
           </Stack>
           <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
-            <Typography>{t('Show coral status')}</Typography>
+            <Typography>{t('Show coral name')}</Typography>
             <Switch
               checked={showStatus}
               onChange={(e) => {
