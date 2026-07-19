@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.2](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.1.1...v1.1.2) (2026-07-19)
+
+
+### Bug Fixes
+
+* **deps:** update mui (non-major) ([#43](https://github.com/graasp/graasp-app-coral-bleaching/issues/43)) ([3596b56](https://github.com/graasp/graasp-app-coral-bleaching/commit/3596b56d60354beac41f408a15e07a367c7c63c0))
+* use rounded current temp on update ([#51](https://github.com/graasp/graasp-app-coral-bleaching/issues/51)) ([27a561a](https://github.com/graasp/graasp-app-coral-bleaching/commit/27a561a5d596542a60dcffaab6ce4eb39e013bd4))
+
 ## [1.1.1](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.1.0...v1.1.1) (2026-05-10)
 
 
