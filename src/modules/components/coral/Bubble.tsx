@@ -58,32 +58,6 @@ export function Bubble({
             keySplines="0.42 0 0.58 1"
           />
         </circle>
-        <ellipse
-          // @ts-expect-error
-          cx={x - 10}
-          cy={y}
-          rx={6.5}
-          ry={3.8}
-          fill="url(#hi)"
-          opacity={0.95}
-        >
-          <animate
-            attributeName="cy"
-            values="700;-50"
-            dur={duration}
-            repeatCount="indefinite"
-            calcMode="spline"
-            keySplines="0.42 0 0.58 1"
-          />
-          <animate
-            attributeName="rx"
-            values="6.5;4.8"
-            dur={duration}
-            repeatCount="indefinite"
-            calcMode="spline"
-            keySplines="0.42 0 0.58 1"
-          />
-        </ellipse>
         <animateTransform
           attributeName="transform"
           type="scale"

@@ -114,6 +114,9 @@ export const useCurrentTemperature = () => {
   return value;
 };
 
+export const getHumanReadableTemperature = (temperature: number) =>
+  Math.round(temperature * 10) / 10;
+
 export const useUpdateCurrentTemperature = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -206,14 +209,17 @@ export const useStatus = (
   const [kelpAmount, setKelpAmount] = useState(initialKelpAmount);
 
   const reset = data?.reset;
+  const humanReadableTemperature = getHumanReadableTemperature(
+    currentTemperature ?? 0,
+  );
 
   const isDying =
-    currentTemperature <= MIN_TEMP_GROWTH ||
-    currentTemperature >= maxTempThreshold;
+    humanReadableTemperature <= MIN_TEMP_GROWTH ||
+    humanReadableTemperature >= maxTempThreshold;
 
   const isGrowing =
-    currentTemperature > MIN_TEMP_GROWTH &&
-    currentTemperature < maxTempThreshold - 1;
+    humanReadableTemperature > MIN_TEMP_GROWTH &&
+    humanReadableTemperature < maxTempThreshold - 1;
 
   useEffect(() => {
     if (reset) {
@@ -233,7 +239,7 @@ export const useStatus = (
       setKelpAmount(initialKelpAmount);
     }
     // non-dead coral
-    else if (status !== CoralStatus.Dead && currentTemperature) {
+    else if (status !== CoralStatus.Dead && humanReadableTemperature) {
       let value = kelpAmount;
       if (isGrowing) {
         value = kelpAmount + growthSpeed;
