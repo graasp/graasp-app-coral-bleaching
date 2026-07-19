@@ -1,6 +1,9 @@
 import { ReactNode } from 'react';
 
-import { useCurrentTemperature } from '@/utils/hooks.js';
+import {
+  getHumanReadableTemperature,
+  useCurrentTemperature,
+} from '@/utils/hooks.js';
 
 import {
   SCALE_UNITS,
@@ -14,7 +17,7 @@ const CurrentTemperature = ({ x, y }: { x: number; y: number }): ReactNode => {
   if (temperature) {
     const scaleUnit = SCALE_UNITS.CELSIUS; // TODO: get scale unit
 
-    const text = Math.round(temperature * 10) / 10 + scaleUnit.unit;
+    const text = getHumanReadableTemperature(temperature) + scaleUnit.unit;
 
     return (
       <text
