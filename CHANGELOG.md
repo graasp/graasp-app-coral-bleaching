@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.3](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.1.2...v1.1.3) (2026-09-08)
+
+
+### Bug Fixes
+
+* **deps:** update dependency react-i18next to v16.5.8 ([#55](https://github.com/graasp/graasp-app-coral-bleaching/issues/55)) ([75005a3](https://github.com/graasp/graasp-app-coral-bleaching/commit/75005a3a7b4dec961171d641c0cf7e0777b20168))
+* **deps:** update react monorepo ([#62](https://github.com/graasp/graasp-app-coral-bleaching/issues/62)) ([fb56e2b](https://github.com/graasp/graasp-app-coral-bleaching/commit/fb56e2be86cce041e5d0f08e1f72b764b8391f0b))
+
 ## [1.1.2](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.1.1...v1.1.2) (2026-07-19)
 
 
