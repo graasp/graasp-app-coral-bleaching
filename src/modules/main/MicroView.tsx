@@ -6,6 +6,7 @@ import { useAnimation } from '@/utils/hooks';
 
 import { MicroCoralIcon } from '../components/MicroCoralIcon';
 import { Background } from '../components/elements/Background';
+import { PolypFilter } from '../components/elements/PolypFilter';
 import { Sunshine } from '../components/elements/Sunshine';
 import { Polyp } from './Polyp';
 
@@ -38,6 +39,9 @@ export function MicroView({
   return (
     <>
       <svg width={width} height={height}>
+        <defs>
+          <PolypFilter />
+        </defs>
         <Background width={width} height={height} isPlaying={isPlaying} />
         <Sunshine width={width} height={height} />
       </svg>

@@ -2,7 +2,13 @@ import { JSX, useCallback, useEffect } from 'react';
 
 import { mapValue, motion, motionValue } from 'motion/react';
 
-import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
+import {
+  CoralStatus,
+  useAnimation,
+  useContext,
+  useMaxValue,
+  useStatus,
+} from '@/utils/hooks';
 
 import { StatusLabel } from '../StatusLabel';
 
@@ -32,6 +38,7 @@ export const YellowCoral = ({
   const {
     data: { reset, showStatus },
   } = useContext();
+  const { data: isPlaying } = useAnimation();
   const { kelpAmount, status } = useStatus('Porite', {
     initialKelpAmount,
     deathSpeed: 0.57,
@@ -105,6 +112,7 @@ export const YellowCoral = ({
           strokeMiterlimit: 1.5,
           ...style,
         }}
+        filter={isPlaying ? 'url(#coralFilter)' : undefined}
       >
         <g transform="matrix(1,0,0,1,-574.440728,-332.940435)">
           <g transform="matrix(1,0,0,1,-196.234552,141.295253)">

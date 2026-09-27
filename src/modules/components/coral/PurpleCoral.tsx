@@ -2,7 +2,12 @@ import { JSX, useCallback, useEffect } from 'react';
 
 import { mapValue, motion, motionValue } from 'motion/react';
 
-import { CoralStatus, useContext, useStatus } from '@/utils/hooks';
+import {
+  CoralStatus,
+  useAnimation,
+  useContext,
+  useStatus,
+} from '@/utils/hooks';
 
 import { StatusLabel } from '../StatusLabel';
 
@@ -29,6 +34,7 @@ export const PurpleCoral = ({
   const {
     data: { reset, showStatus },
   } = useContext();
+  const { data: isPlaying } = useAnimation();
   // exposition égale ou supérieur à 31°C pendant 10j = blanchiment, 14j=mortalité
   // death is controlled from useStatus
   // bleaching is controlled with the light color, varing depending on deathSpeed
@@ -101,6 +107,7 @@ export const PurpleCoral = ({
           strokeMiterlimit: 1.5,
           ...style,
         }}
+        filter={isPlaying ? 'url(#coralFilter)' : undefined}
       >
         <g transform="matrix(1,0,0,1,-978.325356,-548.014035)">
           <g transform="matrix(1.714711,0,0,1.714711,-760.34287,186.526643)">

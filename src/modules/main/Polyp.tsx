@@ -3,7 +3,12 @@ import { JSX, useCallback, useEffect } from 'react';
 import { animate, mapValue, motion, motionValue } from 'motion/react';
 
 import { KELP_SPEED } from '@/config/constants';
-import { CoralStatus, useContext, useStatus } from '@/utils/hooks';
+import {
+  CoralStatus,
+  useAnimation,
+  useContext,
+  useStatus,
+} from '@/utils/hooks';
 
 const zooxantheles = [
   { cx: 130, cy: 370 },
@@ -67,6 +72,7 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
   const {
     data: { reset },
   } = useContext();
+  const { data: isPlaying } = useAnimation();
   // exposition égale ou supérieur à 31°C pendant 7j = blanchiment, 14j=mortalité
   // death is controlled from useStatus
   // bleaching is controlled with the light color, varing depending on deathSpeed
@@ -183,6 +189,7 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
       xmlSpace="preserve"
       viewBox="0 0 695 509"
       style={style}
+      filter={isPlaying ? 'url(#polypFilter)' : ''}
     >
       <g id="zooFree">
         {zooxantheles.map(({ cx, cy }) => (
