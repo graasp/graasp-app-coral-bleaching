@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.2.0...v1.2.1) (2026-10-03)
+
+
+### Bug Fixes
+
+* apply filter only on tentacles and do not show zooxantheles on mount ([81d8ae4](https://github.com/graasp/graasp-app-coral-bleaching/commit/81d8ae450262f7f7cc158f2dc249929cc245ca34))
+
 ## [1.2.0](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.1.2...v1.2.0) (2026-09-27)
 
 
