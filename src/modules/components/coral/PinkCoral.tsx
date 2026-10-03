@@ -2,13 +2,7 @@ import { JSX, useCallback, useEffect } from 'react';
 
 import { mapValue, motion, motionValue } from 'motion/react';
 
-import {
-  CoralStatus,
-  useAnimation,
-  useContext,
-  useMaxValue,
-  useStatus,
-} from '@/utils/hooks';
+import { CoralStatus, useContext, useMaxValue, useStatus } from '@/utils/hooks';
 
 import { StatusLabel } from '../StatusLabel';
 
@@ -37,7 +31,6 @@ export const PinkCoral = ({
   const {
     data: { reset, showStatus },
   } = useContext();
-  const { data: isPlaying } = useAnimation();
   // exposition égale ou supérieur à 31°C pendant 7j = blanchiment, 14j=mortalité
   // death is controlled from useStatus
   // bleaching is controlled with the light color, varing depending on deathSpeed
@@ -106,7 +99,6 @@ export const PinkCoral = ({
         height={scale}
         viewBox="0 0 565 440"
         scale={scale}
-        filter={isPlaying ? 'url(#coralFilter)' : undefined}
         // @ts-expect-error
         style={{
           fillRule: 'evenodd',
