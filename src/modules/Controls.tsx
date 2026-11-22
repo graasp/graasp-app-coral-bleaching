@@ -1,17 +1,24 @@
 import { JSX } from 'react';
 import { useTranslation } from 'react-i18next';
 
+import FastForwardIcon from '@mui/icons-material/FastForward';
 import PauseIcon from '@mui/icons-material/Pause';
 import PlayArrowIcon from '@mui/icons-material/PlayArrow';
 import RestartAltIcon from '@mui/icons-material/RestartAlt';
 import { IconButton, Stack, Tooltip } from '@mui/material';
 
-import { useAnimation, useReset, useSetAnimation } from '@/utils/hooks';
+import {
+  useAnimation,
+  useReset,
+  useSetAnimation,
+  useUpdateTime,
+} from '@/utils/hooks';
 
 const backgroundColor = 'rgba(200, 200, 200, 0.5)';
 
 const Debug = (): JSX.Element => {
   const { data: isPlaying } = useAnimation();
+  const { mutate: updateTime } = useUpdateTime();
   const { mutate: reset } = useReset();
   const { t } = useTranslation();
 
@@ -20,27 +27,46 @@ const Debug = (): JSX.Element => {
   return (
     <Stack>
       <Stack direction="column" alignItems="center" spacing={1} mb={1}>
-        {isPlaying ? (
-          <Tooltip title={t('Pause')}>
-            <IconButton
-              onClick={() => setAnimation(false)}
-              sx={{ background: backgroundColor }}
-              color="warning"
-            >
-              <PauseIcon fontSize="large" />
-            </IconButton>
+        <Stack direction="row" alignItems="flex-end" gap={1}>
+          {isPlaying ? (
+            <Tooltip title={t('Pause')}>
+              <IconButton
+                onClick={() => setAnimation(false)}
+                sx={{ background: backgroundColor }}
+                color="warning"
+              >
+                <PauseIcon fontSize="large" />
+              </IconButton>
+            </Tooltip>
+          ) : (
+            <Tooltip title={t('Play')}>
+              <IconButton
+                onClick={() => setAnimation(true)}
+                sx={{ background: backgroundColor }}
+                color="success"
+              >
+                <PlayArrowIcon fontSize="large" />
+              </IconButton>
+            </Tooltip>
+          )}
+          <Tooltip title={t('Fast forward')}>
+            <span>
+              <IconButton
+                disabled={isPlaying}
+                onClick={() => updateTime(1)}
+                sx={{
+                  background: backgroundColor,
+                  width: 28,
+                  height: 28,
+                  mb: '2px',
+                }}
+                color="primary"
+              >
+                <FastForwardIcon fontSize="small" />
+              </IconButton>
+            </span>
           </Tooltip>
-        ) : (
-          <Tooltip title={t('Play')}>
-            <IconButton
-              onClick={() => setAnimation(true)}
-              sx={{ background: backgroundColor }}
-              color="success"
-            >
-              <PlayArrowIcon fontSize="large" />
-            </IconButton>
-          </Tooltip>
-        )}
+        </Stack>
         <Stack direction="row" gap={1}>
           <Tooltip title={t('Reset')}>
             <IconButton
