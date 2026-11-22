@@ -12,6 +12,11 @@
     "Macroscopic View": "Macroscopic View",
     "Microscopic View": "Microscopic View",
     "Show coral name": "Show coral name",
-    "DEATH_INDICATION": "Death: {{names}}"
+    "DEATH_INDICATION": "Death: {{names}}",
+    "Fast forward": "Fast forward",
+    "Fast forward (next {{count}} days)": "Fast forward (next {{count}} days)",
+    "Fast forward (next day)": "Fast forward (next day)",
+    "Fast forward (previous {{count}} days)": "Fast forward (previous {{count}} days)",
+    "Fast forward (previous day)": "Fast forward (previous day)"
   }
 }

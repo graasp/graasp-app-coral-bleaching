@@ -12,6 +12,9 @@
     "Macroscopic View": "Vue Macroscopique",
     "Microscopic View": "Vue Microscopique",
     "Show coral name": "Montrer le nom des coraux",
-    "DEATH_INDICATION": "Mort: {{names}}"
+    "DEATH_INDICATION": "Mort: {{names}}",
+    "Fast forward": "Avance rapide",
+    "Fast forward to end": "Avance rapide jusqu'à la fin",
+    "Fast forward to start": "Avance rapide jusqu'au début"
   }
 }

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/explicit-function-return-type */
-import { Dispatch, useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
@@ -65,17 +65,30 @@ export const useTime = () => {
 export const useUpdateTime = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: async () => {
+    mutationFn: async (timeIncrement: number = TIME_SPEED) => {
       const newTime = queryClient.getQueryData<number>(KEYS.time) ?? 0;
       const currentTemperature =
         queryClient.getQueryData<number>(KEYS.currentTemperature) ?? 0;
 
-      queryClient.setQueryData<number>(KEYS.time, newTime + TIME_SPEED);
+      const tickCount = Math.max(1, Math.round(timeIncrement / TIME_SPEED));
 
-      // save current temperature at point of time
+      queryClient.setQueryData<number>(KEYS.time, newTime + timeIncrement);
+
+      // Save every continuous time tick so graph and coral animations receive
+      // the same temperature samples as continuous playback.
       queryClient.setQueryData<{ t: number; temp: number }[]>(
         KEYS.temperatureHistory,
-        (d) => d?.concat([{ t: newTime, temp: currentTemperature }]),
+        (history) => {
+          const entries = Array.from({ length: tickCount }, (_, index) => ({
+            t: newTime + index * TIME_SPEED,
+            temp: currentTemperature,
+          }));
+          const endTime = newTime + timeIncrement;
+          if (!entries.some(({ t }) => Math.abs(t - endTime) < 0.0001)) {
+            entries.push({ t: endTime, temp: currentTemperature });
+          }
+          return (history ?? []).concat(entries);
+        },
       );
     },
   });
@@ -226,6 +239,8 @@ export const useStatus = (
       ? growthSpeed * MACRO_GROWTH_SPEED_FACTOR
       : growthSpeed;
 
+  const previousTimeRef = useRef(time);
+
   useEffect(() => {
     if (reset) {
       setStatus(CoralStatus.Normal);
@@ -240,6 +255,7 @@ export const useStatus = (
   // value and record a death before it actually happened.
   useEffect(() => {
     if (time === 0) {
+      previousTimeRef.current = 0;
       setStatus(CoralStatus.Normal);
       setDyingFactor(0);
       setKelpAmount(initialKelpAmount);
@@ -247,60 +263,80 @@ export const useStatus = (
     }
 
     if (status === CoralStatus.Dead) {
+      previousTimeRef.current = time;
       return;
     }
 
+    const previousTime = previousTimeRef.current;
+    const elapsed = Math.max(0, time - previousTime);
+    const tickCount = Math.max(1, Math.round(elapsed / TIME_SPEED));
+    const tickLength = elapsed / tickCount;
+
+    previousTimeRef.current = time;
+
     let nextKelpAmount = kelpAmount;
-    if (isGrowing) {
-      nextKelpAmount += effectiveGrowthSpeed;
+    let nextStatus: CoralStatus = status;
+    let nextDyingFactor = dyingFactor;
+
+    for (let tick = 0; tick < tickCount; tick += 1) {
+      if (isGrowing) {
+        nextKelpAmount += effectiveGrowthSpeed;
+      }
+      if (isDying) {
+        nextKelpAmount -= deathSpeed;
+      }
+      nextKelpAmount = Math.max(0, Math.min(nextKelpAmount, 100));
+
+      switch (nextStatus) {
+        case CoralStatus.Growing:
+          if (isDying) {
+            nextStatus = CoralStatus.Dying;
+          } else if (!isGrowing) {
+            nextStatus = CoralStatus.Normal;
+          }
+          break;
+        case CoralStatus.Normal:
+          if (isDying) {
+            nextStatus = CoralStatus.Dying;
+          } else if (isGrowing) {
+            nextStatus = CoralStatus.Growing;
+          } else {
+            nextDyingFactor = Math.max(nextDyingFactor - TIME_SPEED, 0);
+          }
+          break;
+        case CoralStatus.Dying:
+          if (!isDying) {
+            nextStatus = CoralStatus.Normal;
+          } else if (nextKelpAmount <= 0) {
+            nextStatus = CoralStatus.Dead;
+            const tickTime = previousTime + tickLength * (tick + 1);
+            console.debug(coralId, 'is dead');
+
+            queryClient.setQueryData<{ t: number; name: string }[]>(
+              KEYS.deathHistory,
+              (deathHistory) => {
+                const history = deathHistory ?? [];
+                if (history.some(({ name }) => name === coralId)) {
+                  return history;
+                }
+                return history.concat([{ t: tickTime, name: coralId }]);
+              },
+            );
+          }
+          break;
+        default:
+          break;
+      }
+
+      if (nextStatus === CoralStatus.Dead) {
+        break;
+      }
     }
-    if (isDying) {
-      nextKelpAmount -= deathSpeed;
-    }
-    nextKelpAmount = Math.max(0, Math.min(nextKelpAmount, 100));
+
     setKelpAmount(nextKelpAmount);
-
-    switch (status) {
-      case CoralStatus.Growing:
-        if (isDying) {
-          setStatus(CoralStatus.Dying);
-        } else if (!isGrowing) {
-          setStatus(CoralStatus.Normal);
-        }
-        break;
-      case CoralStatus.Normal:
-        if (isDying) {
-          setStatus(CoralStatus.Dying);
-        } else if (isGrowing) {
-          setStatus(CoralStatus.Growing);
-        } else {
-          setDyingFactor((d) => Math.max(d - TIME_SPEED, 0));
-        }
-        break;
-      case CoralStatus.Dying:
-        if (!isDying) {
-          setStatus(CoralStatus.Normal);
-        } else if (nextKelpAmount <= 0) {
-          setStatus(CoralStatus.Dead);
-          console.debug(coralId, 'is dead');
-
-          // save one death timestamp per coral
-          queryClient.setQueryData<{ t: number; name: string }[]>(
-            KEYS.deathHistory,
-            (deathHistory) => {
-              const history = deathHistory ?? [];
-              if (history.some(({ name }) => name === coralId)) {
-                return history;
-              }
-              return history.concat([{ t: time, name: coralId }]);
-            },
-          );
-        }
-        break;
-      default:
-        break;
-    }
-    // This effect advances once per simulated time tick.
+    setStatus(nextStatus);
+    setDyingFactor(nextDyingFactor);
+    // This effect advances for both continuous and fast-forward time updates.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
@@ -352,10 +388,9 @@ export const useAnimation = () => {
 export const useMaxValue = (
   initialValue: number,
   newValue: number,
-): [number, Dispatch<number>] => {
+): [number, (value: number) => void] => {
   const [max, setMax] = useState(initialValue);
 
-  // prevent shrinking
   useEffect(() => {
     if (newValue > max) {
       setMax(newValue);

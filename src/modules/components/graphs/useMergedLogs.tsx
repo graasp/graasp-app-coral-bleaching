@@ -1,5 +1,6 @@
 import groupby from 'lodash.groupby';
 
+import { TIME_SPEED } from '@/config/constants';
 import {
   Log,
   useDeathHistory,
@@ -27,7 +28,19 @@ export const useMergedLogs = ({
       interval ? value > Math.max(time - interval, 0) : true,
     )
     .map((l) => {
-      const logs = deathTimes.filter((t) => t.t === l.t);
+      const tolerance = TIME_SPEED + 0.0001;
+      const logs = deathTimes.filter((death) => {
+        if (death.t === l.t) {
+          return true;
+        }
+
+        const nearestLog = log.reduce((nearest, candidate) =>
+          Math.abs(candidate.t - death.t) < Math.abs(nearest.t - death.t)
+            ? candidate
+            : nearest,
+        );
+        return nearestLog.t === l.t && Math.abs(death.t - l.t) <= tolerance;
+      });
       if (logs.length) {
         // set data for death indications
         return {

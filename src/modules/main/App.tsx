@@ -1,6 +1,6 @@
 import { JSX, useEffect, useRef } from 'react';
 
-import { ANIMATION_UPDATE_INTERVAL } from '@/config/constants';
+import { ANIMATION_UPDATE_INTERVAL, TIME_SPEED } from '@/config/constants';
 import { View } from '@/config/types';
 import {
   useAnimation,
@@ -20,9 +20,9 @@ const App = (): JSX.Element => {
   const { data } = useContext();
   const interval = useRef<number | undefined>(undefined);
   const { data: stageDimensions } = useStageDimensions();
+  const { mutate: setStageDimensions } = useSetStageDimensions();
   const { mutate: updateTime } = useUpdateTime();
   const { data: isPlaying } = useAnimation();
-  const { mutate: setStageDimensions } = useSetStageDimensions();
 
   const checkSize = (): void => {
     const stageWidth = window?.innerWidth || 0;
@@ -52,7 +52,7 @@ const App = (): JSX.Element => {
   useEffect(() => {
     if (isPlaying) {
       interval.current = setInterval(() => {
-        updateTime();
+        updateTime(TIME_SPEED);
       }, ANIMATION_UPDATE_INTERVAL);
 
       return () => {
