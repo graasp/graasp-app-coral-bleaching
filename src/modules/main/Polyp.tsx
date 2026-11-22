@@ -1,4 +1,4 @@
-import { JSX, useCallback, useEffect, useState } from 'react';
+import { JSX, useCallback, useEffect, useRef, useState } from 'react';
 
 import { animate, mapValue, motion, motionValue } from 'motion/react';
 
@@ -73,6 +73,7 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
     data: { reset },
   } = useContext();
   const [prevReset, setPrevReset] = useState(reset);
+  const isPolypZooxantheleExpulsionActive = useRef(false);
   const { data: isPlaying } = useAnimation();
   // exposition égale ou supérieur à 31°C pendant 7j = blanchiment, 14j=mortalité
   // death is controlled from useStatus
@@ -86,40 +87,77 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
   const BLEACHING_MIN_THRESHOLD = 20;
   const motionKelpAmount = motionValue(kelpAmount);
 
-  const recover = useCallback(() => {
+  const recover = useCallback((animateFreeZooxantheles = true) => {
+    isPolypZooxantheleExpulsionActive.current = false;
     animate('#polyp #zooGroup circle', { fill: '#499f29' }, { duration: 3 });
-    // eslint-disable-next-line no-restricted-syntax
-    for (const c of document.getElementsByClassName('zooAnimateReset')) {
-      (c as SVGAnimateTransformElement).beginElement();
-    }
 
-    // free zooxantheles
-    animate([
-      // small transparent delay to avoid the top border overflow
-      [
-        '#polyp #zooFree circle',
-        { fill: 'rgba(0, 0, 0, 0)' },
-        { duration: 0.5 },
-      ],
-      [
-        '#polyp #zooFree circle',
-        { fill: '#499f29' },
-        {
-          duration: 1,
-        },
-      ],
-      ['#polyp #zooFree circle', { fill: 'rgba(0, 0, 0, 0)' }, { duration: 2 }],
-    ]);
+    // Only reset the transforms of zooxantheles inside the polyp.
+    const polypResetAnimations =
+      document.querySelectorAll<SVGAnimateTransformElement>(
+        '#polyp #zooGroup .zooAnimateReset',
+      );
+    polypResetAnimations.forEach((animation) => animation.beginElement());
+
+    if (animateFreeZooxantheles) {
+      // free zooxantheles
+      animate([
+        // small transparent delay to avoid the top border overflow
+        [
+          '#polyp #zooFree circle',
+          { fill: 'rgba(0, 0, 0, 0)' },
+          { duration: 0.5 },
+        ],
+        [
+          '#polyp #zooFree circle',
+          { fill: '#499f29' },
+          {
+            duration: 1,
+          },
+        ],
+        [
+          '#polyp #zooFree circle',
+          { fill: 'rgba(0, 0, 0, 0)' },
+          { duration: 2 },
+        ],
+      ]);
+    }
+  }, []);
+
+  const getLeftZooxanthelesCount = useCallback(() => {
+    const zooGroupCircles = document.querySelectorAll<SVGCircleElement>(
+      '#polyp #zooGroup circle',
+    );
+
+    return Array.from(zooGroupCircles).filter((circle) => {
+      const { fill } = window.getComputedStyle(circle);
+      return (
+        fill === 'transparent' ||
+        fill === 'rgba(0, 0, 0, 0)' ||
+        fill === 'rgb(0, 0, 0, 0)' ||
+        fill.includes('rgba(0, 0, 0, 0)')
+      );
+    }).length;
   }, []);
 
   // reset animations
   useEffect(() => {
     if (prevReset !== reset) {
-      recover();
+      if (
+        isPolypZooxantheleExpulsionActive.current ||
+        getLeftZooxanthelesCount() > 0
+      ) {
+        recover(false);
+      }
+
+      // Free zooxantheles must not run an animation on reset.
+      document
+        .querySelectorAll<SVGCircleElement>('#polyp #zooFree circle')
+        .forEach((circle) => circle.setAttribute('fill', 'rgba(0, 0, 0, 0)'));
+
       setPrevReset(reset);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [reset, recover]);
+  }, [reset, recover, getLeftZooxanthelesCount]);
 
   useEffect(() => {
     // on reaching bleaching state, loose kelp animation
@@ -127,6 +165,8 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
       Math.abs(kelpAmount - BLEACHING_MAX_THRESHOLD) <= KELP_SPEED &&
       status === CoralStatus.Dying
     ) {
+      isPolypZooxantheleExpulsionActive.current = true;
+
       // zooxantheles in polyp
       animate(
         '#polyp #zooGroup circle',
@@ -721,7 +761,7 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
           transform="matrix(-.82688 .50765 -.5953 -.96965 1323.853 149.692)"
         />
         <path
-          d="M855.767 340.769c-45.533 35.75-34.909 99.002-113.753 170.341-42.374 6.507-9.298 39.325 11.639 8.129C877.281 456.112 880.498 443.926 894 375l-38.233-34.231Z"
+          d="M855.767 340.769c-45.533 35.75-34.909 99.002-113.753 156.698-33.409 14.193 4.19 29.404 10.375 6.048 66.57-30.301 154.014-29.077 182.749-141.4l-28.639-21.346Z"
           style={{
             fill: 'url(#j)',
           }}
