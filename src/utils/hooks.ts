@@ -230,68 +230,72 @@ export const useStatus = (
     }
   }, [initialKelpAmount, reset, updateTemperature]);
 
-  // update kelp value
+  // Update the kelp and status together so both use the same value for this
+  // time step. Keeping these in separate effects can observe a stale kelp
+  // value and record a death before it actually happened.
   useEffect(() => {
-    // reset
     if (time === 0) {
       setStatus(CoralStatus.Normal);
       setDyingFactor(0);
       setKelpAmount(initialKelpAmount);
+      return;
     }
-    // non-dead coral
-    else if (status !== CoralStatus.Dead && humanReadableTemperature) {
-      let value = kelpAmount;
-      if (isGrowing) {
-        value = kelpAmount + growthSpeed;
-      }
-      if (isDying) {
-        value = kelpAmount - deathSpeed;
-      }
-      const newValue = Math.max(0, Math.min(value, 100));
-      setKelpAmount(newValue);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [time]);
 
-  // state machine per status
-  useEffect(() => {
-    if (status !== CoralStatus.Dead) {
-      switch (status) {
-        case CoralStatus.Growing:
-          if (isDying) {
-            setStatus(CoralStatus.Dying);
-          }
-          if (!isGrowing) {
-            setStatus(CoralStatus.Normal);
-          }
-          break;
-        case CoralStatus.Normal:
-          if (isDying) {
-            setStatus(CoralStatus.Dying);
-          } else if (isGrowing) {
-            setStatus(CoralStatus.Growing);
-          } else {
-            setDyingFactor((d) => Math.max(d - TIME_SPEED, 0));
-          }
-          break;
-        case CoralStatus.Dying:
-          if (!isDying) {
-            setStatus(CoralStatus.Normal);
-          } else if (kelpAmount <= 0) {
-            setStatus(CoralStatus.Dead);
-            console.debug(coralId, 'is dead');
-
-            // save death timestamp
-            queryClient.setQueryData<{ t: number; name: string }[]>(
-              KEYS.deathHistory,
-              (d) => (d ?? []).concat([{ t: time, name: coralId }]),
-            );
-          }
-          break;
-        default:
-          break;
-      }
+    if (status === CoralStatus.Dead) {
+      return;
     }
+
+    let nextKelpAmount = kelpAmount;
+    if (isGrowing) {
+      nextKelpAmount += growthSpeed;
+    }
+    if (isDying) {
+      nextKelpAmount -= deathSpeed;
+    }
+    nextKelpAmount = Math.max(0, Math.min(nextKelpAmount, 100));
+    setKelpAmount(nextKelpAmount);
+
+    switch (status) {
+      case CoralStatus.Growing:
+        if (isDying) {
+          setStatus(CoralStatus.Dying);
+        } else if (!isGrowing) {
+          setStatus(CoralStatus.Normal);
+        }
+        break;
+      case CoralStatus.Normal:
+        if (isDying) {
+          setStatus(CoralStatus.Dying);
+        } else if (isGrowing) {
+          setStatus(CoralStatus.Growing);
+        } else {
+          setDyingFactor((d) => Math.max(d - TIME_SPEED, 0));
+        }
+        break;
+      case CoralStatus.Dying:
+        if (!isDying) {
+          setStatus(CoralStatus.Normal);
+        } else if (nextKelpAmount <= 0) {
+          setStatus(CoralStatus.Dead);
+          console.debug(coralId, 'is dead');
+
+          // save one death timestamp per coral
+          queryClient.setQueryData<{ t: number; name: string }[]>(
+            KEYS.deathHistory,
+            (deathHistory) => {
+              const history = deathHistory ?? [];
+              if (history.some(({ name }) => name === coralId)) {
+                return history;
+              }
+              return history.concat([{ t: time, name: coralId }]);
+            },
+          );
+        }
+        break;
+      default:
+        break;
+    }
+    // This effect advances once per simulated time tick.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [time]);
 
@@ -311,6 +315,7 @@ export const useReset = () => {
       queryClient.setQueryData(['animation'], false);
       queryClient.setQueryData(['isDead'], false);
       queryClient.setQueryData(KEYS.temperatureHistory, []);
+      queryClient.setQueryData(KEYS.deathHistory, []);
       queryClient.setQueryData(KEYS.time, 0);
       queryClient.setQueryData<Context>(KEYS.context, (d) => ({
         ...(d ?? DEFAULT_CONTEXT),
