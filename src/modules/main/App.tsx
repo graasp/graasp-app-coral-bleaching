@@ -1,5 +1,6 @@
-import { JSX, createRef, useEffect } from 'react';
+import { JSX, useEffect, useRef } from 'react';
 
+import { ANIMATION_UPDATE_INTERVAL } from '@/config/constants';
 import { View } from '@/config/types';
 import {
   useAnimation,
@@ -17,7 +18,7 @@ import { MicroView } from './MicroView';
 
 const App = (): JSX.Element => {
   const { data } = useContext();
-  const interval = createRef<number>();
+  const interval = useRef<number | undefined>(undefined);
   const { data: stageDimensions } = useStageDimensions();
   const { mutate: updateTime } = useUpdateTime();
   const { data: isPlaying } = useAnimation();
@@ -52,10 +53,10 @@ const App = (): JSX.Element => {
     if (isPlaying) {
       interval.current = setInterval(() => {
         updateTime();
-      }, 100);
+      }, ANIMATION_UPDATE_INTERVAL);
 
       return () => {
-        if (interval && interval.current) {
+        if (interval.current) {
           clearInterval(interval.current);
         }
       };
@@ -65,7 +66,6 @@ const App = (): JSX.Element => {
         clearInterval(interval.current);
       }
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isPlaying, updateTime]);
 
   return (

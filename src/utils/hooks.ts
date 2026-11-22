@@ -7,6 +7,7 @@ import {
   INIT_CURRENT_TEMPERATURE,
   INIT_GROWTH_SCALE,
   INIT_KELP_AMOUNT,
+  MACRO_GROWTH_SPEED_FACTOR,
   MAX_TEMP_GROWTH,
   MIN_TEMP_GROWTH,
   TIME_SPEED,
@@ -220,6 +221,10 @@ export const useStatus = (
   const isGrowing =
     humanReadableTemperature > MIN_TEMP_GROWTH &&
     humanReadableTemperature < maxTempThreshold - 1;
+  const effectiveGrowthSpeed =
+    data.view === View.Macro
+      ? growthSpeed * MACRO_GROWTH_SPEED_FACTOR
+      : growthSpeed;
 
   useEffect(() => {
     if (reset) {
@@ -247,7 +252,7 @@ export const useStatus = (
 
     let nextKelpAmount = kelpAmount;
     if (isGrowing) {
-      nextKelpAmount += growthSpeed;
+      nextKelpAmount += effectiveGrowthSpeed;
     }
     if (isDying) {
       nextKelpAmount -= deathSpeed;

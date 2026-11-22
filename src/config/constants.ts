@@ -46,6 +46,8 @@ export const INIT_CURRENT_TEMPERATURE = 25;
 
 export const KELP_SPEED = 1.2;
 export const TIME_SPEED = 0.2; // Macro: 0.1 Micro: 0.02
+export const ANIMATION_UPDATE_INTERVAL = 100;
+export const MACRO_GROWTH_SPEED_FACTOR = 1 / 3;
 export const DEATH_DAY = 14;
 
 export const MIN_TEMP_GROWTH = 23;
