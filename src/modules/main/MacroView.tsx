@@ -215,7 +215,14 @@ export function MacroView({
         />
       </g>
 
-      <LensIcon style={{ position: 'absolute', top: 180, left: '31%' }} />
+      <LensIcon
+        style={{
+          position: 'absolute',
+          bottom: 340 + height / 3,
+          left: `calc(12% + ${width / 6}px)`,
+          zIndex: 2,
+        }}
+      />
     </>
   );
 }
