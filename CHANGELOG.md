@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.3.0](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.2.1...v1.3.0) (2026-11-22)
+
+
+### Features
+
+* add fast forward per day button ([c803921](https://github.com/graasp/graasp-app-coral-bleaching/commit/c8039213e02d85aa44cb402eb5599ae213e76047))
+* run slower growth in macro view ([a8109b9](https://github.com/graasp/graasp-app-coral-bleaching/commit/a8109b94441637125837d738130ca70679db022d))
+
+
+### Bug Fixes
+
+* add comment, fix ([0a49192](https://github.com/graasp/graasp-app-coral-bleaching/commit/0a49192e7de9bd5649151fa4d7d6620fd6523319))
+* fix free zooxantheles reset animations ([2b88889](https://github.com/graasp/graasp-app-coral-bleaching/commit/2b88889397603002343826aa1fc699280cae5b43))
+* fix zooxantheles animation, wrong death times ([f574b7a](https://github.com/graasp/graasp-app-coral-bleaching/commit/f574b7a397d9f88dc0655031ce19713d233cda92))
+* show lens on coral on big screens ([675bd95](https://github.com/graasp/graasp-app-coral-bleaching/commit/675bd950d718197f404b64421abbb0853d12e65b))
+
 ## [1.2.1](https://github.com/graasp/graasp-app-coral-bleaching/compare/v1.2.0...v1.2.1) (2026-10-03)
 
 
