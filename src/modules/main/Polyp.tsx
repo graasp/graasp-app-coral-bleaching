@@ -74,6 +74,7 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
   } = useContext();
   const [prevReset, setPrevReset] = useState(reset);
   const isPolypZooxantheleExpulsionActive = useRef(false);
+  const isFreeZooxantheleExpulsionActive = useRef(false);
   const { data: isPlaying } = useAnimation();
   // exposition égale ou supérieur à 31°C pendant 7j = blanchiment, 14j=mortalité
   // death is controlled from useStatus
@@ -88,15 +89,16 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
   const motionKelpAmount = motionValue(kelpAmount);
 
   const recover = useCallback((animateFreeZooxantheles = true) => {
-    isPolypZooxantheleExpulsionActive.current = false;
     animate('#polyp #zooGroup circle', { fill: '#499f29' }, { duration: 3 });
 
     // Only reset the transforms of zooxantheles inside the polyp.
-    const polypResetAnimations =
-      document.querySelectorAll<SVGAnimateTransformElement>(
-        '#polyp #zooGroup .zooAnimateReset',
-      );
-    polypResetAnimations.forEach((animation) => animation.beginElement());
+    // Reset transforms: only in the polyp on reset, and both groups on recovery.
+    const resetSelector = animateFreeZooxantheles
+      ? '#polyp .zooAnimateReset'
+      : '#polyp #zooGroup .zooAnimateReset';
+    const resetAnimations =
+      document.querySelectorAll<SVGAnimateTransformElement>(resetSelector);
+    resetAnimations.forEach((animation) => animation.beginElement());
 
     if (animateFreeZooxantheles) {
       // free zooxantheles
@@ -146,10 +148,49 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
         isPolypZooxantheleExpulsionActive.current ||
         getLeftZooxanthelesCount() > 0
       ) {
-        recover(false);
+        animate(
+          '#polyp #zooGroup circle',
+          { fill: '#499f29' },
+          { duration: 0 },
+        );
+
+        const polypExpulsionAnimations =
+          document.querySelectorAll<SVGAnimateTransformElement>(
+            '#polyp #zooGroup .zooAnimate',
+          );
+        polypExpulsionAnimations.forEach((animation) => animation.endElement());
+
+        const polypResetAnimations =
+          document.querySelectorAll<SVGAnimateTransformElement>(
+            '#polyp #zooGroup .zooAnimateReset',
+          );
+        polypResetAnimations.forEach((animation) => {
+          animation.setAttribute('dur', '0.001s');
+          animation.beginElement();
+          animation.setAttribute('dur', '3s');
+        });
+
+        document
+          .querySelectorAll<SVGCircleElement>('#polyp #zooGroup circle')
+          .forEach((circle) => circle.setAttribute('fill', '#499f29'));
       }
 
+      isPolypZooxantheleExpulsionActive.current = false;
+      isFreeZooxantheleExpulsionActive.current = false;
+
       // Free zooxantheles must not run an animation on reset.
+      animate(
+        '#polyp #zooFree circle',
+        { fill: 'rgba(0, 0, 0, 0)' },
+        { duration: 0 },
+      );
+
+      const freeExpulsionAnimations =
+        document.querySelectorAll<SVGAnimateTransformElement>(
+          '#polyp #zooFree .zooAnimate',
+        );
+      freeExpulsionAnimations.forEach((animation) => animation.endElement());
+
       document
         .querySelectorAll<SVGCircleElement>('#polyp #zooFree circle')
         .forEach((circle) => circle.setAttribute('fill', 'rgba(0, 0, 0, 0)'));
@@ -165,7 +206,15 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
       Math.abs(kelpAmount - BLEACHING_MAX_THRESHOLD) <= KELP_SPEED &&
       status === CoralStatus.Dying
     ) {
+      if (
+        isPolypZooxantheleExpulsionActive.current &&
+        isFreeZooxantheleExpulsionActive.current
+      ) {
+        return;
+      }
+
       isPolypZooxantheleExpulsionActive.current = true;
+      isFreeZooxantheleExpulsionActive.current = true;
 
       // zooxantheles in polyp
       animate(
@@ -196,10 +245,13 @@ export const Polyp = ({ style }: { style: object }): JSX.Element => {
 
       // on recovering from bleaching, recover kelp animation
     } else if (
-      Math.abs(kelpAmount - BLEACHING_MAX_THRESHOLD) <= KELP_SPEED &&
-      status === CoralStatus.Growing
+      status === CoralStatus.Growing &&
+      (isPolypZooxantheleExpulsionActive.current ||
+        isFreeZooxantheleExpulsionActive.current)
     ) {
       recover();
+      isPolypZooxantheleExpulsionActive.current = false;
+      isFreeZooxantheleExpulsionActive.current = false;
     }
   }, [status, kelpAmount, recover]);
 
