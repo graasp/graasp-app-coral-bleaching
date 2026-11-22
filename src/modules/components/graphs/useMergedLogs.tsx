@@ -29,16 +29,21 @@ export const useMergedLogs = ({
     )
     .map((l) => {
       const tolerance = TIME_SPEED + 0.0001;
+      // Associate deaths that happened close to this temperature-log point.
       const logs = deathTimes.filter((death) => {
+        // First, match when death and temperature timestamps are exactly equal.
         if (death.t === l.t) {
           return true;
         }
 
+        // Otherwise, find the temperature log nearest to this death timestamp.
         const nearestLog = log.reduce((nearest, candidate) =>
           Math.abs(candidate.t - death.t) < Math.abs(nearest.t - death.t)
             ? candidate
             : nearest,
         );
+        // Include the death only if the nearest log is the current point
+        // and the timestamps are within the allowed sampling tolerance.
         return nearestLog.t === l.t && Math.abs(death.t - l.t) <= tolerance;
       });
       if (logs.length) {
